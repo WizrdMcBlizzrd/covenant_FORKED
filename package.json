@@ -1,0 +1,35 @@
+{
+  "name": "covenant",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean:assets": "node scripts/clean-public.js",
+    "build:templates": "node scripts/build-templates.js",
+    "build": "esbuild app/assets/javascripts/application.js --bundle --sourcemap --format=esm --outdir=public --public-path=/ --entry-names=[name]-[hash] --metafile=scripts/meta.json --loader:.yml=text --loader:.yaml=text",
+    "build:manifest": "node scripts/build-manifest.js",
+    "build:css": "node scripts/build-css.js",
+    "predev": "npm run clean:assets && npm run build && npm run build:css && npm run build:manifest && npm run build:templates",
+    "dev": "wrangler dev --local --test-scheduled --env-file .dev.vars.app",
+    "dev:watch": "chokidar \"app/**/*\" \"config/**/*\" \"scripts/build-templates.js\" \"scripts/build-css.js\" \"scripts/build-manifest.js\" -i \"generated/**\" -i \"public/**\" -i \"scripts/meta.json\" -c \"npm run -s predev\"",
+    "predeploy": "npm run clean:assets && npm run build && npm run build:css && npm run build:manifest && npm run build:templates",
+    "deploy": "wrangler deploy",
+    "deploy:signing-agent": "wrangler deploy --config wrangler.signing-agent.toml",
+    "dev:signing-agent": "wrangler dev --local --test-scheduled --config wrangler.signing-agent.toml --env-file .dev.vars.signing-agent"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "*",
+    "@hotwired/turbo": "*",
+    "@scure/btc-signer": "^2.0.1",
+    "hono": "*",
+    "sats-connect": "*",
+    "yaml": "*"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "*",
+    "chokidar-cli": "^3.0.0",
+    "ejs": "*",
+    "esbuild": "*",
+    "tailwindcss": "*",
+    "wrangler": "^4.56.0"
+  }
+}
