@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %> // NERV TERMINAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= assets.css %>" />
+    <script type="module" src="<%= assets.js %>"></script>
+  </head>
+  <body
+    data-controller="store body-class usd wallet"
+    data-action="wallet:connected@window->body-class#setConnected wallet:disconnected@window->body-class#setDisconnected keydown.esc@window->wallet#close"
+    class="theme-mecha"
+  >
+    <!-- Side Data Stream -->
+    <div class="side-stream">
+      <div class="side-stream-content">
+        0x7F3A 0x9B2C 0x4E1D 0x8F0A 0x2C5B 0x6D9E 0x1A3F 0x5C8D 0x9E2B 0x3F7C
+        0x8A1D 0x4B6E 0x7C9F 0x2D5A 0x6E8B 0x1F4C 0x5A7D 0x9B3E 0x3C6F 0x8D2A
+        SYNC_OK BUFFER_CLEAR TX_PENDING MEMPOOL_OK NODE_ACTIVE BLOCK_847291
+        0x7F3A 0x9B2C 0x4E1D 0x8F0A 0x2C5B 0x6D9E 0x1A3F 0x5C8D 0x9E2B 0x3F7C
+      </div>
+    </div>
+
+    <!-- Wallet Modal -->
+    <div data-wallet-target="selector" data-state="closed">
+      <div class="wallet-backdrop" data-action="click->wallet#close"></div>
+      <div class="wallet-panel">
+        <div class="wallet-header">
+          <div class="wallet-title">
+            <div class="wallet-title-icon"></div>
+            <span class="wallet-title-text">Wallet Authorization</span>
+          </div>
+          <button class="wallet-close" type="button" aria-label="Close" data-action="wallet#close">&times;</button>
+        </div>
+        <div class="wallet-body">
+          <div class="wallet-message">
+            <p class="subtitle">PILOT SYNC REQUIRED</p>
+            <p>Select wallet to establish neural link</p>
+          </div>
+          <div class="wallet-options">
+            <button class="wallet-option" data-wallet-target="xverse" data-action="wallet#authorize:prevent" data-wallet-provider-param="xverse">
+              <div class="wallet-option-icon">
+                <img src="/wallets/xverse.png" alt="" />
+              </div>
+              <div class="wallet-option-info">
+                <div class="wallet-option-name">Xverse</div>
+              </div>
+              <span class="wallet-option-status">AVAILABLE</span>
+              <span class="wallet-option-arrow">></span>
+            </button>
+            <button class="wallet-option" data-wallet-target="unisat" data-action="wallet#authorize:prevent" data-wallet-provider-param="unisat">
+              <div class="wallet-option-icon">
+                <img src="/wallets/unisat.png" alt="" />
+              </div>
+              <div class="wallet-option-info">
+                <div class="wallet-option-name">Unisat</div>
+              </div>
+              <span class="wallet-option-status">DETECTED</span>
+              <span class="wallet-option-arrow">></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" data-store-target="main">
+      <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" data-testid="footer">
+      <div>
+        <a href="https://github.com/lifofifoX/covenant" target="_blank" rel="noopener" data-testid="footer-blizzard">Covenant</a> // MECHA THEME // <%= new Date().getFullYear() %>
+      </div>
+    </footer>
+
+    <!-- Bottom HUD Navigation -->
+    <nav class="bottom-hud">
+      <div class="hud-left">
+        <div class="mobile-nav" data-controller="dropdown" data-action="mouseup@window->dropdown#hide" data-testid="nav-menu">
+          <button class="mobile-menu-btn" type="button" aria-label="Menu" data-action="dropdown#toggle" data-testid="nav-menu-button">&#9776;</button>
+          <div class="dropdown-menu hidden" data-dropdown-target="menu" data-testid="nav-menu-list">
+            <a class="dropdown-item" href="/" data-testid="nav-menu-home">HOME</a>
+            <a class="dropdown-item" href="/activity" data-testid="nav-menu-activity">ACTIVITY</a>
+            <a class="dropdown-item" href="/policy" data-testid="nav-menu-policy">PROTOCOL</a>
+          </div>
+        </div>
+        <a href="/" class="hud-nav-item" data-testid="home-link">Home</a>
+        <a href="/activity" class="hud-nav-item" data-testid="nav-activity">Activity</a>
+        <a href="/policy" class="hud-nav-item" data-testid="nav-policy">Protocol</a>
+      </div>
+      <div class="hud-center">
+        <a href="/" class="hud-logo">COVENANT</a>
+        <span class="hud-tagline">ORDINALS COMMAND CENTER</span>
+      </div>
+      <div class="hud-right">
+        <div class="hud-status">
+          <div class="hud-status-light"></div>
+          <span>SYNC: OK</span>
+        </div>
+        <button class="hud-nav-item hide-on-connected" type="button" data-action="wallet#select">Connect</button>
+        <div class="show-on-connected" style="position: relative;" data-controller="dropdown" data-action="mouseup@window->dropdown#hide">
+          <button class="hud-nav-item" type="button" data-action="dropdown#toggle">
+            <span data-wallet-target="addressPreview"></span>
+          </button>
+          <div class="dropdown-menu hidden" data-dropdown-target="menu">
+            <a class="dropdown-item danger" href="#" data-action="wallet#logout:prevent dropdown#toggle">DISCONNECT</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>

@@ -1,0 +1,209 @@
+<section
+  data-testid="inscription-page"
+  data-controller="inscription"
+  data-action="wallet:connected@window->inscription#onWalletConnected wallet:disconnected@window->inscription#onWalletDisconnected"
+  data-inscription-price-value="<%= checkout.priceSats %>"
+  data-inscription-inscription-metadata-value="<%= JSON.stringify(inscription.metadata) %>"
+  data-inscription-payment-address-value="<%= config.payment_address %>"
+>
+  <div class="specimen-fullbleed">
+    <!-- Specimen View (Full Bleed Image) -->
+    <div class="specimen-view">
+      <div class="confidential-stamp">CONFIDENTIAL</div>
+      <div class="xray-frame" data-controller="image">
+        <span class="xray-label">> IMAGING</span>
+        <div class="inscription-skeleton" data-image-target="skeleton"></div>
+        <% if (inscription.isImage) { %>
+          <img
+            src="<%= inscription.contentUrl %>"
+            alt="<%= title %>"
+            loading="eager"
+            decoding="async"
+            class="opacity-0 transition-opacity duration-300"
+            data-image-target="img"
+            data-action="load->image#loaded error->image#error"
+            data-testid="inscription-media-img"
+          />
+        <% } else { %>
+          <iframe
+            src="<%= inscription.previewUrl %>"
+            class="pointer-events-none opacity-0 transition-opacity duration-300"
+            allow="accelerometer; gyroscope"
+            data-image-target="media"
+            data-action="load->image#loaded error->image#error"
+            data-testid="inscription-media-iframe"
+          ></iframe>
+        <% } %>
+        <span class="xray-id">INS-<%= inscription.number %>-ORD</span>
+      </div>
+    </div>
+
+    <!-- Specimen Drawer (Detail Panel) -->
+    <div class="specimen-drawer">
+      <div class="drawer-header">
+        <div class="drawer-title" data-testid="page-title">DIAGNOSTIC REPORT</div>
+        <div class="drawer-subtitle">Specimen #<%= new Intl.NumberFormat('en-US').format(inscription.number) %> — <%= config.title %></div>
+      </div>
+
+      <div class="diagnostic-report" data-testid="details">
+        <div class="report-section" data-testid="detail-id">
+          <div class="report-label">SPECIMEN ID</div>
+          <div class="report-value"><a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link"><%= inscription.id.substring(0, 20) %>...i0</a></div>
+        </div>
+        <div class="report-section" data-testid="detail-number">
+          <div class="report-label">INSCRIPTION NUMBER</div>
+          <div class="report-value"><a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-number-link">#<%= new Intl.NumberFormat('en-US').format(inscription.number) %></a></div>
+        </div>
+        <div class="report-section">
+          <div class="report-label">COLLECTION</div>
+          <div class="report-value"><a href="/<%= encodeURIComponent(config.slug) %>"><%= config.title %></a></div>
+        </div>
+        <div class="report-section">
+          <div class="report-label">CONTENT TYPE</div>
+          <div class="report-value"><%= inscription.contentType || 'Unknown' %></div>
+        </div>
+        <div class="report-section" data-testid="detail-inscribed">
+          <% const inscribedHuman = new Date(inscription.timestamp * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) %>
+          <div class="report-label">COLLECTION DATE</div>
+          <div class="report-value" data-testid="detail-inscribed-value"><%= inscribedHuman %></div>
+        </div>
+      </div>
+
+      <div class="lab-values">
+        <div class="lab-item" data-testid="detail-sat">
+          <span class="lab-name">SAT:</span>
+          <span class="lab-result normal"><a href="https://ordinals.com/sat/<%= encodeURIComponent(inscription.sat) %>" target="_blank" rel="noopener" data-testid="detail-sat-link"><%= inscription.sat %></a></span>
+        </div>
+        <div class="lab-item">
+          <span class="lab-name">PRICE:</span>
+          <span class="lab-result high">
+            <span data-testid="price-sats"><%= formatSats(checkout.priceSats) %></span>
+            <span class="hidden purchase-usd" data-usd-sats="<%= checkout.priceSats %>" style="display: block; font-size: 9px; color: var(--color-secondary); margin-top: 2px;"></span>
+          </span>
+        </div>
+        <% if (inscription.charmIcons.length > 0) { %>
+          <div class="lab-item" data-testid="detail-charms">
+            <span class="lab-name">CHARMS:</span>
+            <span class="lab-result" data-testid="detail-charms-icons">
+              <% inscription.charmIcons.forEach((icon) => { %>
+                <span><%= icon %></span>
+              <% }) %>
+            </span>
+          </div>
+        <% } %>
+        <% if (inscription.parents.length > 0) { %>
+          <div class="lab-item" data-testid="detail-parents">
+            <span class="lab-name">PARENTS:</span>
+            <span class="lab-result" data-testid="detail-parents-list">
+              <% inscription.parents.forEach((parentId) => { %>
+                <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link"><%= parentId.substring(0, 8) %>...</a>
+              <% }) %>
+            </span>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Purchase Panel -->
+      <% if (order.status === 'pending' || order.status === 'confirmed') { %>
+        <%- include('partials/order', { order }) %>
+      <% } else { %>
+        <div data-testid="purchase-panel" style="padding: 0 20px 20px;">
+          <form method="post" data-testid="buy-form" data-inscription-target="form">
+            <% if ((config.optional_payments ?? []).length > 0) { %>
+              <div class="optional-payments" data-testid="optional-payments">
+                <div class="optional-payments-label">ADDITIONAL OPTIONS</div>
+                <% config.optional_payments.forEach((payment, index) => { %>
+                  <label class="optional-payment" data-testid="optional-payment">
+                    <input type="checkbox" data-inscription-target="optionalPayment" data-payment='<%= JSON.stringify(payment) %>' data-action="inscription#calculateCost" />
+                    <div class="optional-payment-title"><%= payment.title %></div>
+                    <span class="optional-payment-amount"><%= formatSats(payment.amount) %></span>
+                    <div class="optional-payment-desc"><%= payment.description %></div>
+                  </label>
+                <% }) %>
+              </div>
+            <% } %>
+
+            <div class="fees-section" data-testid="fees" data-inscription-target="fees">
+              <div class="fee-row">
+                <span class="label">NETWORK FEE:</span>
+                <span class="value" data-inscription-target="fee">-</span>
+              </div>
+              <div class="fee-row">
+                <span class="label">FEE RATE:</span>
+                <span class="value" data-inscription-target="feeRate">-</span>
+              </div>
+              <div class="fee-row total">
+                <span class="label">TOTAL:</span>
+                <span class="value">
+                  <span data-inscription-target="total">-</span>
+                  <span class="hidden" data-usd-role="total" data-usd-sats="" style="display: block; font-size: 9px; color: var(--color-secondary); margin-top: 2px;"></span>
+                </span>
+              </div>
+            </div>
+
+            <button
+              class="order-procedure-btn hide-on-connected"
+              type="button"
+              data-inscription-target="connectButton"
+              data-action="wallet#select"
+            >
+              ADMIT PATIENT
+            </button>
+
+            <button
+              class="order-procedure-btn show-on-connected"
+              type="button"
+              data-inscription-target="prepareButton"
+              data-action="click->inscription#prepare"
+            >
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                <span data-inscription-target="prepareSpinner" class="button-spinner button-spinner-hidden"></span>
+                <span data-inscription-target="prepareLabel">ORDER PROCEDURE</span>
+              </span>
+            </button>
+
+            <button
+              class="order-procedure-btn hidden"
+              type="button"
+              data-testid="buy-button"
+              data-inscription-target="buyButton"
+              data-action="click->inscription#buy"
+            >
+              <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                <span data-inscription-target="buySpinner" class="button-spinner button-spinner-hidden"></span>
+                <span data-inscription-target="buyLabel">CONFIRM PROCEDURE</span>
+              </span>
+            </button>
+          </form>
+
+          <div class="hidden message message-success" data-inscription-target="successPanel" data-testid="buy-success">
+            <div class="message-title" data-inscription-target="successTitle">PROCEDURE COMPLETE</div>
+            <a class="message-link" target="_blank" rel="noopener" data-inscription-target="successLink" href="">View on mempool.space</a>
+          </div>
+
+          <div class="hidden message message-error" data-inscription-target="errorPanel" data-testid="buy-client-error">
+            <div class="message-title" data-inscription-target="errorTitle">PROCEDURE FAILED</div>
+            <div class="message-link" data-inscription-target="errorMessage"></div>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Chain of Custody -->
+      <div class="chain-custody">
+        <div class="custody-title">CHAIN OF CUSTODY</div>
+        <div class="custody-entry">
+          <span><%= inscribedHuman %></span>
+          <span>Inscribed on Bitcoin</span>
+        </div>
+        <div class="custody-entry">
+          <span>CURRENT</span>
+          <span>Listed on TRIAGE Marketplace</span>
+        </div>
+        <div class="custody-entry">
+          <span>PENDING</span>
+          <span>Awaiting transfer authorization</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

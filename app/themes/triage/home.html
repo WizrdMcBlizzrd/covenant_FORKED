@@ -1,0 +1,182 @@
+<section data-testid="home-page">
+  <div class="dashboard-grid">
+    <!-- Patient Medical Record (Artist Bio) -->
+    <div class="patient-record">
+      <div class="chart-clip"></div>
+      <div class="record-header">
+        <div class="record-title">PATIENT MEDICAL RECORD</div>
+        <div class="record-facility">TRIAGE GENERAL HOSPITAL — ORDINALS DEPT.</div>
+      </div>
+      <div class="record-body">
+        <div class="record-row">
+          <span class="record-label">PATIENT NAME:</span>
+          <span class="record-value"><%= CONFIG.artist_name %></span>
+        </div>
+        <div class="record-row">
+          <span class="record-label">MRN:</span>
+          <span class="record-value">#TRI-<%= new Date().getFullYear() %>-001</span>
+        </div>
+        <div class="record-row">
+          <span class="record-label">DOB:</span>
+          <span class="record-value">03-JAN-2009</span>
+        </div>
+        <div class="record-row">
+          <span class="record-label">ADMISSION:</span>
+          <span class="record-value"><%= new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase() %></span>
+        </div>
+        <div class="record-row">
+          <span class="record-label">ATTENDING:</span>
+          <span class="record-value handwritten">Dr. Nakamoto</span>
+        </div>
+        <% if (artist.about) { %>
+          <div class="record-row">
+            <span class="record-label">DIAGNOSIS:</span>
+            <span class="record-value handwritten" data-testid="artist-about"><%= artist.about %></span>
+          </div>
+        <% } else { %>
+          <div class="record-row">
+            <span class="record-label">DIAGNOSIS:</span>
+            <span class="record-value handwritten">Acute inscription accumulation. Chronic creativity.</span>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="wristband">
+        <div class="wristband-barcode"></div>
+        <div class="wristband-info">
+          <div class="wristband-name"><%= CONFIG.artist_name.toUpperCase() %></div>
+          <div class="wristband-dob">DOB: 01/03/2009 | MRN: TRI-<%= new Date().getFullYear() %>-001</div>
+        </div>
+      </div>
+
+      <div class="vitals-chart">
+        <div class="vitals-title">ARTIST VITALS</div>
+        <div class="vital-row">
+          <span class="vital-name">Heart Rate (Activity)</span>
+          <span class="vital-value stable"><%= (collections ?? []).reduce((sum, c) => sum + (c.itemsCount ?? 0), 0) %> <span class="readout-unit">bpm</span></span>
+        </div>
+        <div class="vital-row">
+          <span class="vital-name">Blood Pressure (Collections)</span>
+          <span class="vital-value stable"><%= (collections ?? []).length %> <span class="readout-unit">active</span></span>
+        </div>
+        <div class="vital-row">
+          <span class="vital-name">Temperature (Status)</span>
+          <span class="vital-value pending">98.6 <span class="readout-unit">trending</span></span>
+        </div>
+        <div class="vital-row">
+          <span class="vital-name">O2 Saturation</span>
+          <span class="vital-value stable">100% <span class="readout-unit">online</span></span>
+        </div>
+      </div>
+
+      <% if (artist.socials.websiteUrl || artist.socials.xUrl || artist.socials.githubUrl) { %>
+        <div class="social-links" data-testid="artist-social">
+          <% if (artist.socials.websiteUrl) { %>
+            <a href="<%= artist.socials.websiteUrl %>" target="_blank" rel="noopener" class="social-link" data-testid="artist-social-website">WEBSITE</a>
+          <% } %>
+          <% if (artist.socials.xUrl) { %>
+            <a href="<%= artist.socials.xUrl %>" target="_blank" rel="noopener" class="social-link" data-testid="artist-social-x">X/TWITTER</a>
+          <% } %>
+          <% if (artist.socials.githubUrl) { %>
+            <a href="<%= artist.socials.githubUrl %>" target="_blank" rel="noopener" class="social-link" data-testid="artist-social-github">GITHUB</a>
+          <% } %>
+        </div>
+      <% } %>
+
+      <div class="allergies-section">
+        <div class="allergies-title">! ALLERGIES / CONTRAINDICATIONS</div>
+        <span class="allergy-tag">JPEGS</span>
+        <span class="allergy-tag">LAZY MINTING</span>
+        <span class="allergy-tag">GAS FEES</span>
+        <span class="allergy-tag">CENTRALIZATION</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Panels -->
+    <div class="dashboard-panels">
+      <!-- Vitals Monitor -->
+      <div class="vitals-monitor">
+        <div class="monitor-header">
+          <span class="monitor-title">> CURRENT STATUS</span>
+          <span class="monitor-time"><%= new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) %> UTC</span>
+        </div>
+        <div class="monitor-readouts">
+          <div class="readout">
+            <div class="readout-value"><%= (collections ?? []).reduce((sum, c) => sum + (c.itemsCount ?? 0), 0) %></div>
+            <div class="readout-label">TOTAL SPECIMENS</div>
+          </div>
+          <div class="readout">
+            <div class="readout-value"><%= (collections ?? []).reduce((sum, c) => sum + (c.availableCount ?? 0), 0) %></div>
+            <div class="readout-label">AVAILABLE</div>
+          </div>
+          <div class="readout">
+            <div class="readout-value warning"><%= (collections ?? []).reduce((sum, c) => sum + ((c.itemsCount ?? 0) - (c.availableCount ?? 0)), 0) %></div>
+            <div class="readout-label">PENDING</div>
+          </div>
+          <div class="readout">
+            <div class="readout-value critical"><%= (collections ?? []).length > 0 ? '!' : '0' %></div>
+            <div class="readout-label">STAT</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specimen Queue (Collections) -->
+      <div class="specimen-queue">
+        <div class="queue-header">
+          <span class="queue-title">SPECIMEN QUEUE</span>
+          <span class="queue-count"><%= (collections ?? []).length %> COLLECTIONS</span>
+        </div>
+        <% if ((collections ?? []).length === 0) { %>
+          <div class="empty-state" data-testid="empty-state">
+            <p>NO SPECIMENS IN QUEUE // SYSTEM STANDBY</p>
+          </div>
+        <% } else { %>
+          <div data-testid="collections">
+            <% (collections ?? []).forEach((collection, index) => { %>
+              <a
+                class="queue-item <%= index === 0 ? 'urgent' : (index === 1 ? 'pending' : '') %>"
+                href="/<%= encodeURIComponent(collection.slug) %>"
+                data-testid="collection-card"
+                data-collection-slug="<%= collection.slug %>"
+              >
+                <span class="queue-number"><%= String(index + 1).padStart(2, '0') %></span>
+                <div class="queue-info">
+                  <div class="queue-name" data-testid="collection-title"><%= collection.title %></div>
+                  <div class="queue-meta"><%= collection.availableCount %> specimens - <span data-testid="collection-price"><%= formatSats(collection.priceSats) %></span></div>
+                </div>
+                <span class="queue-priority <%= index === 0 ? 'stat' : (index === 1 ? 'urgent' : '') %>"><%= index === 0 ? 'STAT' : (index === 1 ? 'URGENT' : 'ROUTINE') %></span>
+              </a>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Recent Procedures -->
+      <div class="recent-procedures">
+        <div class="queue-header">
+          <span class="queue-title">RECENT PROCEDURES</span>
+        </div>
+        <div class="procedure-item">
+          <span class="procedure-id">PROC-<%= new Date().getFullYear() %>-847</span>
+          <span class="procedure-name">Marketplace Initialization</span>
+          <span class="procedure-status discharged">DISCHARGED</span>
+        </div>
+        <div class="procedure-item">
+          <span class="procedure-id">PROC-<%= new Date().getFullYear() %>-846</span>
+          <span class="procedure-name">Collection Sync Protocol</span>
+          <span class="procedure-status discharged">COMPLETE</span>
+        </div>
+        <div class="procedure-item">
+          <span class="procedure-id">PROC-<%= new Date().getFullYear() %>-845</span>
+          <span class="procedure-name">Bitcoin Network Link</span>
+          <span class="procedure-status in-progress">MONITORING</span>
+        </div>
+        <div class="procedure-item">
+          <span class="procedure-id">PROC-<%= new Date().getFullYear() %>-844</span>
+          <span class="procedure-name">UTXO Verification</span>
+          <span class="procedure-status discharged">VERIFIED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<section data-testid="activity-page">
+  <div class="section">
+    <div class="section-header">MISSION LOG</div>
+
+    <div class="activity-header">
+      <h2 data-testid="page-title">Transaction Log</h2>
+      <p class="subtitle">OPERATIONAL HISTORY</p>
+    </div>
+
+    <% if ((orders ?? []).length === 0) { %>
+      <div class="empty-state" data-testid="empty-state">
+        <p>NO TRANSACTIONS RECORDED // LOG EMPTY</p>
+      </div>
+    <% } else { %>
+      <div class="mission-log" data-testid="orders">
+        <% orders.forEach((o, index) => { %>
+          <div class="log-entry" data-testid="order-row">
+            <div class="log-timestamp">
+              <span class="date"><%= new Date(o.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+              <%= new Date(o.created_at).toLocaleTimeString('en-US', { hour12: false }) %> UTC
+            </div>
+            <div class="log-content">
+              <span class="log-type <%= o.status %>"><%= o.status.toUpperCase() %></span>
+              <a href="/<%= encodeURIComponent(o.collection_slug) %>/<%= encodeURIComponent(o.inscription_id) %>" data-testid="order-inscription-link" style="color: var(--color-text-primary); text-decoration: none;">
+                <%= o.inscription_id.substring(0, 16) %>...
+              </a>
+              <div class="log-details">
+                <% if (o.txid) { %>
+                  TX: <a href="https://mempool.space/tx/<%= encodeURIComponent(o.txid) %>" target="_blank" rel="noopener" data-testid="order-tx-link"><%= o.txid.substring(0, 24) %>...</a>
+                <% } else { %>
+                  Awaiting broadcast
+                <% } %>
+              </div>
+            </div>
+            <div class="log-amount" data-testid="order-price"><%= o.price_sats ? '+' + formatSats(o.price_sats).replace(' sats', '') : '---' %></div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>

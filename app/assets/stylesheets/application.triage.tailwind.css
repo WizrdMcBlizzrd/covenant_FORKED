@@ -1,0 +1,1974 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #F0F4F3;
+  --color-surface: #FFFFFF;
+  --color-primary: #1A2B2B;
+  --color-secondary: #5C7373;
+  --color-muted: #5C7373;
+  --color-accent: #E63946;
+  --color-border: #D4E0DD;
+  --color-success: #00A676;
+  --color-warning: #F4A261;
+  --color-error: #E63946;
+  --color-wristband: #4A90D9;
+
+  --font-display: 'B612 Mono', monospace;
+  --font-body: 'Overpass', sans-serif;
+  --font-mono: 'Courier Prime', monospace;
+  --font-handwritten: 'Special Elite', cursive;
+}
+
+/* ==================== BASE STYLES ==================== */
+.theme-triage {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.theme-triage * {
+  box-sizing: border-box;
+}
+
+/* Fluorescent Flicker Overlay */
+.theme-triage::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: fluorescent-flicker 4s infinite;
+  z-index: 9998;
+}
+
+@keyframes fluorescent-flicker {
+  0%, 100% { opacity: 0; }
+  5% { opacity: 1; }
+  6% { opacity: 0; }
+  10% { opacity: 0.5; }
+  11% { opacity: 0; }
+  50% { opacity: 0; }
+  51% { opacity: 0.3; }
+  52% { opacity: 0; }
+  80% { opacity: 0; }
+  81% { opacity: 0.6; }
+  82% { opacity: 0.2; }
+  83% { opacity: 0; }
+}
+
+/* ==================== UTILITIES ==================== */
+.hidden { display: none !important; }
+.invisible { visibility: hidden; }
+.opacity-0 { opacity: 0; }
+.transition-opacity { transition: opacity 0.3s; }
+.duration-300 { transition-duration: 300ms; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==================== CONNECTION STATES ==================== */
+.theme-triage .show-on-connected { display: none !important; }
+.theme-triage .hide-on-connected { display: flex; }
+.theme-triage.connected .hide-on-connected { display: none !important; }
+.theme-triage.connected .show-on-connected { display: inline-flex !important; }
+.theme-triage.connected .show-on-connected.btn-block { display: flex !important; }
+
+/* ==================== NAVIGATION (H5 Split Header) ==================== */
+.theme-triage .hospital-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  background: var(--color-primary);
+  border-bottom: 3px solid var(--color-accent);
+  position: relative;
+}
+
+.theme-triage .dept-logo {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  text-decoration: none;
+  color: var(--color-surface);
+}
+
+.theme-triage .dept-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--color-surface);
+  font-family: var(--font-display);
+}
+
+.theme-triage .dept-logo-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border: 2px solid var(--color-accent);
+}
+
+.theme-triage .dept-logo-text {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--color-surface);
+}
+
+.theme-triage .dept-nav {
+  display: flex;
+}
+
+.theme-triage .dept-link {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  text-decoration: none;
+  color: var(--color-surface);
+  transition: background 0.2s;
+  position: relative;
+}
+
+.theme-triage .dept-link:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.theme-triage .dept-link.active {
+  background: var(--color-accent);
+}
+
+.theme-triage .dept-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-surface);
+}
+
+.theme-triage .dept-icon {
+  font-size: 18px;
+}
+
+.theme-triage .dept-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+/* Patient Bar (EKG line) */
+.theme-triage .patient-bar {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  padding: 10px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.theme-triage .patient-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-triage .patient-mrn {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  padding: 3px 10px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.theme-triage .patient-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-triage .status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-success);
+  border-radius: 50%;
+  animation: pulse-status 1.5s infinite;
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.theme-triage .ekg-line {
+  flex: 1;
+  max-width: 250px;
+  height: 24px;
+  margin: 0 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-triage .ekg-svg {
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  animation: ekg-scroll 2s linear infinite;
+}
+
+@keyframes ekg-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Mobile Nav */
+.theme-triage .mobile-nav {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+}
+
+.theme-triage .mobile-menu-btn {
+  background: var(--color-accent);
+  color: var(--color-surface);
+  border: none;
+  padding: 16px 20px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.theme-triage .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  min-width: 180px;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.theme-triage .dropdown-menu.hidden {
+  display: none;
+}
+
+.theme-triage .dropdown-item {
+  display: block;
+  padding: 12px 16px;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.2s;
+}
+
+.theme-triage .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.theme-triage .dropdown-item:hover {
+  background: var(--color-bg);
+}
+
+.theme-triage .dropdown-item.danger {
+  color: var(--color-accent);
+}
+
+.theme-triage .dropdown-item.danger:hover {
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
+/* ==================== WALLET MODAL ==================== */
+.theme-triage [data-wallet-target="selector"] {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 43, 43, 0.9);
+  backdrop-filter: blur(4px);
+}
+
+.theme-triage [data-wallet-target="selector"][data-state="open"] {
+  display: flex;
+}
+
+.theme-triage .wallet-backdrop {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
+.theme-triage .wallet-panel {
+  position: relative;
+  z-index: 1;
+  background: var(--color-surface);
+  max-width: 400px;
+  width: 90%;
+  border: 3px solid var(--color-primary);
+}
+
+.theme-triage .wallet-header {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-triage .wallet-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.theme-triage .wallet-close {
+  background: none;
+  border: none;
+  color: var(--color-surface);
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.theme-triage .wallet-close:hover {
+  opacity: 1;
+}
+
+.theme-triage .wallet-body {
+  padding: 24px;
+}
+
+.theme-triage .wallet-message {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.theme-triage .wallet-message .subtitle {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+  margin-bottom: 4px;
+}
+
+.theme-triage .wallet-message p {
+  font-size: 13px;
+  color: var(--color-primary);
+}
+
+.theme-triage .wallet-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.theme-triage .wallet-option:hover {
+  border-color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+.theme-triage .wallet-option-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.theme-triage .wallet-option-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.theme-triage .wallet-option-info {
+  flex: 1;
+}
+
+.theme-triage .wallet-option-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.theme-triage .wallet-option-status {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--color-success);
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.theme-triage .main-content {
+  padding: 30px;
+  min-height: calc(100vh - 200px);
+}
+
+/* ==================== FOOTER ==================== */
+.theme-triage .footer {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  padding: 16px 30px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: center;
+}
+
+.theme-triage .footer a {
+  color: var(--color-success);
+  text-decoration: none;
+}
+
+.theme-triage .footer a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== HOME PAGE (L6 Dashboard) ==================== */
+.theme-triage .dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+/* Patient Medical Record */
+.theme-triage .patient-record {
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  position: relative;
+}
+
+.theme-triage .chart-clip {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 24px;
+  background: linear-gradient(180deg, #8B7355 0%, #6B5344 100%);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.theme-triage .chart-clip::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 35px;
+  height: 6px;
+  background: #4A3728;
+  border-radius: 0 0 3px 3px;
+}
+
+.theme-triage .record-header {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  padding: 24px 20px 12px;
+  text-align: center;
+}
+
+.theme-triage .record-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.theme-triage .record-facility {
+  font-size: 9px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .record-body {
+  padding: 20px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 23px,
+      var(--color-border) 23px,
+      var(--color-border) 24px
+    );
+  background-size: 100% 24px;
+}
+
+.theme-triage .record-row {
+  display: flex;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+
+.theme-triage .record-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--color-secondary);
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.theme-triage .record-value {
+  font-family: var(--font-handwritten);
+  font-size: 13px;
+  color: var(--color-primary);
+  flex: 1;
+}
+
+.theme-triage .record-value.handwritten {
+  font-style: italic;
+}
+
+/* Wristband */
+.theme-triage .wristband {
+  margin: 20px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 3px solid var(--color-wristband);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-triage .wristband-barcode {
+  width: 50px;
+  height: 24px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-primary) 0px,
+    var(--color-primary) 2px,
+    transparent 2px,
+    transparent 4px,
+    var(--color-primary) 4px,
+    var(--color-primary) 5px,
+    transparent 5px,
+    transparent 8px
+  );
+}
+
+.theme-triage .wristband-info {
+  font-family: var(--font-display);
+  font-size: 9px;
+}
+
+.theme-triage .wristband-name {
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.theme-triage .wristband-dob {
+  color: var(--color-secondary);
+}
+
+/* Vitals Chart */
+.theme-triage .vitals-chart {
+  margin: 20px;
+  padding: 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+.theme-triage .vitals-title {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+  margin-bottom: 10px;
+}
+
+.theme-triage .vital-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.theme-triage .vital-name {
+  font-size: 11px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .vital-value {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.theme-triage .vital-value.stable {
+  color: var(--color-success);
+}
+
+.theme-triage .vital-value.pending {
+  color: var(--color-warning);
+}
+
+.theme-triage .vital-value.critical {
+  color: var(--color-accent);
+}
+
+.theme-triage .readout-unit {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Allergies */
+.theme-triage .allergies-section {
+  margin: 20px;
+  padding: 12px;
+  background: #FFF0F0;
+  border: 2px solid var(--color-accent);
+}
+
+.theme-triage .allergies-title {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.theme-triage .allergy-tag {
+  display: inline-block;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  padding: 3px 8px;
+  font-family: var(--font-display);
+  font-size: 9px;
+  margin: 2px;
+}
+
+/* Social Links */
+.theme-triage .social-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+.theme-triage .social-link {
+  display: inline-block;
+  padding: 6px 12px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+
+.theme-triage .social-link:hover {
+  background: var(--color-accent);
+}
+
+/* Dashboard Panels */
+.theme-triage .dashboard-panels {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 20px;
+}
+
+/* Vitals Monitor */
+.theme-triage .vitals-monitor {
+  background: var(--color-primary);
+  padding: 20px;
+  border: 3px solid var(--color-primary);
+}
+
+.theme-triage .monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.theme-triage .monitor-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--color-success);
+}
+
+.theme-triage .monitor-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .monitor-readouts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.theme-triage .readout {
+  text-align: center;
+}
+
+.theme-triage .readout-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-success);
+  line-height: 1;
+}
+
+.theme-triage .readout-value.warning {
+  color: var(--color-warning);
+}
+
+.theme-triage .readout-value.critical {
+  color: var(--color-accent);
+  animation: blink-critical 0.5s infinite;
+}
+
+@keyframes blink-critical {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.theme-triage .readout-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  color: var(--color-secondary);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Specimen Queue */
+.theme-triage .specimen-queue {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+}
+
+.theme-triage .queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.theme-triage .queue-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--color-primary);
+}
+
+.theme-triage .queue-count {
+  background: var(--color-accent);
+  color: var(--color-surface);
+  padding: 3px 10px;
+  font-family: var(--font-display);
+  font-size: 10px;
+}
+
+.theme-triage .queue-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: var(--color-bg);
+  margin-bottom: 8px;
+  border-left: 4px solid var(--color-success);
+  text-decoration: none;
+  color: var(--color-primary);
+  transition: all 0.2s;
+}
+
+.theme-triage .queue-item:hover {
+  transform: translateX(4px);
+  border-left-color: var(--color-accent);
+}
+
+.theme-triage .queue-item.urgent {
+  border-left-color: var(--color-accent);
+  background: #FFF5F5;
+}
+
+.theme-triage .queue-item.pending {
+  border-left-color: var(--color-warning);
+}
+
+.theme-triage .queue-number {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-secondary);
+  width: 45px;
+  text-align: center;
+}
+
+.theme-triage .queue-item.urgent .queue-number {
+  color: var(--color-accent);
+}
+
+.theme-triage .queue-info {
+  flex: 1;
+}
+
+.theme-triage .queue-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.theme-triage .queue-meta {
+  font-size: 10px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .queue-priority {
+  font-family: var(--font-display);
+  font-size: 9px;
+  padding: 4px 8px;
+  background: var(--color-success);
+  color: var(--color-surface);
+}
+
+.theme-triage .queue-priority.stat {
+  background: var(--color-accent);
+  animation: blink-critical 1s infinite;
+}
+
+.theme-triage .queue-priority.urgent {
+  background: var(--color-warning);
+  color: var(--color-primary);
+}
+
+/* Recent Procedures */
+.theme-triage .recent-procedures {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+}
+
+.theme-triage .procedure-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.theme-triage .procedure-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .procedure-name {
+  font-size: 12px;
+  flex: 1;
+  margin: 0 12px;
+}
+
+.theme-triage .procedure-status {
+  font-family: var(--font-display);
+  font-size: 9px;
+  padding: 3px 8px;
+}
+
+.theme-triage .procedure-status.discharged {
+  background: var(--color-success);
+  color: var(--color-surface);
+}
+
+.theme-triage .procedure-status.in-progress {
+  background: var(--color-warning);
+  color: var(--color-primary);
+}
+
+/* ==================== COLLECTION PAGE (G4 Single Column) ==================== */
+.theme-triage .intake-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--color-primary);
+}
+
+.theme-triage .intake-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+.theme-triage .intake-stats {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .triage-queue {
+  max-width: 900px;
+}
+
+.theme-triage .triage-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  margin-bottom: 12px;
+  position: relative;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.theme-triage .triage-item:hover {
+  border-color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+.theme-triage .triage-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--color-success);
+}
+
+.theme-triage .triage-item.stat::before {
+  background: var(--color-accent);
+}
+
+.theme-triage .triage-item.urgent::before {
+  background: var(--color-warning);
+}
+
+.theme-triage .triage-item.sold::before {
+  background: var(--color-secondary);
+}
+
+.theme-triage .specimen-thumb {
+  width: 70px;
+  height: 70px;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-surface);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-triage .specimen-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.theme-triage .specimen-thumb::after {
+  content: 'SPECIMEN';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 6px;
+  background: var(--color-surface);
+  padding: 1px 4px;
+  color: var(--color-primary);
+  letter-spacing: 1px;
+}
+
+.theme-triage .specimen-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.theme-triage .specimen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.theme-triage .specimen-id {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.theme-triage .specimen-priority {
+  font-family: var(--font-display);
+  font-size: 9px;
+  padding: 3px 8px;
+  background: var(--color-success);
+  color: var(--color-surface);
+}
+
+.theme-triage .specimen-priority.stat {
+  background: var(--color-accent);
+}
+
+.theme-triage .specimen-priority.urgent {
+  background: var(--color-warning);
+  color: var(--color-primary);
+}
+
+.theme-triage .specimen-priority.sold {
+  background: var(--color-secondary);
+}
+
+.theme-triage .specimen-diagnostics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-border);
+}
+
+.theme-triage .queue-timestamp {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dotted var(--color-border);
+}
+
+.theme-triage .diagnostic {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.theme-triage .diagnostic-label {
+  color: var(--color-secondary);
+  display: block;
+  margin-bottom: 2px;
+  font-size: 9px;
+}
+
+.theme-triage .diagnostic-value {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Pagination */
+.theme-triage .pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 30px;
+}
+
+.theme-triage .page-btn {
+  padding: 10px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.theme-triage .page-btn:hover:not(.disabled):not(.active) {
+  background: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.theme-triage .page-btn.active {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  border-color: var(--color-primary);
+}
+
+.theme-triage .page-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ==================== DETAIL PAGE (D8 Full Bleed + Drawer) ==================== */
+.theme-triage .specimen-fullbleed {
+  display: flex;
+  min-height: 500px;
+  background: var(--color-primary);
+  margin: -30px;
+  position: relative;
+}
+
+.theme-triage .specimen-view {
+  flex: 1;
+  min-height: 500px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(0,166,118,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(230,57,70,0.1) 0%, transparent 50%),
+    var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 40px;
+}
+
+.theme-triage .confidential-stamp {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  padding: 6px 14px;
+  border: 3px solid var(--color-accent);
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 3px;
+  transform: rotate(12deg);
+  opacity: 0.8;
+  z-index: 10;
+}
+
+.theme-triage .xray-frame {
+  width: 100%;
+  height: 100%;
+  max-width: 600px;
+  max-height: 600px;
+  background: linear-gradient(135deg, #0a1a1a 0%, #1a2b2b 50%, #0a1a1a 100%);
+  border: 4px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow:
+    0 0 60px rgba(0,166,118,0.2),
+    inset 0 0 100px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+.theme-triage .xray-frame::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255,255,255,0.05);
+  pointer-events: none;
+}
+
+.theme-triage .xray-frame img,
+.theme-triage .xray-frame iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.theme-triage .xray-label {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  color: var(--color-success);
+  letter-spacing: 2px;
+}
+
+.theme-triage .xray-id {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .inscription-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  animation: skeleton-pulse 1.5s infinite;
+}
+
+@keyframes skeleton-pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Detail Drawer */
+.theme-triage .specimen-drawer {
+  width: 400px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.3);
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+.theme-triage .drawer-header {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.theme-triage .drawer-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.theme-triage .drawer-subtitle {
+  font-size: 11px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .diagnostic-report {
+  padding: 20px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 19px,
+      var(--color-border) 19px,
+      var(--color-border) 20px
+    );
+}
+
+.theme-triage .report-section {
+  margin-bottom: 16px;
+}
+
+.theme-triage .report-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+  margin-bottom: 4px;
+}
+
+.theme-triage .report-value {
+  font-family: var(--font-handwritten);
+  font-size: 13px;
+}
+
+.theme-triage .report-value a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.theme-triage .report-value a:hover {
+  text-decoration: underline;
+}
+
+.theme-triage .lab-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+.theme-triage .lab-item {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.theme-triage .lab-name {
+  color: var(--color-secondary);
+  display: block;
+  font-size: 9px;
+  margin-bottom: 2px;
+}
+
+.theme-triage .lab-result {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.theme-triage .lab-result.high {
+  color: var(--color-accent);
+}
+
+.theme-triage .lab-result.normal {
+  color: var(--color-success);
+}
+
+/* Purchase Button */
+.theme-triage .order-procedure-btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  border: none;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.theme-triage .order-procedure-btn:hover {
+  background: #C62D3A;
+}
+
+.theme-triage .order-procedure-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Chain of Custody */
+.theme-triage .chain-custody {
+  padding: 16px 20px;
+  background: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .custody-title {
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+  font-size: 9px;
+}
+
+.theme-triage .custody-entry {
+  display: flex;
+  gap: 14px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+/* Fees Section */
+.theme-triage .fees-section {
+  padding: 16px 20px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  margin: 16px 0;
+}
+
+.theme-triage .fee-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.theme-triage .fee-row .label {
+  color: var(--color-secondary);
+}
+
+.theme-triage .fee-row .value {
+  color: var(--color-primary);
+}
+
+.theme-triage .fee-row.total {
+  border-top: 1px solid var(--color-border);
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 700;
+}
+
+/* Optional Payments */
+.theme-triage .optional-payments {
+  padding: 16px 20px;
+  border: 1px solid var(--color-border);
+  margin: 16px 0;
+}
+
+.theme-triage .optional-payments-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+  margin-bottom: 12px;
+}
+
+.theme-triage .optional-payment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: var(--color-bg);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.theme-triage .optional-payment:hover {
+  background: var(--color-border);
+}
+
+.theme-triage .optional-payment input {
+  width: 16px;
+  height: 16px;
+}
+
+.theme-triage .optional-payment-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.theme-triage .optional-payment-amount {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--color-success);
+}
+
+.theme-triage .optional-payment-desc {
+  width: 100%;
+  font-size: 11px;
+  color: var(--color-secondary);
+  margin-left: 26px;
+}
+
+/* Messages */
+.theme-triage .message {
+  padding: 16px;
+  margin: 16px 0;
+  border: 2px solid var(--color-border);
+}
+
+.theme-triage .message-success {
+  background: rgba(0, 166, 118, 0.1);
+  border-color: var(--color-success);
+}
+
+.theme-triage .message-error {
+  background: rgba(230, 57, 70, 0.1);
+  border-color: var(--color-accent);
+}
+
+.theme-triage .message-pending {
+  background: rgba(244, 162, 97, 0.1);
+  border-color: var(--color-warning);
+}
+
+.theme-triage .message-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.theme-triage .message-success .message-title {
+  color: var(--color-success);
+}
+
+.theme-triage .message-error .message-title {
+  color: var(--color-accent);
+}
+
+.theme-triage .message-pending .message-title {
+  color: var(--color-warning);
+}
+
+.theme-triage .message-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-primary);
+}
+
+/* Button Spinner */
+.theme-triage .button-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-surface);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.theme-triage .button-spinner-hidden {
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== ACTIVITY PAGE (Patient Chart) ==================== */
+.theme-triage .patient-chart {
+  max-width: 900px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  position: relative;
+}
+
+.theme-triage .chart-holes {
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.theme-triage .chart-hole {
+  width: 10px;
+  height: 10px;
+  background: var(--color-bg);
+  border-radius: 50%;
+  margin-left: -4px;
+  border: 1px solid var(--color-border);
+}
+
+.theme-triage .chart-header {
+  padding: 16px 20px 16px 50px;
+  background: var(--color-bg);
+  border-bottom: 2px solid var(--color-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.theme-triage .chart-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+.theme-triage .chart-running-total {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .procedure-log {
+  padding-left: 50px;
+}
+
+.theme-triage .log-entry {
+  display: grid;
+  grid-template-columns: 90px 1fr 100px 80px;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 23px,
+      rgba(212,224,221,0.3) 23px,
+      rgba(212,224,221,0.3) 24px
+    );
+  text-decoration: none;
+  color: var(--color-primary);
+  transition: background 0.2s;
+}
+
+.theme-triage .log-entry:hover {
+  background: var(--color-bg);
+}
+
+.theme-triage .log-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .log-procedure {
+  font-family: var(--font-handwritten);
+  font-size: 13px;
+}
+
+.theme-triage .log-procedure a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.theme-triage .log-procedure a:hover {
+  text-decoration: underline;
+}
+
+.theme-triage .log-specimen {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .log-status {
+  font-family: var(--font-display);
+  font-size: 9px;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.theme-triage .log-status.stable,
+.theme-triage .log-status.confirmed {
+  background: var(--color-success);
+  color: var(--color-surface);
+}
+
+.theme-triage .log-status.critical,
+.theme-triage .log-status.failed {
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
+.theme-triage .log-status.discharged {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.theme-triage .log-status.pending {
+  background: var(--color-warning);
+  color: var(--color-primary);
+}
+
+.theme-triage .doctor-signature {
+  padding: 20px 20px 20px 50px;
+  background: var(--color-bg);
+  border-top: 2px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.theme-triage .signature-line {
+  border-bottom: 1px solid var(--color-primary);
+  width: 180px;
+  padding-bottom: 4px;
+  font-family: var(--font-handwritten);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.theme-triage .signature-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-secondary);
+  margin-top: 4px;
+}
+
+.theme-triage .initials-box {
+  display: flex;
+  gap: 6px;
+}
+
+.theme-triage .initial {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-handwritten);
+  font-size: 12px;
+}
+
+/* Empty State */
+.theme-triage .empty-state {
+  padding: 60px 40px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+}
+
+.theme-triage .empty-state p {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+}
+
+/* ==================== POLICY PAGE (Consent Form) ==================== */
+.theme-triage .consent-form {
+  max-width: 700px;
+  background: var(--color-surface);
+  padding: 40px;
+  border: 1px solid var(--color-border);
+  position: relative;
+}
+
+.theme-triage .consent-form::before {
+  content: 'FORM MKT-2024-001';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--color-secondary);
+}
+
+.theme-triage .consent-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 3px;
+  text-align: center;
+  margin: 0 0 8px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.theme-triage .consent-subtitle {
+  text-align: center;
+  font-size: 11px;
+  color: var(--color-secondary);
+  margin-bottom: 28px;
+}
+
+.theme-triage .consent-section {
+  margin-bottom: 22px;
+}
+
+.theme-triage .consent-section-title {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+  margin-bottom: 10px;
+}
+
+.theme-triage .consent-text {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--color-primary);
+}
+
+.theme-triage .billing-account {
+  background: var(--color-bg);
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  margin: 16px 0;
+}
+
+.theme-triage .billing-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--color-secondary);
+  margin-bottom: 6px;
+}
+
+.theme-triage .billing-address {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  word-break: break-all;
+  color: var(--color-primary);
+}
+
+.theme-triage .btn-copy {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  border: none;
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.theme-triage .btn-copy:hover {
+  background: var(--color-accent);
+}
+
+.theme-triage .policy-yaml {
+  background: var(--color-primary);
+  color: var(--color-success);
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.theme-triage .consent-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.theme-triage .consent-sig-block {
+  text-align: center;
+}
+
+.theme-triage .sig-line {
+  border-bottom: 1px solid var(--color-primary);
+  height: 36px;
+  margin-bottom: 6px;
+}
+
+.theme-triage .sig-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-secondary);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .theme-triage .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-triage .specimen-fullbleed {
+    flex-direction: column;
+  }
+
+  .theme-triage .specimen-view {
+    min-height: 300px;
+  }
+
+  .theme-triage .specimen-drawer {
+    width: 100%;
+    max-height: none;
+  }
+
+  .theme-triage .monitor-readouts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .theme-triage .specimen-diagnostics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .theme-triage .log-entry {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .theme-triage .consent-signatures {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .theme-triage .main-content {
+    padding: 20px;
+  }
+
+  .theme-triage .hospital-header {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .theme-triage .dept-logo {
+    border-right: none;
+    flex: 1;
+  }
+
+  .theme-triage .dept-nav {
+    display: none;
+  }
+
+  .theme-triage .mobile-nav {
+    display: flex;
+    position: relative;
+    top: auto;
+    right: auto;
+    height: auto;
+  }
+
+  .theme-triage .patient-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .theme-triage .ekg-line {
+    display: none;
+  }
+
+  .theme-triage .intake-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .theme-triage .triage-item {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .theme-triage .specimen-thumb {
+    width: 100%;
+    height: 150px;
+  }
+
+  .theme-triage .lab-values {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-triage .chart-holes {
+    display: none;
+  }
+
+  .theme-triage .chart-header,
+  .theme-triage .procedure-log,
+  .theme-triage .doctor-signature {
+    padding-left: 20px;
+  }
+}

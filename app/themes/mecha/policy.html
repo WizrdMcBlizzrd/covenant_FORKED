@@ -1,0 +1,69 @@
+<section data-testid="policy-page">
+  <div class="section">
+    <div class="section-header">PROTOCOL</div>
+
+    <div class="protocol-document" data-testid="policy-card">
+      <div class="protocol-header">
+        <div class="protocol-classification">CLASSIFIED // LEVEL-7 CLEARANCE</div>
+        <h2 class="protocol-title" data-testid="page-title">Covenant Protocol</h2>
+      </div>
+
+      <div class="protocol-body">
+        <div class="protocol-section-item">
+          <h3 class="protocol-section-title" data-testid="policy-title">Mission Parameters</h3>
+          <p class="protocol-text">
+            All inscription acquisitions are executed via atomic swap protocol. No intermediaries.
+            No custody. Direct peer-to-peer transfer secured by Bitcoin's PSBT signing mechanism.
+            Transactions are irreversible upon broadcast confirmation.
+          </p>
+        </div>
+
+        <div class="protocol-section-item">
+          <h3 class="protocol-section-title">Engagement Rules</h3>
+          <ul class="protocol-list">
+            <li>Connect compatible wallet (Unisat/Xverse authorized)</li>
+            <li>Select target inscription from available inventory</li>
+            <li>Review acquisition cost including network fees</li>
+            <li>Authorize transaction via wallet signature</li>
+            <li>Await broadcast and confirmation (1-6 blocks)</li>
+          </ul>
+        </div>
+
+        <div class="protocol-section-item">
+          <h3 class="protocol-section-title">Payment Coordinates</h3>
+          <p class="protocol-text">All payments route through the following address. Verify before transmitting.</p>
+          <div class="address-display">
+            <div class="address-value">
+              <span data-testid="wallet-address-link"><%= walletAddress %></span>
+              <button class="btn-copy" type="button" onclick="navigator.clipboard.writeText('<%= walletAddress %>')">COPY</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="protocol-section-item">
+          <h3 class="protocol-section-title">Network Parameters</h3>
+          <p class="protocol-text">
+            Network: Bitcoin Mainnet<br>
+            Accepted Wallets: Unisat, Xverse<br>
+            Protocol: Ordinals<br>
+            Authenticity: Verified by <%= CONFIG.artist_name %>
+          </p>
+        </div>
+
+        <div class="protocol-section-item">
+          <h3 class="protocol-section-title">Risk Assessment</h3>
+          <p class="protocol-text">
+            Bitcoin transactions are final. Verify all details before signing. The operator assumes
+            no liability for user error, network congestion delays, or external market conditions.
+            All sales are as-is with no warranty expressed or implied.
+          </p>
+        </div>
+
+        <div class="protocol-section-item">
+          <h3 class="protocol-section-title">System Configuration</h3>
+          <pre class="policy-yaml" data-testid="policy-pre"><%= policyYaml %></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

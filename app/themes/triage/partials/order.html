@@ -1,0 +1,47 @@
+<div data-testid="order-panel" style="padding: 0 20px 20px;">
+  <% const isPending = order.status === 'pending' %>
+
+  <div class="message <%= isPending ? 'message-pending' : 'message-success' %>" data-testid="order-banner">
+    <div class="message-title"><%= isPending ? 'PROCEDURE IN PROGRESS' : 'PROCEDURE COMPLETE' %></div>
+  </div>
+
+  <div class="lab-values" data-testid="order-details">
+    <div class="lab-item">
+      <span class="lab-name">STATUS:</span>
+      <span class="lab-result" style="<%= isPending ? 'color: var(--color-warning);' : 'color: var(--color-success);' %>">
+        <% if (isPending) { %>
+          <span class="button-spinner" style="width: 12px; height: 12px; border-width: 1px; display: inline-block; vertical-align: middle; margin-right: 8px;"></span>
+        <% } %>
+        <%= order.status.toUpperCase() %>
+      </span>
+    </div>
+    <div class="lab-item">
+      <span class="lab-name">PRICE:</span>
+      <span class="lab-result"><%= formatSats(order.price_sats) %></span>
+    </div>
+    <div class="lab-item">
+      <span class="lab-name">PATIENT:</span>
+      <span class="lab-result"><%= order.buyer_address.substring(0, 16) %>...</span>
+    </div>
+    <div class="lab-item">
+      <span class="lab-name">TX:</span>
+      <span class="lab-result">
+        <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener"><%= order.txid.substring(0, 16) %>...</a>
+      </span>
+    </div>
+  </div>
+
+  <% const extra = JSON.parse(order.extra_details || '{}') %>
+  <% const optionalPayments = extra.optional_payments || [] %>
+  <% if (optionalPayments.length > 0) { %>
+    <div style="margin-top: 16px;" data-testid="order-optional-payments">
+      <div class="report-label" style="margin-bottom: 8px;">ADDITIONAL PROCEDURES</div>
+      <% optionalPayments.forEach((p) => { %>
+        <div class="fee-row">
+          <span class="label"><%= p.title.toUpperCase() %></span>
+          <span class="value"><%= formatSats(p.amount) %></span>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>

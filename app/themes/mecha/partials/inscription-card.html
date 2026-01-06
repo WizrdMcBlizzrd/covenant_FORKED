@@ -1,0 +1,49 @@
+<tr
+  data-testid="inscription-card"
+  data-inscription-id="<%= inscription.id %>"
+>
+  <td>
+    <div class="table-thumb" data-controller="image">
+      <div class="inscription-skeleton" data-image-target="skeleton"></div>
+      <% if (inscription.isImage) { %>
+        <img
+          src="<%= inscription.contentUrl %>"
+          alt="<%= inscription.title || 'Inscription #' + inscription.number %>"
+          loading="lazy"
+          decoding="async"
+          class="opacity-0 transition-opacity duration-300"
+          style="image-rendering: pixelated"
+          data-image-target="img"
+          data-action="load->image#loaded error->image#error"
+        />
+      <% } else { %>
+        <iframe
+          src="<%= inscription.previewUrl %>"
+          class="pointer-events-none opacity-0 transition-opacity duration-300"
+          allow="accelerometer; gyroscope"
+          data-image-target="media"
+          data-action="load->image#loaded error->image#error"
+        ></iframe>
+      <% } %>
+    </div>
+  </td>
+  <td><span class="inscription-id">#<%= new Intl.NumberFormat('en-US').format(inscription.number) %></span></td>
+  <td data-testid="inscription-title"><%= inscription.title || 'Inscription #' + inscription.number %></td>
+  <td>
+    <% if (order && order.status === 'pending') { %>
+      <span class="table-status pending">Pending</span>
+    <% } else if (order && order.status === 'confirmed') { %>
+      <span class="table-status sold">Claimed</span>
+    <% } else { %>
+      <span class="table-status available">Available</span>
+    <% } %>
+  </td>
+  <td><span class="table-price" data-testid="inscription-price"><%= formatSats(collection.price_sats).replace(' sats', '') %></span></td>
+  <td>
+    <% if (order && (order.status === 'pending' || order.status === 'confirmed')) { %>
+      <span class="table-action" style="opacity: 0.5; cursor: default;"><%= order.status === 'pending' ? 'Locked' : 'Claimed' %></span>
+    <% } else { %>
+      <a href="/<%= encodeURIComponent(collection.slug) %>/<%= encodeURIComponent(inscription.id) %>" class="table-action">Acquire</a>
+    <% } %>
+  </td>
+</tr>

@@ -370,35 +370,78 @@ When `--wild` flag is used, generate EXPERIMENTAL themes that push boundaries wh
    - Integrated into the theme metaphor
    - Unconventional placement (bottom, side, floating)
 
-### Mechanical & Fake UI Elements (ENCOURAGED)
+### Ambient Motion & Atmospheric Elements (ENCOURAGED)
 
-**Add life to themes with animated, mechanical, or fake UI elements.** These create atmosphere and reinforce the theme's world:
+**Bring themes to life with motion and atmosphere.** The best themes feel alive — elements breathe, pulse, and respond. This creates immersion and reinforces the theme's world.
 
-#### Fake UI Elements
+#### When to Use Ambient Elements
+
+**DO add motion when:**
+- It reinforces the theme's concept naturally (surveillance theme → scanning animations)
+- It adds polish without distraction (subtle hover states, entrance animations)
+- Real page elements can be enhanced (timestamps that tick, status indicators that pulse)
+- The theme would feel static or lifeless without it
+
+**DON'T add motion when:**
+- It feels forced or disconnected from the concept
+- It distracts from the content (inscriptions are the star)
+- It would slow down the experience
+- A simpler approach achieves the same effect
+
+#### Types of Atmospheric Elements
+
+**Enhanced Real Elements** — Animate things that already exist on the page:
+- Timestamps that update in real-time
+- Status badges that pulse when pending
+- Prices with subtle emphasis animations
+- Card hover states with personality
+- Page transitions that match the theme
+
+**Decorative UI Elements** — Non-functional elements that create atmosphere:
 | Element | Description | Example Themes |
 |---------|-------------|----------------|
-| **Fake file browsers** | Windows/Mac OS chrome, folder trees | Retro computing, Desktop |
-| **Fake terminals** | Scrolling logs, command prompts, boot sequences | Hacker, Terminal, DOS |
-| **Fake media players** | Progress bars, play/pause, waveforms | Music, VHS, Cassette |
-| **Fake notifications** | Toast messages, system alerts, error dialogs | OS themes, Virus |
-| **Fake loading screens** | Progress bars, spinners, "please wait" | CD-ROM, Software |
-| **Fake clocks/timestamps** | Real-time displays, countdowns | Surveillance, News |
-| **Fake status indicators** | Blinking lights, signal bars, battery icons | Dashboard, Mecha |
-| **Fake scan lines / noise** | CRT effects, VHS tracking, static | Retro TV, Surveillance |
+| **Terminal windows** | Scrolling logs, command prompts | Hacker, DOS, Mecha |
+| **Media chrome** | Progress bars, waveforms, play controls | Music, VHS, Cassette |
+| **System UI** | Notifications, dialogs, status bars | OS themes, Desktop |
+| **Data displays** | Tickers, readouts, coordinates | Surveillance, News, Sci-fi |
+| **Environmental effects** | Scan lines, noise, film grain | Retro TV, VHS, Film |
 
-#### Mechanical Animations
-- **Ticking clocks** — real-time updates
-- **Blinking cursors** — terminal authenticity
-- **Scrolling tickers** — news/stock aesthetic
-- **Pulsing indicators** — status lights, heartbeats
-- **Spinning elements** — loading, CD/vinyl rotation
-- **Waveform visualizers** — audio reactive or decorative
-- **Particle effects** — dust, static, glitch fragments
-- **Parallax layers** — depth and atmosphere
+**Motion Patterns** — Ways to add life:
+- **Ticking/counting** — clocks, countdowns, incrementing numbers
+- **Blinking/pulsing** — cursors, status lights, indicators
+- **Scrolling/streaming** — tickers, logs, data feeds
+- **Breathing/floating** — subtle scale changes, parallax
+- **Glitching/disrupting** — for corrupted/unstable themes
+
+#### Finding Inspiration
+
+Draw from any source that fits the theme's world:
+- **Technology**: Old operating systems, hardware interfaces, scientific instruments
+- **Media**: Film countdowns, broadcast graphics, album art motion
+- **Environments**: Control rooms, cockpits, terminals, dashboards
+- **Nature & Science**: Weather systems, fluid dynamics, cellular division, crystal growth, bioluminescence, magnetic fields, chemical reactions, decay and growth patterns, swarm behavior, neural networks
+- **Culture**: Signage, wayfinding, retail displays, packaging
+
+Nature is full of motion patterns worth studying: the way smoke rises, water ripples, fire flickers, clouds drift, particles settle, organisms pulse. These organic rhythms feel alive in ways mechanical animations don't.
+
+The key is **authenticity to the concept** — a theme based on surveillance footage should feel like surveillance footage, not just have a camera icon.
+
+#### Scale & Presence
+
+**Don't be timid.** Atmospheric elements can be bold and screen-filling when the theme calls for it:
+
+- **Full-screen overlays**: Scan lines, film grain, weather effects, particle fields
+- **Edge-to-edge motion**: Drifting fog, rising embers, falling snow, floating debris
+- **Background environments**: Starfields, ocean depths, forest canopy, urban rain
+- **Reactive surfaces**: Entire page responds to scroll, time of day, or interaction
+
+A theme about deep space should make you *feel* the void. A theme about fire should have heat rising across the viewport. A theme about corruption should have glitches that interrupt the whole screen.
+
+**The content remains king** — these effects frame and enhance inscriptions, never obscure them. But atmosphere that fills the space creates immersion that small decorative elements can't achieve.
 
 #### Implementation Notes
 
-These elements should be **decorative and atmospheric** — they don't need to be functional. A fake terminal can scroll pre-written logs. A fake media player can show a static waveform. The goal is immersion, not functionality.
+These elements should be **atmospheric and non-blocking** — they enhance without demanding attention. A terminal can scroll pre-written logs. A waveform can be purely decorative. The goal is immersion that serves the content, not spectacle that competes with it.
 
 ### Enhanced Libraries (ASK USER)
 
@@ -951,7 +994,7 @@ Return:
 - Color palette name
 - File path created
 - Brief description of the aesthetic
-- Mechanical/fake UI elements included
+- Ambient/atmospheric elements included (if any)
 - (If wild) Library enhancement opportunities
 ```
 
@@ -995,15 +1038,16 @@ This is an ECCENTRIC theme. Push boundaries while keeping it functional.
 - Unusual metaphors
 - Hidden interactions
 
-### Mechanical & Fake UI Elements (ADD THESE):
-Include at least 2-3 atmospheric/mechanical elements:
-- **Fake UI**: terminals, file browsers, media players, notifications, loading bars
-- **Animations**: ticking clocks, blinking cursors, pulsing indicators, scrolling tickers
-- **Effects**: scan lines, static noise, waveforms, particle dust
+### Ambient Motion & Atmospheric Elements (ADD THESE):
+Include 2-3 elements that bring the theme to life — but only when they flow naturally from the concept:
+- **Enhanced real elements**: Animate existing page content (pulsing status badges, ticking timestamps, breathing cards)
+- **Decorative atmosphere**: Non-functional elements that create mood (terminals, data displays, environmental effects)
+- **Motion patterns**: Ticking, pulsing, scrolling, breathing, glitching — whatever fits the theme's world
 
-These should be decorative and atmospheric — they reinforce the theme's world.
-Example: A mecha theme should have blinking status lights, scrolling data readouts, targeting animations.
-Example: A CD-ROM theme should have spinning disc graphics, progress bars, "loading" states.
+The goal is immersion, not decoration. Ask: "Would this feel missing if it wasn't there?"
+Example: A mecha theme feels incomplete without status readouts and targeting animations.
+Example: A film theme comes alive with countdown leaders and projector flicker.
+Example: A minimal gallery theme might need NO extra motion — the art speaks.
 
 ### Enhanced Libraries (Note Opportunities):
 If the theme would benefit from advanced effects, note it in your output:

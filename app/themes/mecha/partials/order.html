@@ -1,0 +1,49 @@
+<div data-testid="order-panel">
+  <% const isPending = order.status === 'pending' %>
+
+  <div class="overlay-label"><%= isPending ? 'Transaction Pending' : 'Target Acquired' %></div>
+
+  <div class="message <%= isPending ? 'message-pending' : 'message-success' %>" data-testid="order-banner" style="margin-top: 10px; margin-bottom: 10px; padding: 10px;">
+    <div class="message-title" style="font-size: 0.7rem;"><%= isPending ? 'PROCESSING...' : 'ACQUISITION COMPLETE' %></div>
+  </div>
+
+  <div data-testid="order-details">
+    <div class="price-row">
+      <span class="label">STATUS</span>
+      <span class="value" style="<%= isPending ? 'color: var(--color-warning);' : 'color: var(--color-accent);' %>">
+        <% if (isPending) { %>
+          <span class="button-spinner" style="width: 10px; height: 10px; border-width: 1px; display: inline-block; vertical-align: middle; margin-right: 6px;"></span>
+        <% } %>
+        <%= order.status.toUpperCase() %>
+      </span>
+    </div>
+    <div class="price-row">
+      <span class="label">PRICE</span>
+      <span class="value"><%= formatSats(order.price_sats) %></span>
+    </div>
+    <div class="price-row">
+      <span class="label">BUYER</span>
+      <span class="value" style="font-size: 0.65rem;"><%= order.buyer_address.substring(0, 12) %>...</span>
+    </div>
+    <div class="price-row">
+      <span class="label">TX</span>
+      <span class="value">
+        <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" style="color: var(--color-accent); font-size: 0.65rem;"><%= order.txid.substring(0, 12) %>...</a>
+      </span>
+    </div>
+  </div>
+
+  <% const extra = JSON.parse(order.extra_details || '{}') %>
+  <% const optionalPayments = extra.optional_payments || [] %>
+  <% if (optionalPayments.length > 0) { %>
+    <div style="margin-top: 15px;" data-testid="order-optional-payments">
+      <div style="color: var(--color-accent); font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase;">Additional Payments</div>
+      <% optionalPayments.forEach((p) => { %>
+        <div class="price-row">
+          <span class="label"><%= p.title.toUpperCase() %></span>
+          <span class="value"><%= formatSats(p.amount) %></span>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>

@@ -1,0 +1,157 @@
+<section data-testid="home-page">
+  <div class="section">
+    <div class="section-header">COMMAND CENTER</div>
+
+    <div class="dashboard-grid">
+      <!-- Pilot Profile -->
+      <div class="pilot-profile">
+        <div class="profile-corners"></div>
+        <div class="avatar-container">
+          <div class="avatar-reticle"></div>
+          <div class="avatar-inner">
+            <div class="avatar-image">
+              <% if (CONFIG.artist_avatar_url) { %>
+                <img src="<%= CONFIG.artist_avatar_url %>" alt="<%= CONFIG.artist_name %>" />
+              <% } else { %>
+                <%= CONFIG.artist_name.substring(0, 2).toUpperCase() %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <div class="pilot-status">
+          <span class="status-badge active">ACTIVE</span>
+          <span class="status-badge level">OPERATOR</span>
+        </div>
+        <h2 class="pilot-name"><%= CONFIG.artist_name.toUpperCase() %></h2>
+        <p class="pilot-designation">PILOT ID: <%= CONFIG.artist_name.substring(0, 2).toUpperCase() %>-001 // UNIT: EVA-BTC</p>
+
+        <div class="pilot-stats">
+          <div class="stat-item">
+            <div class="stat-label">Sync Rate</div>
+            <div class="stat-value">100%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Collections</div>
+            <div class="stat-value warning"><%= (collections ?? []).length %></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Available</div>
+            <div class="stat-value"><%= (collections ?? []).reduce((sum, c) => sum + (c.availableCount || 0), 0) %></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Total Items</div>
+            <div class="stat-value"><%= (collections ?? []).reduce((sum, c) => sum + (c.itemsCount || 0), 0) %></div>
+          </div>
+        </div>
+
+        <% if (artist.about) { %>
+          <div class="pilot-bio" data-testid="artist-about">
+            <%= artist.about %>
+          </div>
+        <% } else { %>
+          <div class="pilot-bio">
+            Digital artifact creator operating within the Bitcoin ordinals ecosystem.
+            Specialized in unique inscriptions and on-chain art preservation.
+          </div>
+        <% } %>
+
+        <% if (artist.socials.websiteUrl || artist.socials.xUrl || artist.socials.githubUrl) { %>
+          <div class="pilot-links" data-testid="artist-social">
+            <% if (artist.socials.websiteUrl) { %>
+              <a href="<%= artist.socials.websiteUrl %>" target="_blank" rel="noopener" class="pilot-link" data-testid="artist-social-website">Website</a>
+            <% } %>
+            <% if (artist.socials.xUrl) { %>
+              <a href="<%= artist.socials.xUrl %>" target="_blank" rel="noopener" class="pilot-link" data-testid="artist-social-x">X</a>
+            <% } %>
+            <% if (artist.socials.githubUrl) { %>
+              <a href="<%= artist.socials.githubUrl %>" target="_blank" rel="noopener" class="pilot-link" data-testid="artist-social-github">Github</a>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Mission Panels -->
+      <div class="mission-panels">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Active Collections</span>
+            <span class="panel-status">ONLINE</span>
+          </div>
+          <div class="panel-body">
+            <% if ((collections ?? []).length === 0) { %>
+              <div class="empty-state" data-testid="empty-state">
+                <p>NO COLLECTIONS DEPLOYED // INVENTORY EMPTY</p>
+              </div>
+            <% } else { %>
+              <div data-testid="collections">
+                <% (collections ?? []).forEach((collection) => { %>
+                  <a
+                    class="collection-item"
+                    href="/<%= encodeURIComponent(collection.slug) %>"
+                    data-testid="collection-card"
+                    data-collection-slug="<%= collection.slug %>"
+                  >
+                    <div class="collection-thumb"><%= collection.title.substring(0, 2).toUpperCase() %></div>
+                    <div class="collection-info">
+                      <div class="collection-name" data-testid="collection-title"><%= collection.title %></div>
+                      <div class="collection-meta"><%= collection.itemsCount || 0 %> items // <%= collection.availableCount || 0 %> available</div>
+                    </div>
+                    <div class="collection-price" data-testid="collection-price"><%= formatSats(collection.priceSats).replace(' sats', '') %></div>
+                  </a>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">System Telemetry</span>
+            <span class="panel-status">STREAMING</span>
+          </div>
+          <div class="panel-body">
+            <div class="data-stream">
+              <div class="stream-content">
+                [BLOCK] CONFIRMED :: HASH=0x00000000000000000002a7c4...<br>
+                [TX] bc1p9xk...f7jq :: PENDING<br>
+                [SYNC] Mempool depth: Active transactions<br>
+                [ORD] Inscription indexing complete<br>
+                [BLOCK] CONFIRMED :: HASH=0x000000000000000000015e8f...<br>
+                [TX] bc1pqm2...8k4n :: CONFIRMED<br>
+                [SYNC] Fee rate: Current priority<br>
+                [ORD] Collection sync active<br>
+                [BLOCK] CONFIRMED :: HASH=0x00000000000000000003b2d1...<br>
+                [TX] bc1p7r5...2m9v :: BROADCAST<br>
+                [BLOCK] CONFIRMED :: HASH=0x00000000000000000002a7c4...<br>
+                [TX] bc1p9xk...f7jq :: PENDING<br>
+                [SYNC] Node synchronization active<br>
+                [ORD] Inscription processing queue<br>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Network Status</span>
+            <span class="panel-status">CONNECTED</span>
+          </div>
+          <div class="panel-body" style="font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--color-text-dim);">
+            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--color-surface-light);">
+              <span style="color: var(--color-accent);">MEMPOOL</span> Connected and syncing
+            </div>
+            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--color-surface-light);">
+              <span style="color: var(--color-accent);">ORDINALS</span> API responding
+            </div>
+            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--color-surface-light);">
+              <span style="color: var(--color-warning);">WALLET</span> Ready for connection
+            </div>
+            <div style="padding: 0.5rem 0;">
+              <span style="color: var(--color-highlight);">COVENANT</span> Systems operational
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

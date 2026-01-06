@@ -1,0 +1,75 @@
+<section data-testid="activity-page">
+  <h2 class="intake-title" data-testid="page-title">PROCEDURE LOG</h2>
+
+  <div class="patient-chart">
+    <div class="chart-holes">
+      <div class="chart-hole"></div>
+      <div class="chart-hole"></div>
+      <div class="chart-hole"></div>
+      <div class="chart-hole"></div>
+      <div class="chart-hole"></div>
+    </div>
+
+    <div class="chart-header">
+      <span class="chart-title">TRANSACTION RECORDS</span>
+      <span class="chart-running-total">TOTAL PROCEDURES: <%= (orders ?? []).length %></span>
+    </div>
+
+    <% if ((orders ?? []).length === 0) { %>
+      <div class="empty-state" data-testid="empty-state">
+        <p>NO PROCEDURES RECORDED // LOG EMPTY</p>
+      </div>
+    <% } else { %>
+      <div class="procedure-log" data-testid="orders">
+        <% orders.forEach((o) => { %>
+          <div class="log-entry" data-testid="order-row">
+            <span class="log-time">
+              <%= new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %><br>
+              <%= new Date(o.created_at).toLocaleTimeString('en-US', { hour12: false }) %>
+            </span>
+            <span class="log-procedure">
+              <% if (o.status === 'confirmed') { %>
+                Specimen transferred to
+              <% } else if (o.status === 'pending') { %>
+                Procedure in progress for
+              <% } else { %>
+                Failed procedure for
+              <% } %>
+              <a href="/<%= encodeURIComponent(o.collection_slug) %>/<%= encodeURIComponent(o.inscription_id) %>" data-testid="order-inscription-link">
+                <%= o.inscription_id.substring(0, 12) %>...
+              </a>
+              <% if (o.buyer_address) { %>
+                by <%= o.buyer_address.substring(0, 8) %>...
+              <% } %>
+            </span>
+            <span class="log-specimen">
+              <% if (o.price_sats) { %>
+                <span data-testid="order-price"><%= formatSats(o.price_sats) %></span>
+              <% } %>
+              <% if (o.txid) { %>
+                <a href="https://mempool.space/tx/<%= encodeURIComponent(o.txid) %>" target="_blank" rel="noopener" data-testid="order-tx-link">[TX]</a>
+              <% } %>
+            </span>
+            <span class="log-status <%= o.status %>" data-testid="order-status">
+              <%= o.status === 'confirmed' ? 'DISCHARGED' : (o.status === 'pending' ? 'PENDING' : 'CRITICAL') %>
+            </span>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <div class="doctor-signature">
+      <div>
+        <div class="signature-line"><%= CONFIG.artist_name %></div>
+        <div class="signature-label">ATTENDING PHYSICIAN SIGNATURE</div>
+      </div>
+      <div>
+        <div class="signature-label" style="margin-bottom: 8px;">INITIALS</div>
+        <div class="initials-box">
+          <div class="initial"><%= CONFIG.artist_name.charAt(0).toUpperCase() %></div>
+          <div class="initial"><%= CONFIG.artist_name.split(' ').pop()?.charAt(0).toUpperCase() || 'X' %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

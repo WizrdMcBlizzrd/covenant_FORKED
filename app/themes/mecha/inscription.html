@@ -1,0 +1,184 @@
+<section
+  data-testid="inscription-page"
+  data-controller="inscription"
+  data-action="wallet:connected@window->inscription#onWalletConnected wallet:disconnected@window->inscription#onWalletDisconnected"
+  data-inscription-price-value="<%= checkout.priceSats %>"
+  data-inscription-inscription-metadata-value="<%= JSON.stringify(inscription.metadata) %>"
+  data-inscription-payment-address-value="<%= config.payment_address %>"
+>
+  <div class="section">
+    <div class="section-header">TARGET ACQUISITION</div>
+
+    <div class="detail-overlay">
+      <!-- Center: Target Image -->
+      <div class="detail-image-container">
+        <div class="detail-image" data-testid="media" data-controller="image">
+          <div class="inscription-skeleton" data-image-target="skeleton"></div>
+          <% if (inscription.isImage) { %>
+            <img
+              src="<%= inscription.contentUrl %>"
+              alt="<%= title %>"
+              loading="eager"
+              decoding="async"
+              class="opacity-0 transition-opacity duration-300"
+              style="image-rendering: pixelated"
+              data-image-target="img"
+              data-action="load->image#loaded error->image#error"
+              data-testid="inscription-media-img"
+            />
+          <% } else { %>
+            <iframe
+              src="<%= inscription.previewUrl %>"
+              class="pointer-events-none opacity-0 transition-opacity duration-300"
+              allow="accelerometer; gyroscope"
+              data-image-target="media"
+              data-action="load->image#loaded error->image#error"
+              data-testid="inscription-media-iframe"
+            ></iframe>
+          <% } %>
+        </div>
+
+        <!-- Targeting System -->
+        <div class="targeting-system">
+          <div class="reticle-outer"></div>
+          <div class="reticle-inner"></div>
+          <div class="corner-mark tl"></div>
+          <div class="corner-mark tr"></div>
+          <div class="corner-mark bl"></div>
+          <div class="corner-mark br"></div>
+        </div>
+      </div>
+
+      <!-- Top Left: Target ID -->
+      <div class="overlay-panel top-left" data-testid="details">
+        <div class="overlay-label">Target ID</div>
+        <div class="overlay-value highlight" data-testid="detail-number">
+          <a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-number-link" style="color: inherit; text-decoration: none;">#<%= new Intl.NumberFormat('en-US').format(inscription.number) %></a>
+        </div>
+        <div style="margin-top: 0.75rem;">
+          <div class="overlay-label">Collection</div>
+          <div class="overlay-value"><a href="/<%= encodeURIComponent(config.slug) %>" style="color: inherit; text-decoration: none;"><%= config.title %></a></div>
+        </div>
+        <div style="margin-top: 0.75rem;" data-testid="page-title">
+          <div class="overlay-label">Name</div>
+          <div class="overlay-value"><%= title %></div>
+        </div>
+      </div>
+
+      <!-- Top Right: Content Info -->
+      <div class="overlay-panel top-right">
+        <div class="overlay-label">Content Type</div>
+        <div class="overlay-value overlay-value-sm"><%= inscription.contentType || 'Unknown' %></div>
+        <div style="margin-top: 0.75rem;" data-testid="detail-sat">
+          <div class="overlay-label">Sat Number</div>
+          <div class="overlay-value overlay-value-sm">
+            <a href="https://ordinals.com/sat/<%= encodeURIComponent(inscription.sat) %>" target="_blank" rel="noopener" data-testid="detail-sat-link" style="color: inherit; text-decoration: none;"><%= inscription.sat %></a>
+          </div>
+        </div>
+        <% if (inscription.charmIcons.length > 0) { %>
+          <div style="margin-top: 0.75rem;" data-testid="detail-charms">
+            <div class="overlay-label">Charms</div>
+            <div class="overlay-value" data-testid="detail-charms-icons" style="font-size: 18px;">
+              <% inscription.charmIcons.forEach((icon) => { %>
+                <span><%= icon %></span>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Bottom Left: Owner Info -->
+      <div class="overlay-panel bottom-left">
+        <% const inscribedHuman = new Date(inscription.timestamp * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) %>
+        <div data-testid="detail-inscribed">
+          <div class="overlay-label">Inscribed</div>
+          <div class="overlay-value" data-testid="detail-inscribed-value"><%= inscribedHuman %></div>
+        </div>
+        <% if (inscription.parents.length > 0) { %>
+          <div style="margin-top: 0.75rem;" data-testid="detail-parents">
+            <div class="overlay-label">Parents</div>
+            <div class="overlay-value" data-testid="detail-parents-list" style="font-size: 0.7rem;">
+              <% inscription.parents.forEach((parentId) => { %>
+                <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block; color: var(--color-accent); text-decoration: none;"><%= parentId.substring(0, 16) %>...</a>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Bottom Right: Purchase Panel -->
+      <div class="overlay-panel bottom-right">
+        <% if (order.status === 'pending' || order.status === 'confirmed') { %>
+          <%- include('partials/order', { order }) %>
+        <% } else { %>
+          <div data-testid="purchase-panel">
+            <div class="overlay-label">Acquisition Cost</div>
+            <div class="overlay-value critical" data-testid="price-sats" data-inscription-target="total"><%= formatSats(checkout.priceSats).replace(' sats', '') %></div>
+            <div class="price-label hidden purchase-usd" data-usd-sats="" data-usd-role="total"></div>
+
+            <form method="post" data-testid="buy-form" data-inscription-target="form">
+
+              <div class="price-breakdown hidden" data-testid="fees" data-inscription-target="fees">
+                <div class="fee-item">
+                  <div class="overlay-label">Network Fee</div>
+                  <div class="overlay-value" data-inscription-target="fee">-</div>
+                </div>
+                <div class="fee-item">
+                  <div class="overlay-label">Fee Rate</div>
+                  <div class="overlay-value" data-inscription-target="feeRate">-</div>
+                </div>
+              </div>
+
+              <button
+                class="acquire-btn hide-on-connected"
+                type="button"
+                data-inscription-target="connectButton"
+                data-action="wallet#select"
+                style="font-size: 0.7rem; padding: 0.6rem;"
+              >
+                CONNECT WALLET
+              </button>
+
+              <button
+                class="acquire-btn show-on-connected"
+                type="button"
+                data-inscription-target="prepareButton"
+                data-action="click->inscription#prepare"
+                style="font-size: 0.7rem; padding: 0.6rem;"
+              >
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                  <span data-inscription-target="prepareSpinner" class="button-spinner button-spinner-hidden"></span>
+                  <span data-inscription-target="prepareLabel">ACQUIRE TARGET</span>
+                </span>
+              </button>
+
+              <button
+                class="acquire-btn hidden"
+                type="button"
+                data-testid="buy-button"
+                data-inscription-target="buyButton"
+                data-action="click->inscription#buy"
+                style="font-size: 0.7rem; padding: 0.6rem;"
+              >
+                <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                  <span data-inscription-target="buySpinner" class="button-spinner button-spinner-hidden"></span>
+                  <span data-inscription-target="buyLabel">CONFIRM ACQUISITION</span>
+                </span>
+              </button>
+            </form>
+
+            <div class="hidden message message-success" data-inscription-target="successPanel" data-testid="buy-success" style="margin-top: 0.75rem; padding: 10px;">
+              <div class="message-title" data-inscription-target="successTitle" style="font-size: 0.7rem;">ACQUISITION COMPLETE</div>
+              <a class="message-link" target="_blank" rel="noopener" data-inscription-target="successLink" href="" style="font-size: 0.65rem;">View on mempool.space</a>
+            </div>
+
+            <div class="hidden message message-error" data-inscription-target="errorPanel" data-testid="buy-client-error" style="margin-top: 0.75rem; padding: 10px;">
+              <div class="message-title" data-inscription-target="errorTitle" style="font-size: 0.7rem;">ERROR // ACQUISITION FAILED</div>
+              <div class="message-link" data-inscription-target="errorMessage" style="font-size: 0.65rem;"></div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
