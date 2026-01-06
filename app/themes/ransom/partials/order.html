@@ -1,0 +1,51 @@
+<div data-testid="order-panel">
+  <% const isPending = order.status === 'pending' %>
+
+  <div class="message <%= isPending ? 'message-pending' : 'message-success' %>" data-testid="order-banner">
+    <div class="message-title"><%= isPending ? 'Transaction Pending // Processing...' : 'RANSOM PAID // Sold' %></div>
+  </div>
+
+  <div style="margin-top: 20px;" data-testid="order-details">
+    <table class="properties-table">
+      <tr>
+        <td>Status:</td>
+        <td style="<%= isPending ? 'color: #FF8C00;' : 'color: #228B22;' %>">
+          <% if (isPending) { %>
+            <span class="button-spinner" style="width: 12px; height: 12px; border-width: 1px; display: inline-block; vertical-align: middle; margin-right: 8px; border-color: rgba(255,140,0,0.3); border-top-color: #FF8C00;"></span>
+          <% } %>
+          <%= order.status.toUpperCase() %>
+        </td>
+      </tr>
+      <tr>
+        <td>Price:</td>
+        <td style="color: #CC0000; font-family: 'Permanent Marker', cursive;"><%= formatSats(order.price_sats) %></td>
+      </tr>
+      <tr>
+        <td>Buyer:</td>
+        <td><%= order.buyer_address.substring(0, 16) %>...</td>
+      </tr>
+      <tr>
+        <td>TX:</td>
+        <td>
+          <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener"><%= order.txid.substring(0, 16) %>...</a>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <% const extra = JSON.parse(order.extra_details || '{}') %>
+  <% const optionalPayments = extra.optional_payments || [] %>
+  <% if (optionalPayments.length > 0) { %>
+    <div style="margin-top: 20px;" data-testid="order-optional-payments">
+      <div style="color: #CC0000; font-family: 'Permanent Marker', cursive; font-size: 16px; margin-bottom: 10px;">Additional Payments</div>
+      <table class="properties-table">
+        <% optionalPayments.forEach((p) => { %>
+          <tr>
+            <td><%= p.title %>:</td>
+            <td style="color: #CC0000;"><%= formatSats(p.amount) %></td>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+  <% } %>
+</div>

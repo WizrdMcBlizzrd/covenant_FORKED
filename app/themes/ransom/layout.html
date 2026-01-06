@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %> // RANSOM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Rock+Salt&family=Permanent+Marker&family=Cutive+Mono&family=Bebas+Neue&family=Playfair+Display:wght@400;700;900&family=Anton&family=Gloria+Hallelujah&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= assets.css %>" />
+    <script type="module" src="<%= assets.js %>"></script>
+  </head>
+  <body
+    data-controller="store body-class usd wallet"
+    data-action="wallet:connected@window->body-class#setConnected wallet:disconnected@window->body-class#setDisconnected keydown.esc@window->wallet#close"
+    class="theme-ransom"
+  >
+    <!-- Wallet Modal -->
+    <div data-wallet-target="selector" data-state="closed">
+      <div class="wallet-backdrop" data-action="click->wallet#close"></div>
+      <div class="wallet-panel">
+        <div class="tape tape-tl"></div>
+        <div class="tape tape-tr"></div>
+        <div class="wallet-header">
+          <div class="wallet-title">
+            <span class="cutout cutout-black" style="font-family: 'Bebas Neue'; --rot: -2deg;">CONNECT</span>
+            <span class="cutout" style="font-family: 'Playfair Display'; font-weight: 900; --rot: 2deg;">WALLET</span>
+          </div>
+          <button class="wallet-close" type="button" aria-label="Close" data-action="wallet#close">X</button>
+        </div>
+        <div class="wallet-body">
+          <button class="wallet-option" data-wallet-target="xverse" data-action="wallet#authorize:prevent" data-wallet-provider-param="xverse">
+            <div class="wallet-icon">
+              <img src="/wallets/xverse.png" alt="" />
+            </div>
+            <div class="wallet-info">
+              <div class="wallet-name">Xverse Wallet</div>
+              <div class="wallet-desc">Connect using Xverse</div>
+            </div>
+          </button>
+          <button class="wallet-option" data-wallet-target="unisat" data-action="wallet#authorize:prevent" data-wallet-provider-param="unisat">
+            <div class="wallet-icon">
+              <img src="/wallets/unisat.png" alt="" />
+            </div>
+            <div class="wallet-info">
+              <div class="wallet-name">Unisat Wallet</div>
+              <div class="wallet-desc">Connect using Unisat</div>
+            </div>
+          </button>
+        </div>
+        <p class="handwritten" style="text-align: center; margin-top: 20px; font-size: 12px;">
+          Choose wisely...
+        </p>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-inner">
+        <a href="/" class="logo" data-testid="home-link">
+          <% const artistName = CONFIG.artist_name.toUpperCase() %>
+          <% const fonts = ["'Bebas Neue'", "'Playfair Display'", "'Anton'", "'Special Elite'", "'Permanent Marker'", "'Courier Prime'", "'Rock Salt'"]; %>
+          <% const styles = ['cutout cutout-black', 'cutout', 'cutout cutout-red', 'cutout cutout-yellow', 'cutout', 'cutout cutout-black', 'cutout']; %>
+          <% for (let i = 0; i < Math.min(artistName.length, 7); i++) { %>
+            <span class="<%= styles[i % styles.length] %>" style="font-family: <%= fonts[i % fonts.length] %>; --rot: <%= ((i % 2 === 0 ? -1 : 1) * (2 + i % 3)) %>deg;"><%= artistName[i] %></span>
+          <% } %>
+          <% if (artistName.length > 7) { %>
+            <span class="cutout" style="font-family: 'Special Elite'; --rot: 2deg;"><%= artistName.substring(7) %></span>
+          <% } %>
+        </a>
+        <nav class="nav" data-testid="header-nav">
+          <a href="/">Collections</a>
+          <a href="/activity">Activity</a>
+          <a href="/policy">Policy</a>
+        </nav>
+        <div class="header-right">
+          <button class="btn-connect hide-on-connected" type="button" data-action="wallet#select">
+            Connect
+          </button>
+          <div class="show-on-connected" style="position: relative;" data-controller="dropdown" data-action="mouseup@window->dropdown#hide">
+            <button class="btn-connect" type="button" data-action="dropdown#toggle">
+              <span data-wallet-target="addressPreview"></span>
+            </button>
+            <div class="dropdown-menu hidden" data-dropdown-target="menu">
+              <a class="dropdown-item danger" href="#" data-action="wallet#logout:prevent dropdown#toggle">Disconnect</a>
+            </div>
+          </div>
+          <!-- Mobile nav -->
+          <div class="mobile-nav" data-controller="dropdown" data-action="mouseup@window->dropdown#hide" data-testid="nav-menu">
+            <button class="mobile-menu-btn" type="button" aria-label="Menu" data-action="dropdown#toggle" data-testid="nav-menu-button">
+              MENU
+            </button>
+            <div class="dropdown-menu hidden" data-dropdown-target="menu" data-testid="nav-menu-list">
+              <a class="dropdown-item" href="/" data-testid="nav-menu-home">Collections</a>
+              <a class="dropdown-item" href="/activity" data-testid="nav-menu-activity">Activity</a>
+              <a class="dropdown-item" href="/policy" data-testid="nav-menu-policy">Policy</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" data-store-target="main">
+      <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" data-testid="footer">
+      <p class="footer-text">
+        <a href="https://github.com/lifofifoX/covenant" target="_blank" rel="noopener" data-testid="footer-blizzard">Covenant</a> // RANSOM // <%= new Date().getFullYear() %>
+      </p>
+      <p class="footer-note">We have your inscriptions...</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<section data-testid="activity-page">
+  <div class="page-container torn-paper">
+  <div class="section">
+    <div class="section-title">
+      <span class="cutout cutout-red" style="font-family: 'Anton'; --rot: 2deg;">ACTIVITY</span>
+      <span class="cutout" style="font-family: 'Rock Salt'; font-size: 20px; --rot: -3deg;" data-testid="page-title">LOG</span>
+    </div>
+
+    <div class="activity-board-container">
+      <% if ((orders ?? []).length === 0) { %>
+        <div class="empty-state" data-testid="empty-state">
+          <p>NO TRANSACTIONS RECORDED // The case file is empty...</p>
+        </div>
+      <% } else { %>
+        <div class="activity-board" data-testid="orders">
+          <% orders.forEach((o) => { %>
+            <div class="activity-item" data-testid="order-row">
+              <div class="tape"></div>
+              <span class="activity-status <%= o.status === 'pending' ? 'pending' : 'confirmed' %>" data-testid="order-status">
+                <%= o.status === 'pending' ? 'PENDING' : 'CONFIRMED' %>
+              </span>
+              <div class="activity-details">
+                <div>
+                  <a href="/<%= encodeURIComponent(o.collection_slug) %>/<%= encodeURIComponent(o.inscription_id) %>" data-testid="order-inscription-link">
+                    <%= o.inscription_id.substring(0, 12) %>... sold
+                  </a>
+                </div>
+                <% if (o.txid) { %>
+                  <div class="tx-id">
+                    tx: <a href="https://mempool.space/tx/<%= encodeURIComponent(o.txid) %>" target="_blank" rel="noopener" data-testid="order-tx-link"><%= o.txid.substring(0, 8) %>...<%= o.txid.substring(o.txid.length - 6) %></a>
+                  </div>
+                <% } %>
+              </div>
+              <div class="activity-amount" data-testid="order-price">
+                <% if (o.price_sats) { %>
+                  <%= formatSats(o.price_sats) %>
+                <% } else { %>
+                  -
+                <% } %>
+              </div>
+              <% if (o.buyer_address) { %>
+                <div class="activity-time">buyer: <%= o.buyer_address.substring(0, 8) %>...</div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>

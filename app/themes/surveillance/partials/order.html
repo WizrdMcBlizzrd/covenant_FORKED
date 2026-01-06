@@ -1,0 +1,51 @@
+<div data-testid="order-panel">
+  <% const isPending = order.status === 'pending' %>
+
+  <div class="acquire-panel">
+    <div class="acquire-header"><%= isPending ? 'TRANSACTION PENDING' : 'TARGET ACQUIRED' %></div>
+
+    <div class="message <%= isPending ? 'message-pending' : 'message-success' %>" data-testid="order-banner" style="margin-top: 0; margin-bottom: 15px;">
+      <div class="message-title"><%= isPending ? 'PROCESSING...' : 'ACQUISITION CONFIRMED' %></div>
+    </div>
+
+    <div data-testid="order-details">
+      <div class="meta-item">
+        <span class="meta-label">STATUS</span>
+        <span class="meta-value" style="<%= isPending ? 'color: var(--color-warning);' : 'color: var(--color-phosphor-green);' %>">
+          <% if (isPending) { %>
+            <span class="button-spinner" style="width: 12px; height: 12px; border-width: 1px; display: inline-block; vertical-align: middle; margin-right: 8px;"></span>
+          <% } %>
+          <%= order.status.toUpperCase() %>
+        </span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">PRICE</span>
+        <span class="meta-value"><%= formatSats(order.price_sats) %></span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">BUYER</span>
+        <span class="meta-value"><%= order.buyer_address.substring(0, 16) %>...</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">TX</span>
+        <span class="meta-value">
+          <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener"><%= order.txid.substring(0, 16) %>...</a>
+        </span>
+      </div>
+    </div>
+
+    <% const extra = JSON.parse(order.extra_details || '{}') %>
+    <% const optionalPayments = extra.optional_payments || [] %>
+    <% if (optionalPayments.length > 0) { %>
+      <div style="margin-top: 20px;" data-testid="order-optional-payments">
+        <div style="color: var(--color-phosphor-green); font-family: var(--font-display); font-size: 12px; letter-spacing: 2px; margin-bottom: 10px;">ADDITIONAL PAYMENTS</div>
+        <% optionalPayments.forEach((p) => { %>
+          <div class="meta-item">
+            <span class="meta-label"><%= p.title.toUpperCase() %></span>
+            <span class="meta-value"><%= formatSats(p.amount) %></span>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
