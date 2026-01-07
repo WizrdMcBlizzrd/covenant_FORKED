@@ -1,0 +1,1425 @@
+@import "tailwindcss";
+
+@source "../../themes/**/*.html";
+@source "../../../app/assets/javascripts/**/*.js";
+
+@theme {
+  --color-white: #FFFFFF;
+  --color-light-gray: #CCCCCC;
+  --color-mid-gray: #888888;
+  --color-dark-gray: #444444;
+  --color-near-black: #1a1a1a;
+  --color-black: #000000;
+  --font-comic: 'Comic Neue', cursive;
+  --font-bangers: 'Bangers', cursive;
+  --font-bungee: 'Bungee', cursive;
+  --font-creepster: 'Creepster', cursive;
+  --font-pacifico: 'Pacifico', cursive;
+  --font-press-start: 'Press Start 2P', monospace;
+}
+
+/* ============================================
+   GEOCITIES MONO - MONOCHROME VISUAL WARFARE
+   DNA: H9-L9-G8-D6-C8-N9
+   BLACK & WHITE CHAOS
+   ============================================ */
+
+/* ANIMATIONS */
+@keyframes mono-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.5); }
+}
+
+@keyframes blink-slow {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes blink-fast {
+  0%, 30% { opacity: 1; }
+  31%, 60% { opacity: 0; }
+  61%, 100% { opacity: 1; }
+}
+
+@keyframes blink-erratic {
+  0% { opacity: 1; }
+  15% { opacity: 0; }
+  30% { opacity: 1; }
+  45% { opacity: 0; }
+  60% { opacity: 1; }
+  75% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@keyframes marquee-left {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes bounce-horizontal {
+  0%, 100% { transform: translateX(-50%); }
+  50% { transform: translateX(50%); }
+}
+
+@keyframes gray-cycle {
+  0% { color: #FFFFFF; }
+  25% { color: #AAAAAA; }
+  50% { color: #666666; }
+  75% { color: #AAAAAA; }
+  100% { color: #FFFFFF; }
+}
+
+@keyframes mono-flicker {
+  0%, 100% { box-shadow: 0 0 10px #FFFFFF, 0 0 20px #CCCCCC, 0 0 30px #888888; }
+  25% { box-shadow: 0 0 15px #CCCCCC, 0 0 25px #FFFFFF, 0 0 35px #888888; }
+  50% { box-shadow: 0 0 20px #888888, 0 0 30px #FFFFFF, 0 0 40px #CCCCCC; }
+  75% { box-shadow: 0 0 12px #FFFFFF, 0 0 22px #888888, 0 0 32px #CCCCCC; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-5px, -5px) rotate(-2deg); }
+  20% { transform: translate(5px, -5px) rotate(2deg); }
+  30% { transform: translate(-5px, 5px) rotate(-2deg); }
+  40% { transform: translate(5px, 5px) rotate(2deg); }
+  50% { transform: translate(-3px, -3px) rotate(-1deg); }
+  60% { transform: translate(3px, -3px) rotate(1deg); }
+  70% { transform: translate(-3px, 3px) rotate(-1deg); }
+  80% { transform: translate(3px, 3px) rotate(1deg); }
+  90% { transform: translate(-1px, -1px) rotate(0deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor; transform: scale(1); }
+  50% { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; transform: scale(1.05); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes construction-worker {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(-1); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes contrast-shift {
+  0% { filter: contrast(1) brightness(1); }
+  50% { filter: contrast(1.2) brightness(1.1); }
+  100% { filter: contrast(1) brightness(1); }
+}
+
+@keyframes disco-mono {
+  0% { background-color: #000000; }
+  25% { background-color: #333333; }
+  50% { background-color: #666666; }
+  75% { background-color: #333333; }
+  100% { background-color: #000000; }
+}
+
+/* CONNECTION STATE */
+.theme-geocities-mono .show-on-connected { display: none !important; }
+.theme-geocities-mono.connected .hide-on-connected { display: none !important; }
+.theme-geocities-mono.connected .show-on-connected { display: block !important; }
+.theme-geocities-mono .hide-on-connected { display: block; }
+
+/* Button visibility overrides - ensure JS class changes work */
+.theme-geocities-mono .buy-button.hidden { display: none !important; }
+.theme-geocities-mono .buy-button.inline-flex { display: inline-flex !important; }
+
+/* BASE BODY STYLES */
+.theme-geocities-mono {
+  margin: 0;
+  padding: 0;
+  font-family: 'Comic Neue', cursive;
+  background:
+    repeating-linear-gradient(45deg, #0a0a0a 0px, #0a0a0a 10px, #1a1a1a 10px, #1a1a1a 20px),
+    linear-gradient(90deg, #000000, #222222, #444444, #666666, #444444, #222222, #000000);
+  background-size: 40px 40px, 400% 400%;
+  animation: mono-gradient 8s ease infinite;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><text y="24" font-size="24">◆</text></svg>'), auto;
+}
+
+.theme-geocities-mono::before {
+  content: "★ ✦ ★ ✧ ★ ✦ ★ ✧ ★ ✦ ★ ✧ ★ ✦ ★ ✧";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 30px;
+  color: #444444;
+  pointer-events: none;
+  z-index: 0;
+  animation: star-twinkle 3s ease-in-out infinite;
+  word-spacing: 50px;
+  line-height: 100px;
+  opacity: 0.5;
+}
+
+/* MARQUEE BARS */
+.marquee-top {
+  background: linear-gradient(90deg, #000000, #333333, #666666, #999999, #666666, #333333, #000000);
+  padding: 8px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 5px dashed #FFFFFF;
+  position: relative;
+  z-index: 100;
+}
+
+.marquee-top .marquee-content {
+  display: inline-block;
+  animation: marquee-left 20s linear infinite;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #FFFFFF;
+  text-shadow: 2px 2px 0 #000000;
+}
+
+.marquee-middle {
+  background: linear-gradient(90deg, #FFFFFF, #CCCCCC, #999999, #666666, #999999, #CCCCCC, #FFFFFF);
+  padding: 5px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 3px dotted #000000;
+  border-bottom: 3px dotted #000000;
+}
+
+.marquee-middle .marquee-content {
+  display: inline-block;
+  animation: marquee-right 16s linear infinite;
+  font-family: 'Bangers', cursive;
+  font-size: 18px;
+  color: #000000;
+  text-shadow: 3px 3px 0 #FFFFFF, -3px -3px 0 #888888;
+}
+
+/* HEADER */
+.geo-header {
+  background: linear-gradient(135deg, #FFFFFF 0%, #CCCCCC 25%, #888888 50%, #CCCCCC 75%, #FFFFFF 100%);
+  padding: 20px;
+  transform: skewY(-2deg);
+  border: 10px ridge #CCCCCC;
+  margin: 20px;
+  position: relative;
+  z-index: 10;
+  animation: mono-flicker 1.5s infinite, shake 5s infinite;
+}
+
+.geo-header::before {
+  content: "◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆";
+  position: absolute;
+  top: -30px;
+  left: 0;
+  right: 0;
+  font-size: 24px;
+  color: #FFFFFF;
+  animation: pulse-glow 1s infinite;
+}
+
+.geo-header::after {
+  content: "◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆";
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  right: 0;
+  font-size: 24px;
+  color: #FFFFFF;
+  animation: pulse-glow 1s infinite;
+}
+
+.site-title {
+  font-family: 'Bungee', cursive;
+  font-size: 48px;
+  text-align: center;
+  animation: gray-cycle 3s linear infinite, wobble 2s ease-in-out infinite;
+  text-shadow: 5px 5px 0 #000000, -5px -5px 0 #666666, 10px 10px 0 #333333, -10px 10px 0 #999999;
+  transform: skewY(2deg);
+  margin: 0;
+  color: #FFFFFF;
+}
+
+.site-title span { display: inline-block; }
+.site-title span:nth-child(odd) { animation: bounce 1.5s ease-in-out infinite; color: #FFFFFF; }
+.site-title span:nth-child(even) { animation: bounce 0.5s ease-in-out infinite 0.25s; color: #888888; }
+
+/* VISITOR COUNTER */
+.visitor-counter {
+  background: #000000;
+  border: 8px ridge #888888;
+  padding: 15px 30px;
+  margin: 20px auto;
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  animation: blink-erratic 3s infinite;
+}
+
+.visitor-counter .label {
+  color: #CCCCCC;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 10px;
+  animation: gray-cycle 2s linear infinite;
+}
+
+.visitor-counter .number {
+  color: #FFFFFF;
+  font-size: 36px;
+  text-shadow: 0 0 10px #FFFFFF, 0 0 20px #FFFFFF;
+  letter-spacing: 5px;
+  animation: pulse-glow 1.5s infinite;
+}
+
+/* NAVIGATION */
+.geo-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: linear-gradient(180deg, #1a1a1a, #333333, #1a1a1a);
+  border: 5px outset #888888;
+  margin: 10px;
+}
+
+.geo-nav a {
+  padding: 15px 25px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  border: 4px outset;
+  animation: wobble 2s ease-in-out infinite;
+}
+
+.geo-nav a:nth-child(1) { font-family: 'Comic Neue', cursive; background: #FFFFFF; color: #000000; border-color: #CCCCCC; transform: rotate(-5deg); }
+.geo-nav a:nth-child(2) { font-family: 'Bangers', cursive; background: #000000; color: #FFFFFF; border-color: #666666; transform: rotate(3deg); }
+.geo-nav a:nth-child(3) { font-family: 'Creepster', cursive; background: #666666; color: #FFFFFF; border-color: #FFFFFF; transform: rotate(-3deg); }
+.geo-nav a:nth-child(4) { font-family: 'Pacifico', cursive; background: #333333; color: #FFFFFF; border-color: #999999; transform: rotate(5deg); }
+.geo-nav a:nth-child(5) { font-family: 'Press Start 2P', monospace; font-size: 10px; background: #CCCCCC; color: #000000; border-color: #FFFFFF; transform: rotate(-2deg); }
+
+.geo-nav a:hover {
+  animation: shake 0.8s infinite, mono-flicker 0.3s infinite;
+  transform: scale(1.2) rotate(10deg);
+}
+
+/* UNDER CONSTRUCTION */
+.under-construction {
+  background: repeating-linear-gradient(45deg, #FFFFFF, #FFFFFF 20px, #000000 20px, #000000 40px);
+  padding: 20px;
+  margin: 20px;
+  border: 5px solid #888888;
+  text-align: center;
+}
+
+.construction-icon { font-size: 60px; display: inline-block; animation: construction-worker 1s ease-in-out infinite; filter: grayscale(100%); }
+.construction-text { font-family: 'Bangers', cursive; font-size: 36px; color: #000000; text-shadow: 3px 3px 0 #FFFFFF; animation: blink-fast 1.5s infinite; }
+
+/* SECTION TITLES */
+.section-title {
+  font-family: 'Creepster', cursive;
+  font-size: 48px;
+  text-align: center;
+  color: #FFFFFF;
+  text-shadow: 5px 5px 0 #000000, -5px -5px 0 #666666, 0 0 30px #FFFFFF;
+  animation: gray-cycle 2s linear infinite, shake 3s infinite;
+  margin-bottom: 30px;
+}
+
+/* COLLECTION CARDS */
+.collections-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px;
+}
+
+.collection-card {
+  width: 300px;
+  background: linear-gradient(45deg, #1a1a1a, #2a2a2a, #1a1a1a);
+  border: 8px ridge;
+  padding: 20px;
+  position: relative;
+  animation: wobble 2s ease-in-out infinite;
+  text-decoration: none;
+}
+
+.collection-card:nth-child(3n+1) { border-color: #FFFFFF; transform: rotate(-5deg); }
+.collection-card:nth-child(3n+2) { border-color: #888888; transform: rotate(3deg); }
+.collection-card:nth-child(3n+3) { border-color: #444444; transform: rotate(-2deg); }
+
+.collection-card:hover { animation: spin 0.5s ease-in-out, shake 0.3s infinite; }
+
+.collection-card .badge {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  background: #FFFFFF;
+  color: #000000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 8px 12px;
+  transform: rotate(15deg);
+  animation: blink-fast 0.3s infinite, pulse-glow 0.5s infinite;
+  border: 3px solid #000000;
+  z-index: 10;
+}
+
+.collection-card .image-frame {
+  border: 10px ridge #CCCCCC;
+  background: #000000;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.collection-card .image-frame::before {
+  content: "✦";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: 20px;
+  animation: spin 5s linear infinite;
+  z-index: 5;
+  color: #FFFFFF;
+}
+
+.collection-card .image-frame::after {
+  content: "✦";
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 20px;
+  animation: spin-reverse 5s linear infinite;
+  z-index: 5;
+  color: #FFFFFF;
+}
+
+.collection-card .image-frame img,
+.collection-card .image-frame iframe {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border: 3px solid #888888;
+  animation: contrast-shift 5s linear infinite;
+  display: block;
+  filter: grayscale(100%);
+}
+
+.collection-card .card-title {
+  font-family: 'Bangers', cursive;
+  font-size: 28px;
+  color: #FFFFFF;
+  text-align: center;
+  text-shadow: 3px 3px 0 #000000;
+  margin: 15px 0 10px;
+  animation: gray-cycle 1.5s linear infinite;
+}
+
+.collection-card .card-info {
+  font-family: 'Comic Neue', cursive;
+  color: #CCCCCC;
+  text-align: center;
+  font-size: 16px;
+}
+
+.collection-card .price-tag {
+  background: linear-gradient(45deg, #FFFFFF, #CCCCCC);
+  color: #000000;
+  font-family: 'Bungee', cursive;
+  font-size: 24px;
+  padding: 10px 20px;
+  margin-top: 15px;
+  text-align: center;
+  border: 4px double #000000;
+  animation: pulse-glow 0.5s infinite, blink-erratic 2s infinite;
+  transform: rotate(-3deg);
+}
+
+/* INSCRIPTION GRID */
+.inscription-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 20px;
+}
+
+.inscription-card {
+  background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+  border: 6px ridge;
+  padding: 15px;
+  position: relative;
+  text-decoration: none;
+}
+
+.inscription-card:nth-child(6n+1) { border-color: #FFFFFF; transform: rotate(-3deg); }
+.inscription-card:nth-child(6n+2) { border-color: #DDDDDD; transform: rotate(2deg); }
+.inscription-card:nth-child(6n+3) { border-color: #BBBBBB; transform: rotate(-2deg); }
+.inscription-card:nth-child(6n+4) { border-color: #999999; transform: rotate(4deg); }
+.inscription-card:nth-child(6n+5) { border-color: #777777; transform: rotate(-4deg); }
+.inscription-card:nth-child(6n+6) { border-color: #555555; transform: rotate(3deg); }
+
+.inscription-card:hover { animation: shake 1s infinite; z-index: 10; }
+
+.inscription-card .inscription-image {
+  border: 5px ridge #888888;
+  overflow: hidden;
+  position: relative;
+}
+
+.inscription-card .inscription-image img,
+.inscription-card .inscription-image iframe {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%);
+}
+
+.inscription-card:hover .inscription-image img,
+.inscription-card:hover .inscription-image iframe {
+  animation: spin 3s linear;
+}
+
+.inscription-card .inscription-info {
+  padding: 10px 0 0;
+}
+
+.inscription-card .inscription-number {
+  font-family: 'Bangers', cursive;
+  font-size: 22px;
+  color: #FFFFFF;
+  text-align: center;
+  animation: gray-cycle 2s infinite;
+}
+
+.inscription-card .inscription-price {
+  text-align: center;
+  font-family: 'Bungee', cursive;
+  font-size: 18px;
+  color: #FFFFFF;
+  background: #000000;
+  padding: 8px;
+  border: 3px double #FFFFFF;
+  animation: pulse-glow 1s infinite;
+  margin-top: 10px;
+}
+
+.inscription-card .inscription-price .sats {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* BADGE STYLES */
+.inscription-card .badge-sold,
+.inscription-card .badge-pending {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  z-index: 10;
+}
+
+.inscription-card .badge-sold {
+  background: #FFFFFF;
+  color: #000000;
+  animation: blink-fast 0.5s infinite;
+}
+
+.inscription-card .badge-pending {
+  background: #888888;
+  color: #FFFFFF;
+  animation: pulse-glow 1s infinite;
+}
+
+/* INSCRIPTION DETAIL PAGE */
+.detail-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.detail-media {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.inscription-frame {
+  background: linear-gradient(135deg, #FFFFFF, #CCCCCC, #FFFFFF, #AAAAAA, #FFFFFF);
+  border: 20px ridge #CCCCCC;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 0 0 5px #000000, 0 0 0 10px #FFFFFF, inset 0 0 50px rgba(0,0,0,0.5), 10px 10px 30px rgba(0,0,0,0.5);
+  animation: mono-flicker 2.5s infinite;
+}
+
+.inscription-frame::before {
+  content: "★ RARE ★ AUTHENTIC ★ WOW ★";
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bangers', cursive;
+  font-size: 20px;
+  color: #000000;
+  animation: gray-cycle 3s infinite;
+  white-space: nowrap;
+}
+
+.inscription-frame img,
+.inscription-frame iframe {
+  width: 100%;
+  display: block;
+  border: 5px solid #000000;
+  animation: contrast-shift 10s linear infinite;
+  filter: grayscale(100%);
+}
+
+.detail-sidebar {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+}
+
+.inscription-title {
+  font-family: 'Creepster', cursive;
+  font-size: 48px;
+  color: #FFFFFF;
+  text-shadow: 4px 4px 0 #666666, -4px -4px 0 #888888;
+  animation: gray-cycle 2s infinite, wobble 1s infinite;
+  margin-bottom: 20px;
+}
+
+.inscription-details {
+  background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+  border: 5px double #888888;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 2px dashed #666666;
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+  font-family: 'Comic Neue', cursive;
+  font-size: 16px;
+  color: #CCCCCC;
+}
+
+.detail-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #FFFFFF;
+  animation: blink-erratic 3s infinite;
+}
+
+.detail-value a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.detail-value a:hover {
+  color: #CCCCCC;
+  animation: gray-cycle 0.5s infinite;
+}
+
+/* RAINBOW DIVIDER - now grayscale */
+.rainbow-divider {
+  height: 10px;
+  background: linear-gradient(90deg, #000000, #333333, #666666, #999999, #CCCCCC, #FFFFFF, #CCCCCC, #999999, #666666, #333333, #000000);
+  margin: 20px 0;
+  animation: mono-gradient 2s linear infinite;
+  background-size: 200% 100%;
+}
+
+/* BUY BUTTON */
+.buy-button {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(45deg, #FFFFFF, #CCCCCC, #FFFFFF);
+  background-size: 200% 200%;
+  animation: mono-gradient 4s ease infinite, pulse-glow 0.5s infinite;
+  border: 8px outset #888888;
+  font-family: 'Bungee', cursive;
+  font-size: 32px;
+  color: #000000;
+  text-shadow: 2px 2px 0 #FFFFFF;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.buy-button:hover {
+  animation: shake 0.8s infinite, mono-flicker 0.3s infinite;
+  transform: scale(1.05);
+}
+
+/* PRICE DISPLAY */
+.price-display {
+  background: #000000;
+  border: 5px ridge #CCCCCC;
+  padding: 20px;
+  text-align: center;
+}
+
+.price-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #888888;
+  animation: blink-slow 1.5s infinite;
+  margin-bottom: 10px;
+}
+
+.price-amount {
+  font-family: 'Bungee', cursive;
+  font-size: 42px;
+  color: #FFFFFF;
+  text-shadow: 3px 3px 0 #666666;
+  animation: gray-cycle 2s infinite;
+}
+
+.price-amount .sats {
+  font-size: 20px;
+  color: #CCCCCC;
+}
+
+/* FEES SECTION */
+.fees-section {
+  background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+  border: 3px dashed #888888;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.fee-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-family: 'Comic Neue', cursive;
+  color: #CCCCCC;
+}
+
+.fee-row.total {
+  border-top: 2px solid #888888;
+  margin-top: 10px;
+  padding-top: 15px;
+  font-family: 'Bungee', cursive;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+/* ACTIVITY PAGE */
+.activity-title {
+  font-family: 'Bungee', cursive;
+  font-size: 48px;
+  text-align: center;
+  color: #FFFFFF;
+  text-shadow: 5px 5px 0 #000000, -5px -5px 0 #666666;
+  animation: gray-cycle 2s infinite;
+  margin-bottom: 30px;
+}
+
+.activity-ticker {
+  background: #000000;
+  border: 5px solid #FFFFFF;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.activity-ticker .ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-left 20s linear infinite;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.activity-row {
+  padding: 20px;
+  border: 5px outset;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: wobble 2s ease-in-out infinite;
+  position: relative;
+}
+
+.activity-row:nth-child(odd) { background: linear-gradient(90deg, #1a1a1a, #2a2a2a); border-color: #FFFFFF; }
+.activity-row:nth-child(even) { background: linear-gradient(90deg, #2a2a2a, #1a1a1a); border-color: #888888; }
+
+.activity-row.sold::after {
+  content: "SOLD!!!";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #FFFFFF;
+  color: #000000;
+  font-family: 'Bangers', cursive;
+  font-size: 20px;
+  padding: 5px 15px;
+  transform: rotate(15deg);
+  animation: blink-fast 0.3s infinite, pulse-glow 0.5s infinite;
+}
+
+.activity-row .item-name {
+  font-family: 'Bangers', cursive;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.activity-row .item-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.activity-row .item-price {
+  font-family: 'Bungee', cursive;
+  font-size: 16px;
+  color: #FFFFFF;
+  animation: gray-cycle 2s infinite;
+}
+
+.activity-row .status-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  margin-left: 10px;
+}
+
+.activity-row .status-badge.pending {
+  background: #888888;
+  color: #FFFFFF;
+  animation: pulse-glow 1s infinite;
+}
+
+.activity-row .status-badge.confirmed {
+  background: #FFFFFF;
+  color: #000000;
+  animation: blink-slow 1.5s infinite;
+}
+
+/* POLICY PAGE */
+.policy-title {
+  font-family: 'Creepster', cursive;
+  font-size: 48px;
+  text-align: center;
+  color: #FFFFFF;
+  text-shadow: 5px 5px 0 #666666, -5px -5px 0 #888888;
+  animation: shake 2s infinite;
+  margin-bottom: 30px;
+}
+
+.policy-container {
+  background: linear-gradient(135deg, #EEEEEE, #DDDDDD);
+  border: 15px double #333333;
+  padding: 30px;
+  position: relative;
+  transform: rotate(1deg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.policy-container::before {
+  content: "◆ OFFICIAL DOCUMENT ◆";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Bangers', cursive;
+  font-size: 24px;
+  color: #333333;
+  animation: wobble 3s infinite;
+}
+
+.policy-section {
+  margin-bottom: 30px;
+}
+
+.policy-section h3 {
+  font-family: 'Bungee', cursive;
+  font-size: 28px;
+  color: #000000;
+  border-bottom: 5px dashed #000000;
+  padding-bottom: 10px;
+  animation: blink-slow 1s infinite;
+}
+
+.policy-section p {
+  font-family: 'Comic Neue', cursive;
+  font-size: 18px;
+  color: #333333;
+  line-height: 1.8;
+}
+
+.policy-section .important {
+  background: #000000;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  font-weight: bold;
+  animation: blink-fast 1.5s infinite;
+}
+
+.policy-yaml {
+  background: #000000;
+  color: #FFFFFF;
+  padding: 20px;
+  border: 5px ridge #888888;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.wallet-address-box {
+  background: #000000;
+  border: 5px ridge #CCCCCC;
+  padding: 15px;
+  margin: 15px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wallet-address {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #FFFFFF;
+  word-break: break-all;
+}
+
+.btn-copy {
+  background: linear-gradient(45deg, #FFFFFF, #CCCCCC);
+  border: 3px outset #888888;
+  color: #000000;
+  font-family: 'Bangers', cursive;
+  padding: 8px 16px;
+  cursor: pointer;
+  animation: wobble 2s infinite;
+}
+
+.btn-copy:hover {
+  animation: shake 0.5s infinite;
+}
+
+/* WALLET POPUP */
+.wallet-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wallet-popup-overlay[data-state="closed"] {
+  display: none;
+}
+
+.wallet-popup {
+  background: linear-gradient(45deg, #FFFFFF, #CCCCCC, #999999, #CCCCCC, #FFFFFF);
+  background-size: 400% 400%;
+  animation: mono-gradient 6s ease infinite;
+  border: 15px ridge #888888;
+  padding: 30px;
+  max-width: 500px;
+  position: relative;
+  transform: rotate(-2deg);
+  box-shadow: 0 0 0 5px #FFFFFF, 0 0 0 10px #888888, 0 0 0 15px #FFFFFF, 0 0 50px #000000, 0 0 100px #333333;
+}
+
+.wallet-popup::before {
+  content: "◆◇◆◇◆◇◆◇◆◇◆";
+  position: absolute;
+  top: -40px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 24px;
+  animation: bounce 1.5s infinite;
+  color: #000000;
+}
+
+.wallet-popup::after {
+  content: "◇◆◇◆◇◆◇◆◇◆◇";
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 24px;
+  animation: bounce 1.5s infinite 0.25s;
+  color: #000000;
+}
+
+.wallet-popup-title {
+  font-family: 'Bungee', cursive;
+  font-size: 36px;
+  text-align: center;
+  color: #000000;
+  text-shadow: 4px 4px 0 #FFFFFF, -4px -4px 0 #888888, 8px 8px 0 #CCCCCC;
+  animation: shake 1.5s infinite, gray-cycle 1s infinite;
+  margin-bottom: 20px;
+}
+
+.wallet-popup-subtitle {
+  font-family: 'Comic Neue', cursive;
+  font-size: 20px;
+  text-align: center;
+  color: #FFFFFF;
+  background: #000000;
+  padding: 10px;
+  border: 3px dashed #888888;
+  animation: blink-slow 1.5s infinite;
+  margin-bottom: 20px;
+}
+
+.wallet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.wallet-option {
+  background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+  border: 5px outset;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  animation: wobble 1s ease-in-out infinite;
+  position: relative;
+}
+
+.wallet-option:nth-child(1) { border-color: #FFFFFF; }
+.wallet-option:nth-child(2) { border-color: #888888; }
+.wallet-option:nth-child(3) { border-color: #444444; }
+
+.wallet-option:hover {
+  animation: shake 0.8s infinite;
+  transform: scale(1.05);
+}
+
+.wallet-option .wallet-icon {
+  width: 40px;
+  height: 40px;
+  animation: spin 8s linear infinite;
+  filter: grayscale(100%);
+}
+
+.wallet-option .wallet-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(100%);
+}
+
+.wallet-option .wallet-name {
+  font-family: 'Bangers', cursive;
+  font-size: 28px;
+  color: #FFFFFF;
+  text-shadow: 2px 2px 0 #000000;
+}
+
+.wallet-popup-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #FFFFFF;
+  background: #333333;
+  padding: 10px;
+  border: 2px inset #666666;
+}
+
+.wallet-popup-close {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #FFFFFF;
+  border: 3px outset #888888;
+  color: #000000;
+  font-family: 'Bangers', cursive;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  animation: wobble 1s infinite;
+}
+
+/* FOOTER */
+.geo-footer {
+  background: #000000;
+  border-top: 10px ridge #CCCCCC;
+  padding: 30px;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-family: 'Comic Neue', cursive;
+  font-size: 18px;
+  color: #FFFFFF;
+  text-decoration: none;
+  animation: gray-cycle 3s infinite;
+}
+
+.footer-links a:hover {
+  animation: blink-fast 0.2s infinite;
+}
+
+.webring {
+  background: linear-gradient(90deg, #1a1a1a, #2a2a2a, #1a1a1a);
+  border: 5px ridge #888888;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.webring-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.webring-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.webring-nav a {
+  background: #000000;
+  color: #FFFFFF;
+  padding: 5px 15px;
+  border: 2px outset #FFFFFF;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.copyright {
+  font-family: 'Comic Neue', cursive;
+  font-size: 14px;
+  color: #888888;
+  margin-top: 20px;
+}
+
+.copyright .heart {
+  color: #FFFFFF;
+  animation: pulse-glow 1s infinite;
+}
+
+.copyright a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+/* HIT COUNTER */
+.hit-counter-row {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin: 10px 0;
+}
+
+.counter-digit {
+  background: #000000;
+  color: #FFFFFF;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 20px;
+  padding: 5px 8px;
+  border: 2px inset #333333;
+}
+
+/* GUESTBOOK BUTTON */
+.guestbook-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  animation: bounce 1.5s ease-in-out infinite;
+}
+
+.guestbook-button a {
+  display: block;
+  background: linear-gradient(45deg, #FFFFFF, #CCCCCC, #999999, #CCCCCC, #FFFFFF);
+  background-size: 300% 300%;
+  animation: mono-gradient 6s ease infinite;
+  padding: 20px 30px;
+  font-family: 'Bangers', cursive;
+  font-size: 24px;
+  color: #000000;
+  text-decoration: none;
+  border: 5px ridge #888888;
+  text-shadow: 3px 3px 0 #FFFFFF;
+  transform: rotate(5deg);
+}
+
+.guestbook-button a:hover {
+  animation: shake 0.8s infinite;
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* NETSCAPE BADGE */
+.netscape-badge {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #CCCCCC;
+  border: 3px outset #FFFFFF;
+  padding: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #000000;
+  text-align: center;
+  z-index: 1000;
+  animation: wobble 2s ease-in-out infinite;
+}
+
+.netscape-badge span {
+  display: block;
+  margin-top: 5px;
+  color: #333333;
+}
+
+/* BUTTON SPINNER */
+.button-spinner {
+  display: inline-flex;
+  height: 1rem;
+  width: 1rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+.button-spinner-hidden {
+  visibility: hidden;
+}
+
+/* MESSAGE BOXES */
+.message {
+  padding: 15px;
+  border: 5px outset;
+  margin: 15px 0;
+}
+
+.message-success {
+  background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+}
+
+.message-error {
+  background: linear-gradient(90deg, #2a2a2a, #1a1a1a);
+  border-color: #888888;
+  color: #FFFFFF;
+}
+
+.message-pending {
+  background: linear-gradient(90deg, #333333, #444444);
+  border-color: #CCCCCC;
+  color: #FFFFFF;
+}
+
+.message-title {
+  font-family: 'Bangers', cursive;
+  font-size: 24px;
+  animation: gray-cycle 2s infinite;
+}
+
+.message-link {
+  display: block;
+  margin-top: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #CCCCCC;
+}
+
+/* OPTIONAL PAYMENTS */
+.optional-payments {
+  background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+  border: 3px dashed #888888;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.optional-payments-label {
+  font-family: 'Bangers', cursive;
+  font-size: 20px;
+  color: #FFFFFF;
+  margin-bottom: 15px;
+  animation: blink-slow 1.5s infinite;
+}
+
+.optional-payment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  background: #000000;
+  border: 3px outset #888888;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.optional-payment:hover {
+  animation: wobble 0.5s infinite;
+}
+
+.optional-payment input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #FFFFFF;
+}
+
+.optional-payment-title {
+  font-family: 'Comic Neue', cursive;
+  font-size: 16px;
+  color: #CCCCCC;
+  flex: 1;
+}
+
+.optional-payment-amount {
+  font-family: 'Bungee', cursive;
+  font-size: 16px;
+  color: #FFFFFF;
+}
+
+.optional-payment-desc {
+  width: 100%;
+  font-family: 'Comic Neue', cursive;
+  font-size: 12px;
+  color: #666666;
+}
+
+/* SKELETON LOADING */
+.inscription-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #1a1a1a 25%, #333333 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: marquee-left 1.5s infinite;
+}
+
+/* ORDER PANEL */
+.order-panel {
+  background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+  border: 5px double #CCCCCC;
+  padding: 20px;
+}
+
+.order-status {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.order-status.pending {
+  background: #888888;
+  color: #FFFFFF;
+  animation: pulse-glow 1s infinite;
+}
+
+.order-status.confirmed {
+  background: #FFFFFF;
+  color: #000000;
+  animation: blink-slow 1.5s infinite;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .site-title { font-size: 28px; }
+  .wallet-popup { margin: 20px; padding: 15px; }
+  .geo-nav a { padding: 10px 15px; font-size: 14px; }
+  .collection-card { width: 100%; }
+  .section-title { font-size: 32px; }
+  .inscription-title { font-size: 32px; }
+  .detail-layout { flex-direction: column; }
+  .detail-media, .detail-sidebar { max-width: 100%; }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 2s !important;
+    transition-duration: 0.5s !important;
+  }
+}
