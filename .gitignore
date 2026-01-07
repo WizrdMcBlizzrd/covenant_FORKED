@@ -58,3 +58,6 @@ public/*.js
 public/*.js.map
 
 scripts/meta.json
+
+# External skill (submodule)
+.claude/skills/makeover/
