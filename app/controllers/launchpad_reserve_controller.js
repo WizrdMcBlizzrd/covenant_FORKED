@@ -21,18 +21,9 @@ export async function launchpadReserveController(c) {
   const body = await readJsonWithLimit(c.req.raw)
   const buyerOrdinalAddress = normalizeOrdinalAddress(body.buyerOrdinalAddress)
   if (!buyerOrdinalAddress) return json({ error: 'Invalid buyerOrdinalAddress' }, 400)
-  const [, turnstileSecret] = parseTurnstileCredentials(c.env.TURNSTILE_CREDENTIALS)
 
   const ip = c.req.header('cf-connecting-ip') ?? 'unknown'
-  const ipLimit = await c.env.LAUNCHPAD_IP_LIMITER.limit({
-    key: `reserve-ip:${slug}:${ip}`
-  })
-  if (!ipLimit.success) return json({ error: 'Rate limit exceeded' }, 429)
-
-  const reserveLimit = await c.env.LAUNCHPAD_ADDRESS_LIMITER.limit({
-    key: `reserve:${slug}:${buyerOrdinalAddress}`
-  })
-  if (!reserveLimit.success) return json({ error: 'Rate limit exceeded' }, 429)
+  const [, turnstileSecret] = parseTurnstileCredentials(c.env.TURNSTILE_CREDENTIALS)
 
   if (turnstileSecret) {
     const turnstileToken = body.turnstileToken
@@ -46,6 +37,16 @@ export async function launchpadReserveController(c) {
 
     if (!success) return json({ error: 'Turnstile failed' }, 403)
   }
+
+  const ipLimit = await c.env.LAUNCHPAD_IP_LIMITER.limit({
+    key: `reserve-ip:${slug}:${ip}`
+  })
+  if (!ipLimit.success) return json({ error: 'Rate limit exceeded' }, 429)
+
+  const reserveLimit = await c.env.LAUNCHPAD_ADDRESS_LIMITER.limit({
+    key: `reserve:${slug}:${buyerOrdinalAddress}`
+  })
+  if (!reserveLimit.success) return json({ error: 'Rate limit exceeded' }, 429)
 
   const id = c.env.LAUNCHPAD_RESERVATIONS.idFromName(slug)
   const durableObject = c.env.LAUNCHPAD_RESERVATIONS.get(id)
