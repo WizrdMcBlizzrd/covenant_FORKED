@@ -189,14 +189,14 @@ Both YAML files are loaded and validated in `app/config.js` at build time.
 - `SELLING_WALLET_PRIVATE_KEY` must be a hex string (32 bytes) in `.dev.vars.signing-agent` or Wrangler secrets.
 - Optional Turnstile: `TURNSTILE_CREDENTIALS=site_key:secret` in `.dev.vars.app`.
 - Test scheduled jobs at `http://localhost:8787/__scheduled` (port may change if 8787 is busy).
-- Launchpad UI templates exist only in the `zine` theme (`launchpad.html`, `launchpad_sales.html`, `launchpad_progress.html`). Other themes do not support launchpad pages.
+- Launchpad UI templates exist in every theme (`launchpad.html`, `launchpad_sales.html`, `launchpad_progress.html`) and are theme-specific.
 - `generated/` and `public/` are build outputs; do not edit directly.
 
 ## Common Tasks
 
 **Add a standard collection**: Edit `config/policy.yml` under `selling`, rebuild (predev) to pick up YAML changes.
 
-**Add a launchpad collection**: Add `launchpad` block (with `seller_address`) and entry under `launchpad.collections`, including `lowest_inscription_utxo_size`. Ensure theme is `zine`.
+**Add a launchpad collection**: Add `launchpad` block (with `seller_address`) and entry under `launchpad.collections`, including `lowest_inscription_utxo_size`.
 
 **Change theme**: Update `config/store.yml` `theme`, ensure matching theme folder and CSS file, then run `npm run predev` (or `build:css` + `build:manifest` + `build:templates`).
 
