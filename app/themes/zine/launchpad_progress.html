@@ -1,8 +1,7 @@
 <turbo-frame id="launchpad-progress">
-  <% const isGallery = Boolean(collection.gallery_inscription_id) %>
-  <% const totalWorks = parentInscription ? (isGallery ? parentInscription.galleryCount : parentInscription.childCount) : supply.total %>
-  <% const mintedCount = Math.max(0, totalWorks - supply.available) %>
-  <% const mintedPercent = totalWorks > 0 ? Math.round((mintedCount / totalWorks) * 100) : 0 %>
+  <% const totalWorks = supply.total %>
+  <% const mintedCount = supply.minted %>
+  <% const mintedPercent = supply.progress %>
 
   <div class="progress-section" data-testid="progress-section" style="margin-bottom: 1.25rem; border: 3px solid var(--color-primary); background: var(--color-surface); padding: 1rem;">
     <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--color-muted);">

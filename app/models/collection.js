@@ -2,7 +2,6 @@ import { CONFIG, POLICY } from '../config.js'
 import { Inscription } from './inscription.js'
 import {
   countCollectionAvailable,
-  countCollectionTotal,
   ensureInscriptionMetadata,
   getAvailableInscriptionMetadata,
   getInscriptionMetadata,
@@ -48,10 +47,6 @@ export class Collection {
 
   get isLaunchpad() {
     return this.#isLaunchpad
-  }
-
-  async totalSupply({ db }) {
-    return await countCollectionTotal({ db, collectionSlug: this.slug })
   }
 
   async soldCount({ db }) {

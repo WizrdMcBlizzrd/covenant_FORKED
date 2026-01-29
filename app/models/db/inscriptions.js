@@ -130,13 +130,22 @@ export async function countCollectionAvailable({ db, collectionSlug }) {
   return Number(row.count)
 }
 
-export async function countCollectionTotal({ db, collectionSlug }) {
-  const result = await withD1Retry(() =>
-    db.prepare('SELECT COUNT(*) as count FROM collection_inscriptions WHERE collection_slug = ?1')
+export async function countAvailableInscriptions({ db, collectionSlug }) {
+  const row = await withD1Retry(() =>
+    db
+      .prepare(
+        `SELECT COUNT(*) as count
+         FROM collection_inscriptions ci
+         LEFT JOIN orders o ON ci.inscription_id = o.inscription_id
+           AND o.status IN ('pending', 'confirmed')
+         WHERE ci.collection_slug = ?1
+           AND o.id IS NULL`
+      )
       .bind(collectionSlug)
       .first()
   )
-  return result?.count ?? 0
+
+  return Number(row?.count ?? 0)
 }
 
 export async function listCollectionAvailablePage({ db, collectionSlug, limit, offset }) {

@@ -2,6 +2,7 @@ import { CONFIG } from '../config.js'
 import { renderHome } from '../helpers/home.js'
 import { htmlResponse } from './html_response.js'
 import { Collection } from '../models/collection.js'
+import { countAvailableInscriptions } from '../models/db/inscriptions.js'
 
 export async function homeController(c) {
   const db = c.env.DB
@@ -11,7 +12,7 @@ export async function homeController(c) {
   for (const collectionPolicy of Collection.listPolicies()) {
     const collection = Collection.lookup(collectionPolicy.slug)
     const thumbnail = await collection.metadataInscription({ db })
-    const availableCount = await collection.availableCount({ db })
+    const availableCount = await countAvailableInscriptions({ db, collectionSlug: collection.slug })
 
     collections.push({
       slug: collection.slug,

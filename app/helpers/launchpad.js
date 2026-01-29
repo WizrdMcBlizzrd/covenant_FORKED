@@ -1,26 +1,46 @@
 import { renderPage, renderView } from '../themes/theme.js'
 import { assets } from '../../generated/assets.js'
 
-function buildLaunchpadSupply({ totalSupply, soldCount, pendingCount = 0 }) {
-  const availableCount = Math.max(0, totalSupply - soldCount)
-  const pendingSafe = Math.max(0, pendingCount)
-  const mintableCount = Math.max(0, totalSupply - soldCount - pendingSafe)
-  const progress = totalSupply > 0 ? Math.round((soldCount / totalSupply) * 100) : 0
-  const isSoldOut = availableCount <= 0
+function resolveLaunchpadTotal({ collection, parentInscription }) {
+  if (collection.gallery_inscription_id) {
+    return parentInscription?.galleryCount ?? 0
+  }
+
+  if (collection.parent_inscription_id) {
+    return parentInscription?.childCount ?? 0
+  }
+
+  if (Array.isArray(collection.inscription_ids)) {
+    return collection.inscription_ids.length
+  }
+
+  return 0
+}
+
+function buildLaunchpadSupply({ collection, parentInscription, availableCount, pendingCount = 0 }) {
+  const total = resolveLaunchpadTotal({ collection, parentInscription })
+
+  const available = availableCount ?? 0
+  const pendingSafe = pendingCount ?? 0
+  const unavailable = total - available
+
+  const progress = total > 0 ? Math.round((unavailable / total) * 100) : 0
+  const isSoldOut = available <= 0
 
   return {
-    total: totalSupply,
-    sold: soldCount,
+    total,
     pending: pendingSafe,
-    available: availableCount,
-    mintable: mintableCount,
+    available,
+    unavailable,
+    minted: unavailable,
+    mintable: available,
     progress,
     isSoldOut,
-    hasMintable: mintableCount > 0
+    hasMintable: available > 0
   }
 }
 
-export function renderLaunchpad({ config, launchpad, collection, parentInscription, recentSales, totalSupply, soldCount, pendingCount }) {
+export function renderLaunchpad({ config, launchpad, collection, parentInscription, recentSales, availableCount, pendingCount }) {
   return renderPage({
     viewName: 'launchpad.html',
     vars: {
@@ -31,7 +51,7 @@ export function renderLaunchpad({ config, launchpad, collection, parentInscripti
       collection: collection.policy,
       parentInscription,
       recentSales,
-      supply: buildLaunchpadSupply({ totalSupply, soldCount, pendingCount })
+      supply: buildLaunchpadSupply({ collection: collection.policy, parentInscription, availableCount, pendingCount })
     }
   })
 }
@@ -45,13 +65,13 @@ export function renderLaunchpadSales({ recentSales }) {
   })
 }
 
-export function renderLaunchpadProgress({ collection, parentInscription, totalSupply, soldCount, pendingCount }) {
+export function renderLaunchpadProgress({ collection, parentInscription, availableCount, pendingCount }) {
   return renderView({
     viewName: 'launchpad_progress.html',
     vars: {
       collection: collection.policy,
       parentInscription,
-      supply: buildLaunchpadSupply({ totalSupply, soldCount, pendingCount })
+      supply: buildLaunchpadSupply({ collection: collection.policy, parentInscription, availableCount, pendingCount })
     }
   })
 }

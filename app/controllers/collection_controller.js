@@ -4,6 +4,7 @@ import { renderCollection } from '../helpers/collection.js'
 import { renderLaunchpad } from '../helpers/launchpad.js'
 import { htmlResponse } from './html_response.js'
 import { countPendingByCollection, getActiveOrdersForInscriptions, listOrdersByCollection } from '../models/db/orders.js'
+import { countAvailableInscriptions } from '../models/db/inscriptions.js'
 import { parseTurnstileCredentials } from '../utils/turnstile.js'
 import { LAUNCHPAD_CACHE_TTL_SECONDS } from '../utils/launchpad_cache.js'
 
@@ -47,11 +48,10 @@ async function launchpadHandler(c, { collection, db }) {
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
-  const [parentInscription, recentSales, totalSupply, soldCount, pendingCount] = await Promise.all([
+  const [parentInscription, recentSales, availableCount, pendingCount] = await Promise.all([
     collection.parentInscription({ db }),
     listOrdersByCollection({ db, collectionSlug: collection.slug, limit: 10 }),
-    collection.totalSupply({ db }),
-    collection.soldCount({ db }),
+    countAvailableInscriptions({ db, collectionSlug: collection.slug }),
     countPendingByCollection({ db, collectionSlug: collection.slug })
   ])
   const [turnstileSiteKey] = parseTurnstileCredentials(c.env.TURNSTILE_CREDENTIALS)
@@ -62,8 +62,7 @@ async function launchpadHandler(c, { collection, db }) {
     launchpad: { ...POLICY.launchpad, refresh_ms: LAUNCHPAD_FRAME_REFRESH_MS, turnstile_site_key: turnstileSiteKey },
     parentInscription,
     recentSales,
-    totalSupply,
-    soldCount,
+    availableCount,
     pendingCount
   })
 
