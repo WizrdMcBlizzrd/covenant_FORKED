@@ -157,13 +157,15 @@ export default class extends Controller {
       this.#hideError()
 
       const { networkFees, satsRequired } = this.#determineFeesAndUTXOs()
+      const inscriptionPaddingSats = Number(this.#inscriptionMetadata?.value ?? this.lowestInscriptionUtxoSizeValue)
+      const totalSatsRequired = satsRequired - inscriptionPaddingSats
 
       this.feeRateTarget.textContent = `${this.#networkFeeRate} sat/vB`
       this.feeTarget.textContent = formatSats(networkFees)
-      this.totalTarget.textContent = formatSats(satsRequired)
+      this.totalTarget.textContent = formatSats(totalSatsRequired)
 
       const totalUsd = this.element.querySelector('[data-usd-role="total"]')
-      if (totalUsd) totalUsd.setAttribute('data-usd-sats', String(satsRequired))
+      if (totalUsd) totalUsd.setAttribute('data-usd-sats', String(totalSatsRequired))
 
       return true
     } catch (error) {
@@ -302,10 +304,9 @@ export default class extends Controller {
     let networkFees = Math.ceil(txSize * this.#networkFeeRate)
     let totalAvailableSats = BigInt(0)
 
-    const lowestInscriptionUtxoSize = Number(this.lowestInscriptionUtxoSizeValue)
-    const additionalPaddingSats = this.#inscriptionMetadata
-      ? Math.max(0, lowestInscriptionUtxoSize - Number(this.#inscriptionMetadata.value))
-      : lowestInscriptionUtxoSize
+    const estimatedPostage = this.#inscriptionMetadata?.value ?? this.lowestInscriptionUtxoSizeValue
+    const additionalPaddingSats = Math.max(0, 330 - estimatedPostage)
+
     const optionalPaymentsSats = optionalPayments.reduce((sum, payment) => sum + payment.amount, 0)
     const baseRequiredSats = this.priceValue + additionalPaddingSats + optionalPaymentsSats
 
