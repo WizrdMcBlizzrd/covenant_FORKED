@@ -2,6 +2,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+const DEFAULT_TIMEOUT_MS = 10000
+
 export async function fetchJSON(url, options = {}, retries = 2) {
   let attempt = 0
   let lastError
@@ -20,7 +22,11 @@ export async function fetchJSON(url, options = {}, retries = 2) {
 
   while (attempt <= retries) {
     try {
-      const response = await fetch(url, { ...options, headers })
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: AbortSignal.timeout(DEFAULT_TIMEOUT_MS)
+      })
 
       if (!response.ok) {
         const text = await response.text()
