@@ -123,7 +123,7 @@ export async function setCollectionAvailableIds({ db, collectionSlug, availableI
   )
 }
 
-export async function countCollectionAvailable({ db, collectionSlug }) {
+export async function countCollectionInventory({ db, collectionSlug }) {
   const row = await withD1Retry(() =>
     db.prepare('SELECT COUNT(1) as count FROM collection_inscriptions WHERE collection_slug = ?1').bind(collectionSlug).first()
   )

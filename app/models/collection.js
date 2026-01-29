@@ -1,7 +1,7 @@
 import { CONFIG, POLICY } from '../config.js'
 import { Inscription } from './inscription.js'
 import {
-  countCollectionAvailable,
+  countCollectionInventory,
   ensureInscriptionMetadata,
   getAvailableInscriptionMetadata,
   getInscriptionMetadata,
@@ -76,8 +76,8 @@ export class Collection {
     return this.metadataInscription({ db })
   }
 
-  async availableCount({ db }) {
-    return await countCollectionAvailable({ db, collectionSlug: this.slug })
+  async inventoryCount({ db }) {
+    return await countCollectionInventory({ db, collectionSlug: this.slug })
   }
 
   async listAvailablePage({ db, page }) {
@@ -88,7 +88,7 @@ export class Collection {
     const metas = await listCollectionAvailablePage({ db, collectionSlug: this.slug, limit: CONFIG.page_size, offset })
     const inscriptions = metas.map((metadata) => new Inscription({ metadata }))
 
-    const totalCount = await this.availableCount({ db })
+    const totalCount = await this.inventoryCount({ db })
     const totalPages = Math.max(1, Math.ceil(totalCount / CONFIG.page_size))
     const nextPage = pageSafe < totalPages ? String(pageSafe + 1) : null
     const prevPage = pageSafe > 1 ? String(pageSafe - 1) : null
