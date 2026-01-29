@@ -1137,6 +1137,23 @@ body {
   margin: 20px 0;
 }
 
+.theme-dossier .launchpad-preview {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.theme-dossier .launchpad-preview .inscription-inner {
+  width: 100%;
+  height: 100%;
+}
+
+.theme-dossier .launchpad-progress {
+  margin-bottom: 0;
+}
+
 .theme-dossier .inscription-preview::after {
   content: 'EXHIBIT A';
   position: absolute;
@@ -1378,6 +1395,26 @@ body {
 /* Fees Section */
 .theme-dossier .fees-section {
   margin: 20px 0;
+}
+
+.theme-dossier .fees-section .field-value {
+  text-align: right;
+}
+
+.theme-dossier .usd-total .field-label {
+  padding-top: 0;
+  color: transparent;
+}
+
+.theme-dossier .usd-total .field-value {
+  border-bottom: none;
+  color: var(--color-muted);
+  text-align: right;
+}
+
+.theme-dossier .field-row.no-divider .field-value {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 /* SPECS PANEL */

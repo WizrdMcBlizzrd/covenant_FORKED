@@ -47,7 +47,7 @@
           <h2 class="detail-title" data-testid="page-title"><%= title %></h2>
 
           <div class="detail-inscription-id" data-testid="detail-id">
-            <a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link"><%= inscription.id %></a>
+            <a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link" title="<%= inscription.id %>"><%= shortHash(inscription.id) %></a>
           </div>
 
           <!-- Properties -->
@@ -88,7 +88,7 @@
                 <span class="detail-property-label">PARENTS</span>
                 <span class="detail-property-value" data-testid="detail-parents-list">
                   <% inscription.parents.forEach((parentId) => { %>
-                    <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block; font-size: 0.75rem;"><%= parentId.substring(0, 16) %>...</a>
+                    <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block; font-size: 0.75rem;"><%= shortHash(parentId) %></a>
                   <% }) %>
                 </span>
               </div>

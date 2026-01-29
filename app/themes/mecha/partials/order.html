@@ -28,7 +28,7 @@
     <div class="price-row">
       <span class="label">TX</span>
       <span class="value">
-        <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" style="color: var(--color-accent); font-size: 0.65rem;"><%= order.txid.substring(0, 12) %>...</a>
+        <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" style="color: var(--color-accent); font-size: 0.65rem;" title="<%= order.txid %>"><%= shortHash(order.txid) %></a>
       </span>
     </div>
   </div>

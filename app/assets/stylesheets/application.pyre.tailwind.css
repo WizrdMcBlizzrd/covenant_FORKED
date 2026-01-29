@@ -887,6 +887,28 @@
   margin-bottom: 1rem;
 }
 
+.theme-pyre .detail-meta {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-smoke);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+
+.theme-pyre .detail-meta + .detail-meta {
+  margin-top: 0.5rem;
+}
+
+.theme-pyre .detail-link {
+  color: var(--color-flame-red);
+  text-decoration: none;
+}
+
+.theme-pyre .detail-link:hover {
+  color: var(--color-bone);
+}
+
 .theme-pyre .detail-inscription-id {
   font-family: var(--font-body);
   font-size: 0.625rem;
@@ -949,6 +971,45 @@
 
 .theme-pyre .detail-property-value a:hover {
   color: var(--color-flame-red);
+}
+
+/* ===== LAUNCHPAD PROGRESS ===== */
+.theme-pyre .launchpad-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-smoke);
+}
+
+.theme-pyre .launchpad-progress-header,
+.theme-pyre .launchpad-progress-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.theme-pyre .launchpad-progress-header span:last-child,
+.theme-pyre .launchpad-progress-footer strong {
+  color: var(--color-bone);
+  font-weight: 600;
+}
+
+.theme-pyre .launchpad-progress-bar {
+  height: 6px;
+  background: #140b0b;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+.theme-pyre .launchpad-progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-flame-red);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
 }
 
 /* ===== DETAIL PRICE BLOCK ===== */
@@ -1041,6 +1102,19 @@
 
 .theme-pyre .fee-row.total .value {
   color: var(--color-flame-red);
+}
+
+.theme-pyre .fee-row.usd {
+  padding-top: 0;
+  font-size: 0.7rem;
+}
+
+.theme-pyre .fee-row.usd .label {
+  visibility: hidden;
+}
+
+.theme-pyre .fee-row.usd .value {
+  color: var(--color-smoke);
 }
 
 /* ===== OPTIONAL PAYMENTS ===== */

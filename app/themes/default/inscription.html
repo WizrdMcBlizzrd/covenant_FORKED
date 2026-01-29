@@ -104,7 +104,7 @@
           <div data-testid="detail-id">
             <dt class="text-[11px] font-semibold tracking-wide text-white/45">ID</dt>
             <dd class="mt-1">
-              <a class="block truncate font-mono text-xs text-content no-underline hover:text-white" href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link"><%= inscription.id %></a>
+              <a class="block truncate font-mono text-xs text-content no-underline hover:text-white" href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link" title="<%= inscription.id %>"><%= shortHash(inscription.id) %></a>
             </dd>
           </div>
           <div data-testid="detail-number">
@@ -134,7 +134,7 @@
               <dt class="text-[11px] font-semibold tracking-wide text-white/45">Parents</dt>
               <dd class="mt-1 space-y-1" data-testid="detail-parents-list">
                 <% inscription.parents.forEach((parentId) => { %>
-                  <a class="block truncate font-mono text-xs text-content no-underline hover:text-white" href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link"><%= parentId %></a>
+                  <a class="block truncate font-mono text-xs text-content no-underline hover:text-white" href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link"><%= shortHash(parentId) %></a>
                 <% }) %>
               </dd>
             </div>

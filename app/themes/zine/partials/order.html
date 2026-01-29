@@ -27,7 +27,7 @@
     <div class="metadata-item" style="border-bottom: none;">
       <span class="metadata-label">Transaction</span>
       <span class="metadata-value">
-        <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener"><%= order.txid.substring(0, 20) %>...</a>
+        <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" title="<%= order.txid %>"><%= shortHash(order.txid) %></a>
       </span>
     </div>
   </div>

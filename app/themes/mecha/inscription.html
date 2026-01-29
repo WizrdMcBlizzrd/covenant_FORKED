@@ -94,12 +94,12 @@
           <div class="overlay-label">Inscribed</div>
           <div class="overlay-value" data-testid="detail-inscribed-value"><%= inscribedHuman %></div>
         </div>
-        <% if (inscription.parents.length > 0) { %>
+            <% if (inscription.parents.length > 0) { %>
           <div style="margin-top: 0.75rem;" data-testid="detail-parents">
             <div class="overlay-label">Parents</div>
             <div class="overlay-value" data-testid="detail-parents-list" style="font-size: 0.7rem;">
               <% inscription.parents.forEach((parentId) => { %>
-                <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block; color: var(--color-accent); text-decoration: none;"><%= parentId.substring(0, 16) %>...</a>
+                <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block; color: var(--color-accent); text-decoration: none;"><%= shortHash(parentId) %></a>
               <% }) %>
             </div>
           </div>

@@ -15,7 +15,7 @@
   </a>
   <div class="sale-info">
     <div class="sale-id" data-testid="sale-inscription">
-      <%= sale.inscription_id.substring(0, 12) %>...
+      <%= shortHash(sale.inscription_id) %>
     </div>
     <div class="sale-price" data-testid="sale-price">
       <%= formatSats(sale.price_sats) %>

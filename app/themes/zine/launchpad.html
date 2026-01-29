@@ -12,12 +12,9 @@
 >
   <% const isGallery = Boolean(collection.gallery_inscription_id) %>
   <% const bannerId = collection.gallery_inscription_id ?? collection.parent_inscription_id ?? (collection.inscription_ids ?? [])[0] %>
-  <% const totalWorks = supply.total %>
-  <% const mintedCount = supply.minted %>
-  <% const mintedPercent = supply.progress %>
 
   <div class="collection-header" data-testid="launchpad-header">
-    <h1 class="collection-title"><%= collection.title %></h1>
+    <h1 class="collection-title" data-testid="launchpad-title"><%= collection.title %></h1>
     <p style="opacity: 0.8; margin-bottom: 1rem;">
       <% if (isGallery) { %>
         Gallery collection with on-chain provenance.
@@ -45,25 +42,36 @@
   </div>
 
   <div class="detail-layout">
-    <div class="detail-media">
-      <div class="media-frame" data-label="COLLECTION" data-testid="mint-thumb" data-controller="image">
-        <div class="media-image">
-          <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #d0d0d0, #e8e8e8, #d0d0d0);" data-image-target="skeleton"></div>
+    <div class="detail-media" data-testid="launchpad-media" data-controller="image">
+      <div class="media-frame" data-label="Preview">
+        <div style="position: absolute; inset: 0; background: linear-gradient(45deg, #e0e0e0, #f0f0f0);" data-image-target="skeleton"></div>
+        <% if (parentInscription && parentInscription.isImage) { %>
           <img
             src="https://ordinals.com/content/<%= encodeURIComponent(bannerId) %>"
-            alt=""
+            alt="<%= collection.title %>"
             loading="eager"
             decoding="async"
             style="image-rendering: pixelated"
             class="opacity-0 transition-opacity duration-300"
             data-image-target="img"
             data-action="load->image#loaded error->image#error"
+            data-testid="launchpad-media-img"
           />
-        </div>
+        <% } else { %>
+          <iframe
+            src="https://ordinals.com/preview/<%= encodeURIComponent(bannerId) %>"
+            class="pointer-events-none opacity-0 transition-opacity duration-300"
+            loading="eager"
+            allow="accelerometer; gyroscope"
+            data-image-target="media"
+            data-action="load->image#loaded error->image#error"
+            data-testid="launchpad-media-iframe"
+          ></iframe>
+        <% } %>
       </div>
     </div>
 
-    <div class="detail-info">
+    <div>
       <turbo-frame
         id="launchpad-progress"
         src="/launchpad/<%= encodeURIComponent(collection.slug) %>/progress"
@@ -195,6 +203,7 @@
     loading="lazy"
     refresh="morph"
     target="_top"
+    style="display: block; margin-top: 2rem;"
     data-controller="frame-refresh"
     data-frame-refresh-interval-value="<%= launchpad.refresh_ms %>"
   ></turbo-frame>
@@ -203,58 +212,3 @@
 <% if (launchpad.turnstile_site_key) { %>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <% } %>
-
-<style>
-.sale-row {
-  display: grid;
-  grid-template-columns: 50px 1fr auto;
-  gap: 1rem;
-  align-items: center;
-  padding: 0.75rem;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.sale-row:hover {
-  transform: translateX(2px);
-  border-color: var(--color-accent);
-}
-
-.sale-thumb {
-  width: 50px;
-  height: 50px;
-  border: 2px solid var(--color-primary);
-  background: var(--color-surface);
-  overflow: hidden;
-}
-
-.sale-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  image-rendering: pixelated;
-}
-
-.sale-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.sale-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.sale-meta {
-  font-size: 0.75rem;
-  color: var(--color-muted);
-}
-
-.sale-price {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--color-accent);
-}
-</style>

@@ -6,6 +6,14 @@ function formatSats(amount) {
   return `${btc.Decimal.encode(BigInt(amount))} BTC`
 }
 
+function shortHash(value, head = 8, tail = 6) {
+  if (!value) return ''
+  const str = String(value)
+  const limit = head + tail + 2
+  if (str.length <= limit) return str
+  return `${str.slice(0, head)}…${str.slice(-tail)}`
+}
+
 function currentTheme() {
   return themes[CONFIG.theme] ?? themes.default
 }
@@ -27,7 +35,7 @@ export function renderPage({ viewName, vars }) {
   if (!layout) throw new Error('Missing layout.html')
   if (!view) throw new Error(`Missing view: ${viewName}`)
 
-  const viewVars = { ...vars, CONFIG, formatSats }
+  const viewVars = { ...vars, CONFIG, formatSats, shortHash }
   const include = makeInclude({ theme, baseVars: viewVars })
   const body = view({ ...viewVars, include })
   return layout({ ...viewVars, body, include })
@@ -38,7 +46,7 @@ export function renderView({ viewName, vars }) {
   const view = theme[viewName]
   if (!view) throw new Error(`Missing view: ${viewName}`)
 
-  const viewVars = { ...vars, CONFIG, formatSats }
+  const viewVars = { ...vars, CONFIG, formatSats, shortHash }
   const include = makeInclude({ theme, baseVars: viewVars })
   return view({ ...viewVars, include })
 }
@@ -47,5 +55,5 @@ export function renderCard({ vars }) {
   const theme = currentTheme()
   const card = theme['partials/inscription-card.html']
   if (!card) throw new Error('Missing partials/inscription-card.html')
-  return card({ ...vars, CONFIG, formatSats })
+  return card({ ...vars, CONFIG, formatSats, shortHash })
 }

@@ -1,0 +1,33 @@
+<turbo-frame id="launchpad-progress" class="window">
+  <% const totalWorks = supply.total %>
+  <% const mintedCount = supply.minted %>
+  <% const mintedPercent = supply.progress %>
+
+  <div class="window-titlebar">
+    <div class="window-title">
+      <div class="window-title-icon"></div>
+      Supply Status
+    </div>
+    <div class="window-controls">
+      <button class="window-btn">_</button>
+      <button class="window-btn">□</button>
+      <button class="window-btn">×</button>
+    </div>
+  </div>
+  <div class="window-content">
+    <div style="display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 14px; color: rgba(255,255,255,0.8);">
+      <span>Supply</span>
+      <span style="color: var(--color-mint);"><%= totalWorks %></span>
+    </div>
+    <div style="margin-top: 12px;">
+      <span style="display: inline-block; width: 100%; height: 6px; background: #1d2330; border: 1px solid #3a3f4b;">
+        <span style="display: block; height: 100%; width: <%= mintedPercent %>%; background: #7dd3fc;"></span>
+      </span>
+    </div>
+    <div style="margin-top: 12px; display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 12px; color: rgba(255,255,255,0.7);">
+      <span>Minted <strong style="color: var(--color-mint);"><%= mintedCount %></strong></span>
+      <span>Pending <strong style="color: var(--color-mint);"><%= supply.pending %></strong></span>
+      <span>Available <strong style="color: var(--color-mint);"><%= supply.available %></strong></span>
+    </div>
+  </div>
+</turbo-frame>

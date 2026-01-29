@@ -84,7 +84,7 @@
             <table class="properties-table">
               <tr data-testid="detail-id">
                 <td>ID:</td>
-                <td><a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link"><%= inscription.id.substring(0, 16) %>...i0</a></td>
+                <td><a href="https://ordinals.com/inscription/<%= encodeURIComponent(inscription.id) %>" target="_blank" rel="noopener" data-testid="detail-id-link" title="<%= inscription.id %>"><%= shortHash(inscription.id) %></a></td>
               </tr>
               <tr data-testid="detail-number">
                 <td>Number:</td>
@@ -118,7 +118,7 @@
                   <td>Parents:</td>
                   <td data-testid="detail-parents-list">
                     <% inscription.parents.forEach((parentId) => { %>
-                      <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block;"><%= parentId.substring(0, 16) %>...</a>
+                      <a href="https://ordinals.com/inscription/<%= encodeURIComponent(parentId) %>" target="_blank" rel="noopener" title="<%= parentId %>" data-testid="detail-parent-link" style="display: block;"><%= shortHash(parentId) %></a>
                     <% }) %>
                   </td>
                 </tr>

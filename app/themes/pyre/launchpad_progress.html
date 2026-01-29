@@ -1,0 +1,22 @@
+<turbo-frame id="launchpad-progress">
+  <% const totalWorks = supply.total %>
+  <% const mintedCount = supply.minted %>
+  <% const mintedPercent = supply.progress %>
+
+  <div class="detail-card" data-testid="progress-section">
+    <div class="launchpad-progress">
+      <div class="launchpad-progress-header">
+        <span>Supply</span>
+        <span><%= totalWorks %></span>
+      </div>
+      <div class="launchpad-progress-bar">
+        <span class="launchpad-progress-fill" style="width: <%= mintedPercent %>%;"></span>
+      </div>
+      <div class="launchpad-progress-footer">
+        <span>Minted <strong><%= mintedCount %></strong></span>
+        <span>Pending <strong><%= supply.pending %></strong></span>
+        <span>Available <strong><%= supply.available %></strong></span>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

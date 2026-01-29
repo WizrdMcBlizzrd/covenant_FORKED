@@ -1,7 +1,7 @@
 <tr data-testid="inscription-card" data-inscription-id="<%= inscription.id %>">
   <td>
-    <a href="/<%= encodeURIComponent(collection.slug) %>/<%= encodeURIComponent(inscription.id) %>">
-      <%= inscription.id.substring(0, 12) %>...
+    <a href="/<%= encodeURIComponent(collection.slug) %>/<%= encodeURIComponent(inscription.id) %>" title="<%= inscription.id %>">
+      <%= shortHash(inscription.id) %>
     </a>
   </td>
   <td data-testid="inscription-title"><%= inscription.title %></td>

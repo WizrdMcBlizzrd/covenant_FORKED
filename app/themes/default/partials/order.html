@@ -20,7 +20,7 @@
     <div>
       <dt class="text-[11px] font-semibold tracking-wide text-white/45">Transaction</dt>
       <dd class="mt-1">
-        <a class="block font-mono text-xs text-orange-500 no-underline hover:text-orange-400 break-all" target="_blank" rel="noopener" href="https://mempool.space/tx/<%= order.txid %>"><%= order.txid %></a>
+        <a class="block font-mono text-xs text-orange-500 no-underline hover:text-orange-400 break-all" target="_blank" rel="noopener" href="https://mempool.space/tx/<%= order.txid %>" title="<%= order.txid %>"><%= shortHash(order.txid) %></a>
       </dd>
     </div>
     <% if (order.created_at) { %>
@@ -49,4 +49,3 @@
     </div>
   <% } %>
 </div>
-

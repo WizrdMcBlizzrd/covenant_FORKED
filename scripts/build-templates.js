@@ -11,6 +11,7 @@ const destructuredLocals = [
   'assets',
   'CONFIG',
   'formatSats',
+  'shortHash',
   'include',
   'config',
   'storefront',

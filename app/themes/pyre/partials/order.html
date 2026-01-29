@@ -32,7 +32,7 @@
       <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(64, 64, 64, 0.3); font-size: 0.875rem;">
         <span style="color: #737373;">TX</span>
         <span style="color: #e5e5e5;">
-          <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" style="color: #dc2626; text-decoration: none;"><%= order.txid.substring(0, 16) %>...</a>
+          <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" style="color: #dc2626; text-decoration: none;" title="<%= order.txid %>"><%= shortHash(order.txid) %></a>
         </span>
       </div>
     </div>

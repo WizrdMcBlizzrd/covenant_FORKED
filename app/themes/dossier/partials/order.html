@@ -28,7 +28,7 @@
       <div class="spec-row">
         <span class="spec-label">Transaction</span>
         <span class="spec-value">
-          <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener"><%= order.txid.substring(0, 16) %>...</a>
+          <a href="https://mempool.space/tx/<%= order.txid %>" target="_blank" rel="noopener" title="<%= order.txid %>"><%= shortHash(order.txid) %></a>
         </span>
       </div>
     </div>

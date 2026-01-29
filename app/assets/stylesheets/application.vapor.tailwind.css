@@ -518,6 +518,16 @@
   margin-bottom: 15px;
 }
 
+.theme-vapor .collection-header-link {
+  font-family: var(--font-display);
+  color: var(--color-cyan);
+  text-decoration: none;
+}
+
+.theme-vapor .collection-header-link:hover {
+  text-decoration: underline;
+}
+
 .theme-vapor .collection-header-stats {
   display: flex;
   gap: 20px;
@@ -890,6 +900,18 @@
   border-top: 1px solid rgba(255,255,255,0.2);
   margin-top: 8px;
   padding-top: 12px;
+  padding-bottom: 6px;
+}
+
+.theme-vapor .fee-row.usd .label {
+  visibility: hidden;
+}
+
+.theme-vapor .fee-row.usd .value {
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-family: var(--font-display);
+  text-align: right;
 }
 
 /* Optional payments */
