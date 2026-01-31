@@ -18,7 +18,7 @@ function json(data, status = 200) {
   })
 }
 
-const RESERVATION_TIMEOUT_MS = 30 * 1000
+const RESERVATION_TIMEOUT_MS = 10 * 1000
 const RESERVATION_HISTORY_WINDOW_MS = 5 * 60 * 1000
 const RESERVATION_CACHE_TTL_MS = 2000
 

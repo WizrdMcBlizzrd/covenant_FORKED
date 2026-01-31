@@ -209,7 +209,7 @@ Both YAML files are loaded and validated in `app/config.js` at build time.
 - Buyer ordinal addresses are normalized via `normalizeOrdinalAddress` before rate limiting and reservation/mint flow.
 - Turnstile reserve gate (optional) uses `TURNSTILE_CREDENTIALS=site_key:secret` and `app/utils/turnstile.js`.
 - Launchpad uses Turbo frames to refresh `/launchpad/:slug/progress` and `/launchpad/:slug/sales` every 5s.
-- Reservation TTL is 30s (see `RESERVATION_TIMEOUT_MS` in `app/workers/launchpad/worker.js`).
+- Reservation TTL is 10s (see `RESERVATION_TIMEOUT_MS` in `app/workers/launchpad/worker.js`).
 - Launchpad page and fragments use `caches.default`.
 - Minting is allowed even if a reservation has technically expired; the DO only checks that a reservation row exists for the inscription and buyer.
 - Reservation allocation prefers inscriptions that have never been reserved; only falls back to previously reserved ones if needed.

@@ -109,7 +109,7 @@ Covenant already includes:
 |------------|----------|
 | Per-IP rate limit (launchpad) | `LAUNCHPAD_IP_LIMITER` in wrangler.toml |
 | Per-address rate limit | `LAUNCHPAD_ADDRESS_LIMITER` in wrangler.toml |
-| 30s reservation TTL | `RESERVATION_TIMEOUT_MS` in worker.js |
+| 10s reservation TTL | `RESERVATION_TIMEOUT_MS` in worker.js |
 | Single reservation per buyer | ReservationStore |
 | Double-sell prevention | D1 unique index |
 | Mempool tx validation | SigningAgentWorker |
