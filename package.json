@@ -28,6 +28,7 @@
   "devDependencies": {
     "@tailwindcss/cli": "*",
     "chokidar-cli": "^3.0.0",
+    "dotenv": "^17.2.3",
     "ejs": "*",
     "esbuild": "*",
     "tailwindcss": "*",

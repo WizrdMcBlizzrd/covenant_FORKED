@@ -4,6 +4,7 @@ import { RpcErrorCode } from "sats-connect"
 
 import { formatSats, requestSignPsbt } from '../utils/index.js'
 import { Mempool } from '../../../models/mempool.js'
+import { SPAM_LINES } from '../spam.js'
 
 const BASE_TX_SIZE = 10.5
 const PADDING = 546n
@@ -47,6 +48,8 @@ export default class extends Controller {
     this.txid = null
 
     if (this.hasTurnstileTarget) this.#attachTurnstileCallbacks()
+
+    this.#prefillSpam()
     this.#updateSpamValidity()
 
     if (Wallet.connected && Wallet.provider === 'unisat') {
@@ -527,5 +530,12 @@ export default class extends Controller {
 
   #buildOpReturnScript() {
     return btc.Script.encode(["RETURN", this.#opReturnBytes])
+  }
+
+  #prefillSpam() {
+    if (!this.hasSpamInputTarget) return
+
+    if (SPAM_LINES.length === 0) return
+    this.spamInputTarget.value = SPAM_LINES[Math.floor(Math.random() * SPAM_LINES.length)]
   }
 }
