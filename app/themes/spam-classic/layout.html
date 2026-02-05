@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= assets.css %>" />
+    <script type="module" src="<%= assets.js %>"></script>
+  </head>
+  <body
+    data-controller="store body-class usd"
+    data-action="wallet:connected@window->body-class#setConnected wallet:disconnected@window->body-class#setDisconnected"
+    class="min-h-screen bg-spam-green font-body text-spam-navy antialiased"
+  >
+    <!-- Header -->
+    <header class="bg-spam-navy px-6 py-4" data-testid="topbar">
+      <div class="mx-auto max-w-5xl flex items-center justify-between gap-4">
+        <a href="/" class="block" data-testid="home-link">
+          <img src="/spam-logo.png" alt="SPAM" class="h-16 w-auto" />
+        </a>
+
+        <div class="flex items-center gap-3" data-testid="header-right">
+          <div data-controller="wallet" data-testid="connect-slot" data-action="keydown.esc@window->wallet#close mouseup@document->wallet#closeIfClickedOutside">
+            <!-- Wallet Modal -->
+            <div
+              data-wallet-target="selector"
+              class="fixed inset-0 z-[10000] hidden items-center justify-center data-[state=open]:flex"
+              data-state="closed"
+            >
+              <div class="absolute inset-0 bg-spam-navy/70 cursor-pointer" data-action="click->wallet#close"></div>
+              <div class="relative z-10 w-full max-w-[360px] mx-4 bg-spam-bone rounded-2xl border-4 border-spam-navy shadow-can overflow-hidden">
+                <div class="flex items-center justify-between p-4 bg-spam-yellow border-b-4 border-spam-navy">
+                  <span class="font-display text-xl text-spam-navy">Connect wallet</span>
+                  <button class="w-8 h-8 rounded-full bg-spam-green text-spam-bone font-display text-lg hover:bg-spam-green-dark transition-colors flex items-center justify-center" type="button" aria-label="Close" data-action="wallet#close">&times;</button>
+                </div>
+                <div class="p-6 space-y-4">
+                  <button class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer" data-wallet-target="xverse" data-action="wallet#authorize:prevent" data-wallet-provider-param="xverse">
+                    <img src="/wallets/xverse.png" class="h-6 w-6" alt="" />
+                    <span class="font-display text-lg text-spam-navy">Xverse</span>
+                  </button>
+                  <button class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer" data-wallet-target="unisat" data-action="wallet#authorize:prevent" data-wallet-provider-param="unisat">
+                    <img src="/wallets/unisat.png" class="h-6 w-6" alt="" />
+                    <span class="font-display text-lg text-spam-navy">Unisat</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="hide-on-connected">
+              <button class="btn-spam bg-spam-yellow text-spam-navy shadow-yellow text-sm py-2 px-4" data-action="wallet#select">Connect</button>
+            </div>
+
+            <div class="show-on-connected">
+              <div class="relative inline-flex" data-controller="dropdown" data-action="mouseup@window->dropdown#hide">
+                <button class="btn-spam bg-spam-green text-spam-bone text-sm py-2 px-4" data-action="dropdown#toggle">
+                  <span data-wallet-target="addressPreview"></span>
+                </button>
+                <div class="absolute right-0 top-full z-50 mt-2 hidden w-48 bg-spam-bone border-3 border-spam-navy rounded-lg overflow-hidden shadow-can" data-dropdown-target="menu">
+                  <a class="block px-4 py-3 font-display text-sm text-red-600 hover:bg-spam-cream" href="#" data-action="wallet#logout:prevent dropdown#toggle">Disconnect</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mx-auto max-w-5xl px-5 py-8" data-store-target="main">
+      <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-spam-navy px-6 py-4" data-testid="footer">
+      <div class="mx-auto max-w-5xl flex flex-wrap items-center justify-between gap-4">
+        <span class="font-body text-sm text-spam-bone">
+          Powered by <a class="text-spam-yellow hover:text-spam-bone" href="https://github.com/lifofifoX/covenant" target="_blank" rel="noopener" data-testid="footer-blizzard">Covenant</a>
+        </span>
+        <div class="flex items-center gap-4" data-testid="social">
+          <a class="font-body text-sm text-spam-bone hover:text-spam-yellow" href="/activity" data-testid="nav-activity">Activity</a>
+          <% if (CONFIG.artist_socials_website_url) { %>
+            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.artist_socials_website_url %>" target="_blank" rel="noopener" data-testid="social-website">🌐</a>
+          <% } %>
+          <% if (CONFIG.artist_socials_x_url) { %>
+            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.artist_socials_x_url %>" target="_blank" rel="noopener" data-testid="social-x">𝕏</a>
+          <% } %>
+          <% if (CONFIG.artist_socials_github_url) { %>
+            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.artist_socials_github_url %>" target="_blank" rel="noopener" data-testid="social-github">🐙</a>
+          <% } %>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

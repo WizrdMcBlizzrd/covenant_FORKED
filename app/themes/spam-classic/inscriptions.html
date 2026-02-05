@@ -1,0 +1,112 @@
+<section class="pb-6" data-testid="inscriptions-page">
+  <h2 class="sr-only" data-testid="page-title">Store</h2>
+
+  <div>
+    <% if (collection.parent_inscription_id || collection.gallery_inscription_id) { %>
+      <% const isGallery = Boolean(collection.gallery_inscription_id) %>
+      <% const bannerId = isGallery ? collection.gallery_inscription_id : collection.parent_inscription_id %>
+      <div class="yellow-banner mb-6" data-testid="parent-banner">
+        <div class="flex items-stretch">
+          <a
+            class="block w-24 shrink-0 overflow-hidden border-r-3 border-spam-navy bg-spam-cream"
+            href="/<%= encodeURIComponent(collection.slug) %>"
+            data-testid="parent-thumb-link"
+          >
+            <img
+              src="https://ordinals.com/content/<%= encodeURIComponent(bannerId) %>"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              style="image-rendering: pixelated"
+              class="block h-full w-full object-cover"
+              data-testid="parent-thumb"
+            />
+          </a>
+          <div class="min-w-0 px-5 py-4" data-testid="parent-meta">
+            <div class="flex min-w-0 items-center justify-between gap-4" data-testid="parent-title-row">
+              <a
+                class="min-w-0 truncate font-display text-lg text-spam-navy hover:text-spam-green"
+                href="/<%= encodeURIComponent(collection.slug) %>"
+                data-testid="parent-collection-link"
+              ><%= collection.title %></a>
+              <a
+                class="shrink-0 inline-flex items-center gap-2 bg-spam-bone px-2 py-1 rounded border-2 border-spam-navy font-body text-xs text-spam-navy hover:bg-spam-cream"
+                href="https://ordinals.com/inscription/<%= encodeURIComponent(bannerId) %>"
+                target="_blank"
+                rel="noopener"
+                data-testid="parent-ordinals-number-link"
+              ><span>#<%= parentInscription.number %></span><span aria-hidden="true">◉</span></a>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2 font-body text-xs" data-testid="parent-info">
+              <% if (isGallery) { %>
+                <span class="inline-flex items-center gap-2 rounded-full border-2 border-spam-navy bg-spam-yellow px-2 py-1 text-spam-navy" data-testid="parent-children">
+                  <span aria-hidden="true">🖼️</span>
+                  <span class="font-display"><%= new Intl.NumberFormat('en-US').format(parentInscription.galleryCount) %></span>
+                </span>
+              <% } else { %>
+                <span class="inline-flex items-center gap-2 rounded-full border-2 border-spam-navy bg-spam-green px-2 py-1 text-spam-bone" data-testid="parent-children" title="On-chain parent child provenance">
+                  <span aria-hidden="true">🧬</span>
+                  <span class="font-display"><%= new Intl.NumberFormat('en-US').format(parentInscription.childCount) %></span>
+                </span>
+                <% if (parentInscription.isSealed) { %>
+                  <span class="inline-flex items-center gap-2 rounded-full border-2 border-spam-navy bg-red-500 px-2 py-1 text-white font-display" data-testid="parent-sealed" title="The parent inscription owner cannot create more children"><span aria-hidden="true">🔥</span><span class="uppercase tracking-wide text-xs">Sealed</span></span>
+                <% } else { %>
+                  <span class="inline-flex items-center gap-2 rounded-full border-2 border-spam-navy bg-spam-green-light px-2 py-1 text-spam-bone font-display" data-testid="parent-unsealed" title="The parent inscription owner can create more children"><span aria-hidden="true">🔓</span><span class="uppercase tracking-wide text-xs">Unsealed</span></span>
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <% if ((collection.itemsCount ?? 0) === 0) { %>
+      <div class="bg-spam-bone rounded-xl border-4 border-spam-navy p-12 text-center" data-testid="empty-state">
+        <div class="text-5xl mb-4">🥫</div>
+        <div class="font-display text-xl text-spam-navy" data-testid="empty-title">No inscriptions available</div>
+      </div>
+    <% } else { %>
+    <div data-testid="grid" class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+        <%- collection.itemsHtml %>
+    </div>
+    <% } %>
+
+    <% if ((collection.itemsCount ?? 0) > 0 && (pagination.totalPages ?? 1) > 1) { %>
+    <div class="mt-8 flex items-center justify-between gap-3" data-testid="pagination">
+      <a
+        class="btn-spam bg-spam-bone text-spam-navy text-sm py-2 px-4 <%= pagination.hasPrev ? '' : 'invisible' %>"
+        href="<%= pagination.prevUrl %>"
+        data-testid="prev-page"
+        data-action="click->store#paginate"
+      >Prev</a>
+      <div class="flex flex-wrap items-center justify-center gap-2" data-testid="page-links">
+        <% if ((pagination.pages ?? []).length > 0) { %>
+            <% pagination.pages.forEach((pageLink) => { %>
+              <% if (pageLink.type === 'gap') { %>
+              <span class="px-2 py-2 font-display text-sm text-spam-green-dark" aria-hidden="true">…</span>
+            <% } else { %>
+              <a
+                  class="<%= pageLink.isActive ? 'btn-spam bg-spam-yellow text-spam-navy text-sm py-2 px-4' : 'btn-spam bg-spam-bone text-spam-navy text-sm py-2 px-4' %>"
+                  href="<%= pageLink.url %>"
+                data-testid="page-link"
+                  data-page="<%= pageLink.n %>"
+                data-action="click->store#paginate"
+                ><%= pageLink.n %></a>
+            <% } %>
+          <% }) %>
+        <% } else { %>
+            <div class="flex items-center gap-2 bg-spam-bone border-3 border-spam-navy rounded-lg px-3 py-2 font-body text-xs text-spam-navy" data-testid="page-pill">
+            <strong class="font-display">Page</strong>
+              <span data-store-target="page"><%= pagination.page %></span>
+          </div>
+        <% } %>
+      </div>
+      <a
+        class="btn-spam bg-spam-yellow text-spam-navy text-sm py-2 px-4 <%= pagination.hasNext ? '' : 'invisible' %>"
+        href="<%= pagination.nextUrl %>"
+        data-testid="next-page"
+        data-action="click->store#paginate"
+      >Next</a>
+    </div>
+    <% } %>
+  </div>
+</section>

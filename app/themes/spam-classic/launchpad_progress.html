@@ -1,0 +1,23 @@
+<turbo-frame id="launchpad-progress">
+  <div class="yellow-banner p-4 mb-6" data-testid="progress-section">
+    <span class="font-display text-sm tracking-widest uppercase block mb-3 text-spam-navy">Total Cans</span>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="stat-box px-4 py-2 text-center mx-4">
+        <span class="font-display text-xs block text-spam-green">Supply</span>
+        <span class="font-display text-2xl text-spam-navy"><%= supply.total %></span>
+      </div>
+      <div class="stat-box px-4 py-2 text-center mx-4">
+        <span class="font-display text-xs block text-spam-green">Minted</span>
+        <span class="font-display text-2xl text-spam-navy"><%= supply.minted %></span>
+      </div>
+      <div class="stat-box px-4 py-2 text-center mx-4">
+        <span class="font-display text-xs block text-spam-green">Pending</span>
+        <span class="font-display text-2xl text-spam-navy"><%= supply.pending %></span>
+      </div>
+      <div class="stat-box px-4 py-2 text-center mx-4">
+        <span class="font-display text-xs block text-spam-green">Available</span>
+        <span class="font-display text-2xl text-spam-navy"><%= supply.available %></span>
+      </div>
+    </div>
+  </div>
+</turbo-frame>

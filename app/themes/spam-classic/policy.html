@@ -1,0 +1,18 @@
+<section class="pb-6" data-testid="policy-page">
+  <div class="bg-spam-bone rounded-xl border-4 border-spam-navy p-6" data-testid="policy-card">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div class="font-display text-2xl text-spam-navy" data-testid="policy-title">Policy</div>
+      <a
+        class="truncate font-body text-xs text-spam-green underline hover:text-spam-green-dark"
+        href="https://ordinals.com/address/<%= walletAddress %>"
+        target="_blank"
+        rel="noopener"
+        data-testid="wallet-address-link"
+      ><%= walletAddress %></a>
+    </div>
+
+    <div class="mt-4" data-testid="policy-yaml">
+      <pre class="overflow-x-auto bg-spam-cream border-3 border-spam-navy rounded-lg px-4 py-4 font-body text-xs text-spam-navy" data-testid="policy-pre"><%= policyYaml %></pre>
+    </div>
+  </div>
+</section>

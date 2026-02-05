@@ -1,0 +1,59 @@
+<a
+  class="spam-can block"
+  href="/<%= encodeURIComponent(collection.slug) %>/<%= encodeURIComponent(inscription.id) %>"
+  data-testid="inscription-card"
+  data-inscription-id="<%= inscription.id %>"
+>
+  <div class="p-4 pb-2" data-controller="image">
+    <div class="relative aspect-square <%= (order && (order.status === 'pending' || order.status === 'confirmed')) ? 'opacity-60 grayscale' : '' %>">
+      <div class="absolute inset-0 bg-spam-bone-dark rounded animate-pulse" data-image-target="skeleton"></div>
+      <% if (order && order.status === 'pending') { %>
+        <div class="absolute inset-0 flex items-center justify-center bg-spam-navy/20 rounded">
+          <span class="button-spinner text-spam-yellow"></span>
+        </div>
+      <% } %>
+      <% if (order && order.status === 'confirmed') { %>
+        <div class="absolute inset-0 flex items-center justify-center bg-spam-navy/10 rounded">
+          <span class="font-display text-sm text-spam-bone">SOLD</span>
+        </div>
+      <% } %>
+      <% if (inscription.isImage) { %>
+      <img
+        src="<%= inscription.contentUrl %>"
+        alt="<%= inscription.title %>"
+        loading="lazy"
+        decoding="async"
+        style="image-rendering: pixelated"
+        class="w-full h-full object-cover rounded border-2 border-spam-navy opacity-0 transition-opacity duration-300"
+        data-image-target="img"
+        data-action="load->image#loaded error->image#error"
+        data-testid="inscription-thumb"
+      />
+      <% } else { %>
+        <iframe
+          src="<%= inscription.previewUrl %>"
+          class="w-full h-full rounded border-2 border-spam-navy pointer-events-none opacity-0 transition-opacity duration-300"
+          loading="lazy"
+          allow="accelerometer; gyroscope"
+          data-image-target="media"
+          data-action="load->image#loaded error->image#error"
+          data-testid="inscription-thumb"
+        ></iframe>
+      <% } %>
+    </div>
+  </div>
+  <div class="p-4">
+    <div class="flex items-center justify-between gap-2" data-testid="inscription-title">
+      <span class="font-display text-lg text-spam-bone truncate"><%= inscription.title %></span>
+      <div class="shrink-0 flex items-center gap-2">
+        <% if (order && order.status === 'pending') { %>
+          <span class="button-spinner text-spam-yellow"></span>
+        <% } %>
+        <% if (order && order.status === 'confirmed') { %>
+          <span class="font-display text-xs text-spam-bone">SOLD</span>
+        <% } %>
+      </div>
+    </div>
+    <div class="mt-2 font-display text-base text-spam-yellow" data-testid="inscription-price"><%= formatSats(collection.price_sats) %></div>
+  </div>
+</a>

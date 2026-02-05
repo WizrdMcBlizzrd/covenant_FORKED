@@ -1,0 +1,68 @@
+<section class="pb-6" data-testid="activity-page">
+  <div class="mb-6">
+    <h1 class="font-display text-3xl text-spam-bone" data-testid="page-title">Activity</h1>
+  </div>
+
+  <% if ((orders ?? []).length === 0) { %>
+    <div class="bg-spam-bone rounded-xl border-4 border-spam-navy p-12 text-center" data-testid="empty-state">
+      <div class="text-5xl mb-4">🥫</div>
+      <div class="font-display text-xl text-spam-navy">No activity yet</div>
+    </div>
+  <% } else { %>
+    <div class="bg-spam-bone rounded-xl border-4 border-spam-navy overflow-hidden" data-testid="orders">
+      <% orders.forEach((o, index) => { %>
+        <% const isLast = index === orders.length - 1 %>
+        <% const activityLabel = o.status === 'confirmed' ? 'Confirmed' : (o.status === 'pending' ? 'Pending' : o.status) %>
+        <% const statusClass = o.status === 'pending' ? 'bg-spam-yellow text-spam-navy' : (o.status === 'confirmed' ? 'bg-spam-green text-spam-bone' : 'bg-spam-bone-dark text-spam-navy') %>
+        <% const createdHuman = o.created_at ? new Date(o.created_at * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) : '' %>
+        <div class="flex items-center gap-4 p-4 <%= isLast ? '' : 'border-b-2 border-spam-navy' %> hover:bg-spam-cream transition-colors" data-testid="order-row">
+          <a class="block shrink-0" href="/<%= encodeURIComponent(o.collection_slug) %>/<%= encodeURIComponent(o.inscription_id) %>" data-testid="order-thumb-link">
+            <div class="relative w-16 h-16 overflow-hidden rounded-lg border-2 border-spam-navy bg-spam-cream <%= (o.status === 'pending' || o.status === 'confirmed') ? 'opacity-60 grayscale' : '' %>" data-controller="image" data-testid="order-thumb">
+              <div class="absolute inset-0 animate-pulse bg-spam-bone-dark" data-image-target="skeleton"></div>
+              <% if (o.status === 'pending') { %>
+                <div class="absolute inset-0 flex items-center justify-center bg-spam-navy/20">
+                  <span class="button-spinner text-spam-yellow"></span>
+                </div>
+              <% } %>
+              <% if (o.status === 'confirmed') { %>
+                <div class="absolute inset-0 flex items-center justify-center bg-spam-navy/10">
+                  <span class="font-display text-xs text-spam-green">SOLD</span>
+                </div>
+              <% } %>
+              <iframe
+                src="https://ordinals.com/preview/<%= encodeURIComponent(o.inscription_id) %>"
+                allow="accelerometer; gyroscope"
+                class="block h-full w-full border-0 pointer-events-none opacity-0 transition-opacity duration-300"
+                loading="lazy"
+                data-image-target="media"
+                data-action="load->image#loaded error->image#error"
+                data-testid="order-thumb-media"
+              ></iframe>
+            </div>
+          </a>
+
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <a class="font-body text-sm text-spam-navy hover:text-spam-green transition-colors font-bold truncate" href="/<%= encodeURIComponent(o.collection_slug) %>/<%= encodeURIComponent(o.inscription_id) %>" data-testid="order-inscription-link" title="<%= o.inscription_id %>"><%= shortHash(o.inscription_id) %></a>
+              <span class="inline-block font-display text-xs px-2 py-1 rounded <%= statusClass %>" data-testid="order-status"><%= activityLabel %></span>
+            </div>
+
+            <div class="flex items-center gap-4 mt-1 text-sm" data-testid="order-meta">
+              <span class="font-body text-spam-green-dark" data-testid="order-collection"><%= o.collection_slug %></span>
+              <% if (o.price_sats) { %>
+                <span class="font-display text-spam-navy" data-testid="order-price"><%= formatSats(o.price_sats) %></span>
+              <% } %>
+              <% if (createdHuman) { %>
+                <span class="font-body text-spam-green-dark" data-testid="order-created"><%= createdHuman %></span>
+              <% } %>
+            </div>
+          </div>
+
+          <% if (o.txid) { %>
+            <a class="font-body text-xs text-spam-green hover:text-spam-navy transition-colors underline shrink-0" href="https://mempool.space/tx/<%= encodeURIComponent(o.txid) %>" target="_blank" rel="noopener" data-testid="order-tx-link" title="<%= o.txid %>">tx →</a>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</section>

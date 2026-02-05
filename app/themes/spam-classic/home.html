@@ -1,0 +1,97 @@
+<section class="pb-6" data-testid="home-page">
+  <!-- Bio Section -->
+  <div class="flex flex-col lg:flex-row gap-6 mb-8" data-testid="about">
+    <div class="spam-can p-2 flex-shrink-0">
+      <% if (CONFIG.artist_avatar_url) { %>
+        <img src="<%= CONFIG.artist_avatar_url %>" alt="<%= CONFIG.artist_name %>" class="w-28 h-28 rounded-lg border-2 border-spam-navy object-cover" />
+      <% } else { %>
+        <div class="w-28 h-28 rounded-lg border-2 border-spam-navy bg-spam-navy text-spam-yellow flex items-center justify-center font-display text-3xl">
+          <%= CONFIG.artist_name.substring(0, 2).toUpperCase() %>
+        </div>
+      <% } %>
+    </div>
+    <div class="flex-1 bg-spam-bone rounded-xl border-4 border-spam-navy p-6">
+      <h1 class="font-display text-2xl text-spam-navy mb-3"><%= CONFIG.artist_name %></h1>
+      <% if (artist.about) { %>
+        <p class="font-body text-base leading-relaxed text-spam-navy mb-4" data-testid="artist-about"><%= artist.about %></p>
+      <% } %>
+      <% if (artist.socials.websiteUrl || artist.socials.xUrl || artist.socials.githubUrl) { %>
+        <div class="flex gap-4" data-testid="artist-social">
+          <% if (artist.socials.websiteUrl) { %>
+            <a href="<%= artist.socials.websiteUrl %>" target="_blank" rel="noopener" class="text-xl text-spam-green hover:text-spam-navy transition-colors" data-testid="artist-social-website">🌐</a>
+          <% } %>
+          <% if (artist.socials.xUrl) { %>
+            <a href="<%= artist.socials.xUrl %>" target="_blank" rel="noopener" class="text-xl text-spam-green hover:text-spam-navy transition-colors" data-testid="artist-social-x">𝕏</a>
+          <% } %>
+          <% if (artist.socials.githubUrl) { %>
+            <a href="<%= artist.socials.githubUrl %>" target="_blank" rel="noopener" class="text-xl text-spam-green hover:text-spam-navy transition-colors" data-testid="artist-social-github">🐙</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Collections -->
+  <h2 class="font-display text-3xl text-spam-navy mb-6" data-testid="collections-title">Collections</h2>
+
+  <% if ((collections ?? []).length === 0) { %>
+    <div class="bg-spam-bone rounded-xl border-4 border-spam-navy p-12 text-center" data-testid="empty-state">
+      <div class="text-5xl mb-4">🥫</div>
+      <p class="font-display text-xl text-spam-navy">No collections deployed yet</p>
+    </div>
+  <% } else { %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="collections-grid">
+      <% (collections ?? []).forEach((collection) => { %>
+        <a
+          class="spam-can block"
+          href="/<%= encodeURIComponent(collection.slug) %>"
+          data-testid="collection-card"
+          data-collection-slug="<%= collection.slug %>"
+        >
+          <div class="p-4 pb-2" data-controller="image">
+            <div class="relative aspect-square">
+              <div class="absolute inset-0 bg-spam-bone-dark rounded animate-pulse" data-image-target="skeleton"></div>
+              <% if (collection.thumbnail.isImage) { %>
+                <img
+                  src="<%= collection.thumbnail.contentUrl %>"
+                  alt="<%= collection.title %>"
+                  loading="lazy"
+                  decoding="async"
+                  style="image-rendering: pixelated"
+                  class="w-full h-full object-cover rounded border-2 border-spam-navy opacity-0 transition-opacity duration-300"
+                  data-image-target="img"
+                  data-action="load->image#loaded error->image#error"
+                  data-testid="collection-thumb"
+                />
+              <% } else { %>
+                <iframe
+                  src="<%= collection.thumbnail.previewUrl %>"
+                  class="w-full h-full rounded border-2 border-spam-navy pointer-events-none opacity-0 transition-opacity duration-300"
+                  loading="lazy"
+                  allow="accelerometer; gyroscope"
+                  data-image-target="media"
+                  data-action="load->image#loaded error->image#error"
+                  data-testid="collection-thumb"
+                ></iframe>
+              <% } %>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-2" data-testid="collection-title">
+              <span class="font-display text-lg text-spam-bone truncate"><%= collection.title %></span>
+              <% if (collection.hasGallery) { %>
+                <span class="flex-shrink-0 bg-spam-navy text-spam-bone font-body text-[10px] px-2 py-1 rounded" data-testid="collection-gallery-icon">🖼️ Gallery</span>
+              <% } else if (collection.hasParent) { %>
+                <span class="flex-shrink-0 bg-spam-navy text-spam-bone font-body text-[10px] px-2 py-1 rounded" data-testid="collection-parent-icon">🧬 Parent</span>
+              <% } %>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-display text-base text-spam-yellow" data-testid="collection-price"><%= formatSats(collection.priceSats) %></span>
+              <span class="font-body text-sm text-spam-bone" data-testid="collection-available">◉ <%= collection.availableCount %></span>
+            </div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
