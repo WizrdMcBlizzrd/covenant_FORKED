@@ -18,54 +18,91 @@
     <!-- Header -->
     <header class="bg-spam-navy px-6 py-4" data-testid="topbar">
       <div class="mx-auto max-w-5xl flex items-center justify-between gap-4">
-        <a href="/" class="block" data-testid="home-link">
-          <img src="/spam-logo.png" alt="SPAM" class="h-16 w-auto" />
-        </a>
+        <div class="flex items-center gap-3">
+          <% if (CONFIG.header_loop_gif_url) { %>
+            <img
+              src="<%= CONFIG.header_loop_gif_url %>"
+              alt="Header animation"
+              class="h-14 w-14 md:h-16 md:w-16 rounded object-cover shrink-0"
+            />
+          <% } %>
+          <a href="/" class="block" data-testid="home-link">
+            <img
+              src="<%= CONFIG.brand_logo_url || '/spam-logo.png' %>"
+              alt="<%= CONFIG.artist_name %>"
+              class="h-20 md:h-28 lg:h-32 w-auto object-contain shrink-0"
+            />
+          </a>
+        </div>
 
         <div class="flex items-center gap-3" data-testid="header-right">
-          <div data-controller="wallet" data-testid="connect-slot" data-action="keydown.esc@window->wallet#close mouseup@document->wallet#closeIfClickedOutside">
+          <div
+            data-controller="wallet"
+            data-testid="connect-slot"
+            data-action="keydown.esc@window->wallet#close mouseup@document->wallet#closeIfClickedOutside"
+            class="relative"
+          >
+            <!-- Always-visible Connect button (opens modal via JS below) -->
+            <button
+              type="button"
+              id="wallet-open"
+              class="rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
+              data-testid="connect-wallet-button"
+            >
+              Connect wallet
+            </button>
+
             <!-- Wallet Modal -->
             <div
               data-wallet-target="selector"
+              id="wallet-modal"
               class="fixed inset-0 z-[10000] hidden items-center justify-center data-[state=open]:flex"
               data-state="closed"
             >
-              <div class="absolute inset-0 bg-spam-navy/70 cursor-pointer" data-action="click->wallet#close"></div>
+              <div
+                class="absolute inset-0 bg-spam-navy/70 cursor-pointer"
+                data-wallet-close="1"
+              ></div>
+
               <div class="relative z-10 w-full max-w-[360px] mx-4 bg-spam-bone rounded-2xl border-4 border-spam-navy shadow-can overflow-hidden">
                 <div class="flex items-center justify-between p-4 bg-spam-yellow border-b-4 border-spam-navy">
                   <span class="font-display text-xl text-spam-navy">Connect wallet</span>
-                  <button class="w-8 h-8 rounded-full bg-spam-green text-spam-bone font-display text-lg hover:bg-spam-green-dark transition-colors flex items-center justify-center" type="button" aria-label="Close" data-action="wallet#close">&times;</button>
+                  <button
+                    class="w-8 h-8 rounded-full bg-spam-green text-spam-bone font-display text-lg hover:bg-spam-green-dark transition-colors flex items-center justify-center"
+                    type="button"
+                    aria-label="Close"
+                    data-wallet-close="1"
+                  >
+                    &times;
+                  </button>
                 </div>
+
                 <div class="p-6 space-y-4">
-                  <button class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer" data-wallet-target="xverse" data-action="wallet#authorize:prevent" data-wallet-provider-param="xverse">
+                  <button
+                    class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer"
+                    data-wallet-target="xverse"
+                    data-action="wallet#authorize:prevent"
+                    data-wallet-provider-param="xverse"
+                  >
                     <img src="/wallets/xverse.png" class="h-6 w-6" alt="" />
                     <span class="font-display text-lg text-spam-navy">Xverse</span>
                   </button>
-                  <button class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer" data-wallet-target="unisat" data-action="wallet#authorize:prevent" data-wallet-provider-param="unisat">
+
+                  <button
+                    class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer"
+                    data-wallet-target="unisat"
+                    data-action="wallet#authorize:prevent"
+                    data-wallet-provider-param="unisat"
+                  >
                     <img src="/wallets/unisat.png" class="h-6 w-6" alt="" />
                     <span class="font-display text-lg text-spam-navy">Unisat</span>
                   </button>
                 </div>
               </div>
             </div>
-
-            <div class="hide-on-connected">
-              <button class="btn-spam bg-spam-yellow text-spam-navy shadow-yellow text-sm py-2 px-4" data-action="wallet#select">Connect</button>
-            </div>
-
-            <div class="show-on-connected">
-              <div class="relative inline-flex" data-controller="dropdown" data-action="mouseup@window->dropdown#hide">
-                <button class="btn-spam bg-spam-green text-spam-bone text-sm py-2 px-4" data-action="dropdown#toggle">
-                  <span data-wallet-target="addressPreview"></span>
-                </button>
-                <div class="absolute right-0 top-full z-50 mt-2 hidden w-48 bg-spam-bone border-3 border-spam-navy rounded-lg overflow-hidden shadow-can" data-dropdown-target="menu">
-                  <a class="block px-4 py-3 font-display text-sm text-red-600 hover:bg-spam-cream" href="#" data-action="wallet#logout:prevent dropdown#toggle">Disconnect</a>
-                </div>
-              </div>
-            </div>
+            <!-- /Wallet Modal -->
           </div>
-
-          </div>
+        </div>
       </div>
     </header>
 
@@ -78,21 +115,59 @@
     <footer class="bg-spam-navy px-6 py-4" data-testid="footer">
       <div class="mx-auto max-w-5xl flex flex-wrap items-center justify-between gap-4">
         <span class="font-body text-sm text-spam-bone">
-          Powered by <a class="text-spam-yellow hover:text-spam-bone" href="https://github.com/lifofifoX/covenant" target="_blank" rel="noopener" data-testid="footer-blizzard">Covenant</a>
+          Powered by
+          <a
+            class="text-spam-yellow hover:text-spam-bone"
+            href="https://github.com/lifofifoX/covenant"
+            target="_blank"
+            rel="noopener"
+            data-testid="footer-blizzard"
+            >Covenant</a
+          >
         </span>
+
         <div class="flex items-center gap-4" data-testid="social">
           <a class="font-body text-sm text-spam-bone hover:text-spam-yellow" href="/activity" data-testid="nav-activity">Activity</a>
-          <% if (CONFIG.artist_socials_website_url) { %>
-            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.artist_socials_website_url %>" target="_blank" rel="noopener" data-testid="social-website">🌐</a>
+          <% if (CONFIG.social_website_url) { %>
+            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.social_website_url %>" target="_blank" rel="noopener" data-testid="social-website">🌐</a>
           <% } %>
-          <% if (CONFIG.artist_socials_x_url) { %>
-            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.artist_socials_x_url %>" target="_blank" rel="noopener" data-testid="social-x">𝕏</a>
+          <% if (CONFIG.social_x_url) { %>
+            <a class="text-black text-lg" href="<%= CONFIG.social_x_url %>" target="_blank" rel="noopener" data-testid="social-x">𝕏</a>
           <% } %>
-          <% if (CONFIG.artist_socials_github_url) { %>
-            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.artist_socials_github_url %>" target="_blank" rel="noopener" data-testid="social-github">🐙</a>
+          <% if (CONFIG.social_github_url) { %>
+            <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.social_github_url %>" target="_blank" rel="noopener" data-testid="social-github">🐙</a>
           <% } %>
         </div>
       </div>
     </footer>
+
+    <!-- JS modal toggler (because wallet#open isn't a thing in your controller) -->
+    <script>
+      (function () {
+        const openBtn = document.getElementById("wallet-open");
+        const modal = document.getElementById("wallet-modal");
+        if (!openBtn || !modal) return;
+
+        function openModal() {
+          modal.dataset.state = "open";
+        }
+
+        function closeModal() {
+          modal.dataset.state = "closed";
+        }
+
+        openBtn.addEventListener("click", openModal);
+
+        // Close on backdrop + X
+        modal.querySelectorAll("[data-wallet-close]").forEach((el) => {
+          el.addEventListener("click", closeModal);
+        });
+
+        // Close on ESC
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeModal();
+        });
+      })();
+    </script>
   </body>
 </html>

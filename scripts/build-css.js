@@ -7,7 +7,7 @@ const root = process.cwd()
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { stdio: 'inherit' })
+    const child = spawn(cmd, args, { stdio: 'inherit', shell: process.platform === 'win32' })
     child.on('error', reject)
     child.on('exit', (code) => {
       if (code === 0) resolve()

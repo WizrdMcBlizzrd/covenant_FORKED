@@ -1,33 +1,12 @@
 launchpad:
-  seller_address: bc1pyqz80xg3mchfxa5va4d0kwzzpc52jx63ljw4hjw33s7w97p6x58qucrxy6
+  seller_address: bc1pjah4k87jt6ze3clazx9u6k3v0npwkrrjc5wpcyx8jl48npjgc2mqarpk6s
   collections:
     - slug: spellbound
-      title: SPELLBOUND
-      parent_inscription_id: 451accbce30177c23a8cd42ab85131312a449359ada3c054aa147b054136fa3bi0
-      price_sats: 1111
+      title: Bitcoin Knotzis
+      parent_inscription_id: 1949dcdc265f64791e98900107e420ea7d26722db650692961243d84b0516b90i0
+      price_sats: 2500
       lowest_inscription_utxo_size: 330
-      payment_address: bc1qhyqkrnru2agaxf36acg3rdzmjtd2fr8nqt6duh
+      payment_address: bc1qf6c0t4dnsnzu8h0da87y4eeyye2qnk0jqhl2hc
       op_return: true
 
-selling:
-  - slug: random
-    title: Random Wizards
-    price_sats: 500000
-    payment_address: bc1qhyqkrnru2agaxf36acg3rdzmjtd2fr8nqt6duh
-    inscription_ids:
-      - 508411e486223bbd9e0e1b47c8f15ba4751ba02c37facaafb1de655627f454cci0
-      - 0170e1cdd8993da19d791fd1378841a6e981e7754108a069cc943b0e41a36958i0
-  - slug: nakamoto-archives
-    title: NAKAMOTO ARCHIVES
-    gallery_inscription_id: 83683a0a2e91beb6d37953df5a768028b987d5006fab1237931f6e30b344aebci0
-    price_sats: 5000000
-    payment_address: bc1qhyqkrnru2agaxf36acg3rdzmjtd2fr8nqt6duh
-    optional_payments:
-      - title: Ordinals Open Institute
-        description: Support open-source development of the Ordinals protocol
-        amount: 2222
-        address: bc1qguzk63exy7h5uygg8m2tcenca094a8t464jfyvrmr0s6wkt74wls3zr5m3
-      - title: Happy meal for lifo's kids
-        description: We need to keep the kids happy
-        amount: 2222
-        address: bc1qhyqkrnru2agaxf36acg3rdzmjtd2fr8nqt6duh
+selling: []

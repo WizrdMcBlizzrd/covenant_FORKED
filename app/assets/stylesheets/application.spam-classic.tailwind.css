@@ -1,143 +1,135 @@
-@import "tailwindcss";
+ @import "tailwindcss";
+ 
+ @source "../../themes/**/*.html";
+ @source "../../../app/assets/javascripts/**/*.js";
+ 
+ @theme {
+   /* Bitcoin Knotzis Palette */
+   --color-spam-green: hsl(0, 72%, 42%);
+   --color-spam-green-dark: hsl(0, 72%, 30%);
+   --color-spam-green-light: hsl(0, 70%, 52%);
+   --color-spam-navy: hsl(0, 0%, 5%);
+   --color-spam-navy-light: hsl(0, 0%, 15%);
+   --color-spam-yellow: hsl(0, 0%, 100%);
+   --color-spam-yellow-muted: hsl(0, 0%, 92%);
+   --color-spam-bone: hsl(0, 0%, 98%);
+   --color-spam-bone-dark: hsl(0, 0%, 88%);
+   --color-spam-cream: hsl(0, 0%, 100%);
 
-@source "../../themes/**/*.html";
-@source "../../../app/assets/javascripts/**/*.js";
+   --font-display: 'Chewy', cursive;
+   --font-body: 'Comic Neue', cursive;
+ 
+   --shadow-can: 0 4px 0 hsl(0, 72%, 30%), 0 8px 16px hsla(0, 0%, 0%, 0.25);
+   --shadow-can-hover: 0 8px 0 hsl(0, 72%, 30%), 0 16px 24px hsla(0, 0%, 0%, 0.3);
+   --shadow-yellow: 0 4px 0 hsl(0, 0%, 70%), 0 8px 16px hsla(0, 0%, 0%, 0.25);
+ }
+ body .show-on-connected { display: none; }
+ body.connected .hide-on-connected { display: none; }
+ body.connected .show-on-connected { display: inline-flex; }
+ 
 
-@theme {
-  /* SPAM Classic Palette */
-  --color-spam-green: hsl(130, 21%, 36%);
-  --color-spam-green-dark: hsl(130, 25%, 28%);
-  --color-spam-green-light: hsl(130, 18%, 45%);
-  --color-spam-navy: hsl(221, 100%, 13%);
-  --color-spam-navy-light: hsl(221, 80%, 22%);
-  --color-spam-yellow: hsl(52, 100%, 56%);
-  --color-spam-yellow-muted: hsl(52, 85%, 65%);
-  --color-spam-bone: hsl(43, 38%, 93%);
-  --color-spam-bone-dark: hsl(43, 25%, 85%);
-  --color-spam-cream: hsl(43, 45%, 97%);
+ .button-spinner {
+   display: inline-flex;
+   height: 1rem;
+   width: 1rem;
+   flex-shrink: 0;
+   border-radius: 9999px;
+   border: 2px solid currentColor;
+   border-right-color: transparent;
+   animation: spin 1s linear infinite;
+ }
+ .button-spinner-hidden { visibility: hidden; }
+ 
+ @keyframes spin {
+   to { transform: rotate(360deg); }
+ }
+ 
 
-  /* Typography */
-  --font-display: 'Chewy', cursive;
-  --font-body: 'Comic Neue', cursive;
+ .spam-can {
+   background: linear-gradient(180deg,
+     var(--color-spam-yellow) 0%,
+     var(--color-spam-yellow) 35%,
+     var(--color-spam-green) 35%,
+     var(--color-spam-green) 100%
+   );
+   border-radius: 8px;
+   overflow: hidden;
+   box-shadow: var(--shadow-can);
+   transition: transform 0.2s ease, box-shadow 0.2s ease;
+ }
+ 
+ .spam-can:hover {
+   transform: translateY(-4px) rotate(1deg);
+   box-shadow: var(--shadow-can-hover);
+ }
+ 
 
-  /* Shadows */
-  --shadow-can: 0 4px 0 hsl(130, 25%, 28%), 0 8px 16px hsla(221, 100%, 13%, 0.25);
-  --shadow-can-hover: 0 8px 0 hsl(130, 25%, 28%), 0 16px 24px hsla(221, 100%, 13%, 0.3);
-  --shadow-yellow: 0 4px 0 hsl(52, 100%, 40%), 0 8px 16px hsla(221, 100%, 13%, 0.25);
-}
-
-/* Connection states */
-body .show-on-connected { display: none; }
-body.connected .hide-on-connected { display: none; }
-body.connected .show-on-connected { display: inline-flex; }
-
-/* Spinner */
-.button-spinner {
-  display: inline-flex;
-  height: 1rem;
-  width: 1rem;
-  flex-shrink: 0;
-  border-radius: 9999px;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  animation: spin 1s linear infinite;
-}
-.button-spinner-hidden { visibility: hidden; }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* SPAM can card styling */
-.spam-can {
-  background: linear-gradient(180deg,
-    var(--color-spam-yellow) 0%,
-    var(--color-spam-yellow) 35%,
-    var(--color-spam-green) 35%,
-    var(--color-spam-green) 100%
-  );
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--shadow-can);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.spam-can:hover {
-  transform: translateY(-4px) rotate(1deg);
-  box-shadow: var(--shadow-can-hover);
-}
-
-/* Yellow banner styling */
-.yellow-banner {
-  background: var(--color-spam-yellow);
-  color: var(--color-spam-navy);
-  border: 3px solid var(--color-spam-navy);
-  border-radius: 4px;
-}
-
-/* Stat box with equals signs */
-.stat-box {
-  background: var(--color-spam-cream);
-  border: 3px solid var(--color-spam-navy);
-  border-radius: 4px;
-  box-shadow: inset 0 2px 4px hsla(221, 100%, 13%, 0.1);
-  position: relative;
-}
-
-.stat-box::before,
-.stat-box::after {
-  content: '=';
-  position: absolute;
-  font-family: var(--font-display);
-  font-size: 20px;
-  color: var(--color-spam-navy);
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.stat-box::before { left: -16px; }
-.stat-box::after { right: -16px; }
-
-/* Ingredients panel styling */
-.ingredients-panel {
-  background: var(--color-spam-cream);
-  border: 3px solid var(--color-spam-navy);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-/* Button base */
-.btn-spam {
-  font-family: var(--font-display);
-  font-size: 18px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  border: 3px solid var(--color-spam-navy);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: center;
-}
-
-.btn-spam:hover:not(:disabled) {
-  transform: translateY(-2px);
-}
-
-.btn-spam:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: none;
-}
-
-.btn-spam:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+ .yellow-banner {
+   background: var(--color-spam-yellow);
+   color: var(--color-spam-navy);
+   border: 3px solid var(--color-spam-navy);
+   border-radius: 4px;
+ }
+ 
+ .stat-box {
+   background: var(--color-spam-cream);
+   border: 3px solid var(--color-spam-navy);
+   border-radius: 4px;
+   box-shadow: inset 0 2px 4px hsla(0, 0%, 0%, 0.1);
+   position: relative;
+ }
+ 
+ .stat-box::before,
+ .stat-box::after {
+   content: '=';
+   position: absolute;
+   font-family: var(--font-display);
+   font-size: 20px;
+   color: var(--color-spam-navy);
+   top: 50%;
+   transform: translateY(-50%);
+ }
+ 
+ .stat-box::before { left: -16px; }
+ .stat-box::after { right: -16px; }
+ 
+ .ingredients-panel {
+   background: var(--color-spam-cream);
+   border: 3px solid var(--color-spam-navy);
+   border-radius: 8px;
+   padding: 16px;
+ }
+ 
+ .btn-spam {
+   font-family: var(--font-display);
+   font-size: 18px;
+   padding: 12px 24px;
+   border-radius: 8px;
+   border: 3px solid var(--color-spam-navy);
+   cursor: pointer;
+   transition: transform 0.15s ease, box-shadow 0.15s ease;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   text-align: center;
+ }
+ 
+ .btn-spam:hover:not(:disabled) {
+   transform: translateY(-2px);
+ }
+ 
+ .btn-spam:active:not(:disabled) {
+   transform: translateY(2px);
+   box-shadow: none;
+ }
+ 
+ .btn-spam:disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+   *, *::before, *::after {
+     animation-duration: 0.01ms !important;
+     transition-duration: 0.01ms !important;
+   }
+ }
