@@ -93,8 +93,7 @@
       <% if (supply.isSoldOut || !supply.hasMintable) { %>
         <div class="rounded-xl border-4 border-spam-navy bg-spam-bone p-6 text-center" data-testid="launchpad-sold-out">
           <div class="text-5xl mb-3">🥫</div>
-          <div class="font-display text-xl text-spam-navy mb-1">Sold out</div>
-          <div class="font-body text-sm text-spam-navy/80">No mintable items available right now.</div>
+          <div class="font-display text-xl text-spam-navy">Sold out</div>
         </div>
       <% } else { %>
         <form method="post" data-testid="mint-form" data-mint-target="form">
