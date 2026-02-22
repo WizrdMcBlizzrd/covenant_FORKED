@@ -135,7 +135,6 @@
           <div class="hidden" aria-hidden="true">
             <span data-mint-target="fee">-</span>
             <span data-mint-target="feeRate">-</span>
-            <span data-mint-target="total">-</span>
             <button type="button" data-mint-target="connectButton">Connect</button>
             <button type="button" data-mint-target="prepareButton">
               <span data-mint-target="prepareSpinner" class="button-spinner button-spinner-hidden"></span>
@@ -177,29 +176,36 @@
               </div>
             </div>
           <% } %>
-
-          <div class="space-y-3" data-testid="launchpad-mint">
-            <button
-              class="hide-on-connected w-full rounded-xl border-4 border-spam-navy bg-white px-6 py-4 font-display text-lg text-spam-navy hover:bg-spam-green hover:text-spam-bone hover:border-spam-navy transition-colors cursor-pointer shadow-can"
-              type="button"
-              onclick="document.querySelector('[data-testid=connect-wallet-button]')?.click()"
-            >Connect wallet to mint</button>
-
-            <button
-              type="button"
-              class="hidden w-full rounded-xl border-4 border-spam-navy bg-white px-6 py-4 font-display text-lg text-spam-navy hover:bg-spam-green hover:text-spam-bone hover:border-spam-navy transition-colors cursor-pointer shadow-can"
-              data-testid="mint-button"
-              data-mint-target="mintButton"
-              data-action="click->mint#mint"
-            >
-              <span class="inline-flex w-full items-center justify-center gap-2">
-                <span data-mint-target="mintSpinner" class="button-spinner button-spinner-hidden"></span>
-                <span data-mint-target="mintLabel">Mint</span>
-              </span>
-            </button>
-
-          </div>
         </form>
+
+        <div class="show-on-connected mb-3 w-full flex items-center justify-between rounded-lg border-2 border-spam-navy bg-spam-bone px-4 py-3">
+          <span class="font-display text-sm text-spam-navy">Total</span>
+          <div class="text-right">
+            <span class="font-display text-lg text-spam-navy" data-mint-target="total">-</span>
+            <div class="hidden font-body text-xs text-spam-navy/60" data-usd-role="total" data-usd-sats=""></div>
+          </div>
+        </div>
+
+        <div class="space-y-3" data-testid="launchpad-mint">
+          <button
+            class="hide-on-connected w-full rounded-xl border-4 border-spam-navy bg-white px-6 py-4 font-display text-lg text-spam-navy hover:bg-spam-green hover:text-spam-bone hover:border-spam-navy transition-colors cursor-pointer"
+            type="button"
+            onclick="document.querySelector('[data-testid=connect-wallet-button]')?.click()"
+          >Connect wallet to mint</button>
+
+          <button
+            type="button"
+            class="hidden w-full rounded-xl border-4 border-spam-navy bg-white px-6 py-4 font-display text-lg text-spam-navy hover:bg-spam-green hover:text-spam-bone hover:border-spam-navy transition-colors cursor-pointer"
+            data-testid="mint-button"
+            data-mint-target="mintButton"
+            data-action="click->mint#mint"
+          >
+            <span class="inline-flex w-full items-center justify-center gap-2">
+              <span data-mint-target="mintSpinner" class="button-spinner button-spinner-hidden"></span>
+              <span data-mint-target="mintLabel">Mint</span>
+            </span>
+          </button>
+        </div>
 
         <div class="hidden mt-4 p-4 bg-green-100 border-3 border-green-600 rounded-lg" data-mint-target="successPanel" data-testid="mint-success">
           <div class="font-display text-sm text-green-800" data-mint-target="successTitle">Mint Successful</div>
