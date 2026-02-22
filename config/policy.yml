@@ -1,11 +1,11 @@
 launchpad:
   seller_address: bc1pjah4k87jt6ze3clazx9u6k3v0npwkrrjc5wpcyx8jl48npjgc2mqarpk6s
   collections:
-    - slug: spellbound
+    - slug: mint
       title: Bitcoin Knotzis
       parent_inscription_id: 1949dcdc265f64791e98900107e420ea7d26722db650692961243d84b0516b90i0
       price_sats: 2500
-      lowest_inscription_utxo_size: 330
+      lowest_inscription_utxo_size: 1
       payment_address: bc1qf6c0t4dnsnzu8h0da87y4eeyye2qnk0jqhl2hc
       op_return: true
 
