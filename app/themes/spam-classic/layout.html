@@ -39,29 +39,17 @@
           <div
             data-controller="wallet"
             data-testid="connect-slot"
-            data-action="keydown.esc@window->wallet#close mouseup@document->wallet#closeIfClickedOutside"
-            class="relative"
+            data-action="keydown.esc@window->wallet#close"
           >
-            <!-- Always-visible Connect button (opens modal via JS below) -->
-            <button
-              type="button"
-              id="wallet-open"
-              class="rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
-              data-testid="connect-wallet-button"
-            >
-              Connect wallet
-            </button>
-
             <!-- Wallet Modal -->
             <div
               data-wallet-target="selector"
-              id="wallet-modal"
               class="fixed inset-0 z-[10000] hidden items-center justify-center data-[state=open]:flex"
               data-state="closed"
             >
               <div
                 class="absolute inset-0 bg-spam-navy/70 cursor-pointer"
-                data-wallet-close="1"
+                data-action="click->wallet#close"
               ></div>
 
               <div class="relative z-10 w-full max-w-[360px] mx-4 bg-spam-bone rounded-2xl border-4 border-spam-navy shadow-can overflow-hidden">
@@ -71,7 +59,7 @@
                     class="w-8 h-8 rounded-full bg-spam-green text-spam-bone font-display text-lg hover:bg-spam-green-dark transition-colors flex items-center justify-center"
                     type="button"
                     aria-label="Close"
-                    data-wallet-close="1"
+                    data-action="wallet#close"
                   >
                     &times;
                   </button>
@@ -100,7 +88,31 @@
                 </div>
               </div>
             </div>
-            <!-- /Wallet Modal -->
+
+            <div class="hide-on-connected">
+              <button
+                class="rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
+                data-action="wallet#select"
+                data-testid="connect-wallet-button"
+              >
+                Connect wallet
+              </button>
+            </div>
+
+            <div class="show-on-connected">
+              <div class="relative z-30 inline-flex" data-controller="dropdown" data-action="mouseup@window->dropdown#hide">
+                <button
+                  class="inline-flex items-center gap-2 rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
+                  data-action="dropdown#toggle"
+                >
+                  <span data-wallet-target="addressPreview"></span>
+                  <span class="text-spam-bone/50">▾</span>
+                </button>
+                <div class="absolute right-0 top-full z-50 mt-1 hidden w-48 border-3 border-spam-navy bg-spam-bone rounded-lg shadow-can p-1" data-dropdown-target="menu">
+                  <a class="block px-3 py-2 font-display text-sm text-spam-navy hover:bg-spam-yellow rounded" href="#" data-action="wallet#logout:prevent dropdown#toggle">Disconnect</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -141,33 +153,5 @@
       </div>
     </footer>
 
-    <!-- JS modal toggler (because wallet#open isn't a thing in your controller) -->
-    <script>
-      (function () {
-        const openBtn = document.getElementById("wallet-open");
-        const modal = document.getElementById("wallet-modal");
-        if (!openBtn || !modal) return;
-
-        function openModal() {
-          modal.dataset.state = "open";
-        }
-
-        function closeModal() {
-          modal.dataset.state = "closed";
-        }
-
-        openBtn.addEventListener("click", openModal);
-
-        // Close on backdrop + X
-        modal.querySelectorAll("[data-wallet-close]").forEach((el) => {
-          el.addEventListener("click", closeModal);
-        });
-
-        // Close on ESC
-        window.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") closeModal();
-        });
-      })();
-    </script>
   </body>
 </html>
