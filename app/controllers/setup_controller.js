@@ -197,86 +197,357 @@ function checkBindings(env) {
   return checks
 }
 
-function renderSetupHtml({ configChecks, policyChecks, bindingChecks, dbChecks, apiChecks, collectionDbChecks }) {
-  function icon(ok) {
-    return ok ? '&#x2705;' : '&#x274C;'
-  }
-
-  function renderSection(title, checks) {
-    const rows = checks.map(check => `
-      <tr>
-        <td style="padding:6px 12px;border-bottom:1px solid #333">${icon(check.ok)}</td>
-        <td style="padding:6px 12px;border-bottom:1px solid #333;font-weight:600">${escapeHtml(check.name)}</td>
-        <td style="padding:6px 12px;border-bottom:1px solid #333;color:${check.ok ? '#86efac' : '#fca5a5'};word-break:break-all">${escapeHtml(String(check.detail))}</td>
-      </tr>
-    `).join('')
-
-    const allOk = checks.every(c => c.ok)
-    const headerColor = allOk ? '#86efac' : '#fca5a5'
-
-    return `
-      <div style="margin-bottom:32px">
-        <h2 style="font-size:18px;margin-bottom:12px;color:${headerColor}">${icon(allOk)} ${escapeHtml(title)}</h2>
-        <table style="width:100%;border-collapse:collapse;background:#1a1a2e;border-radius:8px;overflow:hidden">
-          <thead>
-            <tr style="background:#16213e">
-              <th style="padding:8px 12px;text-align:left;width:40px"></th>
-              <th style="padding:8px 12px;text-align:left">Check</th>
-              <th style="padding:8px 12px;text-align:left">Status</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    `
-  }
-
-  const totalChecks = [...configChecks, ...policyChecks, ...bindingChecks, ...dbChecks, ...apiChecks, ...collectionDbChecks]
-  const passCount = totalChecks.filter(c => c.ok).length
-  const failCount = totalChecks.filter(c => !c.ok).length
-  const summaryColor = failCount === 0 ? '#86efac' : '#fca5a5'
-
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Covenant Setup</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f23; color: #e2e8f0; padding: 24px; line-height: 1.5; }
-    a { color: #93c5fd; }
-  </style>
-</head>
-<body>
-  <div style="max-width:800px;margin:0 auto">
-    <div style="margin-bottom:32px">
-      <h1 style="font-size:28px;font-weight:700;margin-bottom:8px">Covenant Setup</h1>
-      <p style="color:${summaryColor};font-size:16px;font-weight:600">${passCount} passed, ${failCount} failed</p>
-      <p style="color:#94a3b8;font-size:13px;margin-top:4px">This page checks your deployment configuration, database, bindings, and API connectivity.</p>
-    </div>
-
-    ${renderSection('Configuration (store.yml)', configChecks)}
-    ${renderSection('Policy (policy.yml)', policyChecks)}
-    ${renderSection('Worker Bindings', bindingChecks)}
-    ${renderSection('Database (D1)', dbChecks)}
-    ${renderSection('Collection Inventory', collectionDbChecks)}
-    ${renderSection('API Connectivity', apiChecks)}
-
-    <div style="margin-top:40px;padding-top:16px;border-top:1px solid #333;color:#64748b;font-size:13px">
-      <a href="/">← Back to store</a>
-    </div>
-  </div>
-</body>
-</html>`
-}
-
 function escapeHtml(str) {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+
+function renderSetupHtml({ configChecks, policyChecks, bindingChecks, dbChecks, apiChecks, collectionDbChecks }) {
+  let sectionIndex = 0
+
+  function renderRow(check, rowIndex) {
+    const led = check.ok ? 'led-pass' : 'led-fail'
+    const valueClass = check.ok ? 'val-pass' : 'val-fail'
+    return `<div class="row" style="animation-delay:${rowIndex * 40}ms">
+      <span class="led ${led}"></span>
+      <span class="row-name">${escapeHtml(check.name)}</span>
+      <span class="dots"></span>
+      <span class="row-val ${valueClass}">${escapeHtml(String(check.detail))}</span>
+    </div>`
+  }
+
+  function renderSection(label, tag, checks) {
+    if (checks.length === 0) return ''
+    const allOk = checks.every(c => c.ok)
+    const idx = sectionIndex++
+    const rows = checks.map((c, i) => renderRow(c, i)).join('')
+
+    return `<section class="section" style="animation-delay:${idx * 120}ms">
+      <div class="section-head">
+        <span class="section-tag">${escapeHtml(tag)}</span>
+        <h2 class="section-label">${escapeHtml(label)}</h2>
+        <span class="section-status ${allOk ? 'status-pass' : 'status-fail'}">${allOk ? 'ALL PASS' : 'HAS ERRORS'}</span>
+      </div>
+      <div class="section-body">${rows}</div>
+    </section>`
+  }
+
+  const totalChecks = [...configChecks, ...policyChecks, ...bindingChecks, ...dbChecks, ...apiChecks, ...collectionDbChecks]
+  const passCount = totalChecks.filter(c => c.ok).length
+  const failCount = totalChecks.filter(c => !c.ok).length
+  const allGood = failCount === 0
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Covenant - Setup Diagnostics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2a;
+      --border-bright: #2a2a3a;
+      --text: #b8b8c8;
+      --text-dim: #5a5a70;
+      --pass: #22c55e;
+      --pass-dim: #166534;
+      --pass-glow: rgba(34, 197, 94, 0.15);
+      --fail: #ef4444;
+      --fail-dim: #7f1d1d;
+      --fail-glow: rgba(239, 68, 68, 0.15);
+      --accent: #f59e0b;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.008) 2px,
+        rgba(255, 255, 255, 0.008) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .wrap {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    /* header */
+    .header {
+      margin-bottom: 48px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .header-top a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    .header-top a:hover { color: var(--accent); }
+
+    .header-top .sep {
+      color: var(--border-bright);
+      font-size: 11px;
+    }
+
+    .title {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+    }
+
+    .summary {
+      display: flex;
+      gap: 2px;
+      align-items: stretch;
+      height: 40px;
+    }
+
+    .summary-block {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    .summary-pass {
+      background: var(--pass-glow);
+      border: 1px solid var(--pass-dim);
+      color: var(--pass);
+      border-radius: 6px 0 0 6px;
+    }
+
+    .summary-fail {
+      background: ${allGood ? 'var(--surface)' : 'var(--fail-glow)'};
+      border: 1px solid ${allGood ? 'var(--border)' : 'var(--fail-dim)'};
+      color: ${allGood ? 'var(--text-dim)' : 'var(--fail)'};
+      border-radius: 0 6px 6px 0;
+    }
+
+    .summary-num {
+      font-size: 18px;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    /* sections */
+    .section {
+      margin-bottom: 32px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+
+    .section-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 2px 7px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .section-status {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .status-pass { color: var(--pass); }
+    .status-fail { color: var(--fail); }
+
+    .section-body {
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    /* rows */
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      font-size: 12.5px;
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn 0.3s ease both;
+    }
+
+    .row:last-child { border-bottom: none; }
+
+    .row:hover { background: rgba(255, 255, 255, 0.015); }
+
+    .led {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .led-pass {
+      background: var(--pass);
+      box-shadow: 0 0 6px var(--pass), 0 0 2px var(--pass);
+    }
+
+    .led-fail {
+      background: var(--fail);
+      box-shadow: 0 0 6px var(--fail), 0 0 2px var(--fail);
+      animation: pulse-fail 2s ease-in-out infinite;
+    }
+
+    .row-name {
+      white-space: nowrap;
+      font-weight: 500;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    .dots {
+      flex: 1;
+      min-width: 20px;
+      border-bottom: 1px dotted var(--border-bright);
+      height: 1px;
+      align-self: flex-end;
+      margin-bottom: 5px;
+    }
+
+    .row-val {
+      text-align: right;
+      word-break: break-all;
+      max-width: 55%;
+      flex-shrink: 1;
+    }
+
+    .val-pass { color: var(--text-dim); }
+    .val-fail { color: var(--fail); }
+
+    /* footer */
+    .footer {
+      margin-top: 48px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.5s ease both;
+      animation-delay: 0.6s;
+    }
+
+    .footer a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover { color: var(--accent); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse-fail {
+      0%, 100% { box-shadow: 0 0 6px var(--fail), 0 0 2px var(--fail); }
+      50% { box-shadow: 0 0 10px var(--fail), 0 0 4px var(--fail); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="header-top">
+        <a href="/">covenant</a>
+        <span class="sep">/</span>
+        <a href="/setup">setup</a>
+      </div>
+      <div class="title">Deployment Diagnostics</div>
+      <div class="summary">
+        <div class="summary-block summary-pass"><span class="summary-num">${passCount}</span> passed</div>
+        <div class="summary-block summary-fail"><span class="summary-num">${failCount}</span> failed</div>
+      </div>
+    </div>
+
+    ${renderSection('Configuration', 'yml', configChecks)}
+    ${renderSection('Policy', 'yml', policyChecks)}
+    ${renderSection('Worker Bindings', 'env', bindingChecks)}
+    ${renderSection('Database', 'd1', dbChecks)}
+    ${renderSection('Collection Inventory', 'sync', collectionDbChecks)}
+    ${renderSection('API Connectivity', 'net', apiChecks)}
+
+    <div class="footer">
+      <a href="/">&larr; back to store</a>
+    </div>
+  </div>
+</body>
+</html>`
 }
 
 export async function setupController(c) {
