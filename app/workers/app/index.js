@@ -9,6 +9,7 @@ import { launchpadReserveController } from '../../controllers/launchpad_reserve_
 import { launchpadMintController } from '../../controllers/launchpad_mint_controller.js'
 import { launchpadSalesController } from '../../controllers/launchpad_sales_controller.js'
 import { launchpadProgressController } from '../../controllers/launchpad_progress_controller.js'
+import { setupController } from '../../controllers/setup_controller.js'
 import { runSyncCollectionsCron } from '../../crons/sync_collections_cron.js'
 import { runOrdersCron } from '../../crons/orders_cron.js'
 
@@ -22,6 +23,7 @@ app.onError((err, c) => {
 })
 
 app.get('/', homeController)
+app.get('/setup', setupController)
 app.get('/policy', policyController)
 app.get('/activity', activityController)
 app.post('/sell/:slug', executeSellController)
