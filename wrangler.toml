@@ -1,18 +1,14 @@
 name = "covenant"
 main = "app/workers/app/index.js"
 compatibility_date = "2025-12-17"
-workers_dev = false
-preview_urls = false
+workers_dev = true
+preview_urls = true
 assets = { directory = "public" }
-
-[[routes]]
-pattern = "covenant.wizards.art"
-custom_domain = true
 
 [[d1_databases]]
 binding = "DB"
 database_name = "covenant"
-database_id = "5ab64e45-a78f-4692-939e-7eec3000b341"
+database_id = "eeadb9e3-3ad5-4604-a870-84732a10c3e8"
 
 [[durable_objects.bindings]]
 name = "SIGNING_AGENT"
