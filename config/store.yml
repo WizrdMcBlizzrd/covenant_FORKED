@@ -1,7 +1,7 @@
 ord_api_url: "https://node.runeblaster.io"
 electrs_api_url: "https://mempool.runeblaster.io"
 mempool_space_api_url: "https://memproxy.inscribe.dev/api"
-theme: "spam-classic"
+theme: "maison"
 page_size: 24
 artist_name: "Bitcoin Knotzis"
 artist_avatar_url: "https://pbs.twimg.com/profile_images/2016120143307276288/HDUqbTAA_400x400.jpg"

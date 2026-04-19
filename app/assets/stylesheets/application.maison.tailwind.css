@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@source "../../themes/**/*.html";
+@source "../../../app/assets/javascripts/**/*.js";
+
+@theme {
+  --color-base-950: #f5f1ea;
+  --color-base-900: #ece7df;
+  --color-base-850: #e2dbd1;
+  --color-synth-red: #5f5343;
+  --color-synth-yellow: #8e7a60;
+  --shadow-glow: 0 18px 60px rgba(0, 0, 0, 0.10);
+  --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+body .show-on-connected { display: none; }
+body.connected .hide-on-connected { display: none; }
+body.connected .show-on-connected { display: inline-flex; }
+
+.text-content { color: #3f3a34; }
+
+.ord-dot { display: inline-block; line-height: 1; position: relative; top: -1px; }
+
+.button-spinner { display: inline-flex; height: 1rem; width: 1rem; flex-shrink: 0; border-radius: 9999px; border: 2px solid currentColor; border-right-color: transparent; animation: spin 1s linear infinite; }
+.button-spinner-hidden { visibility: hidden; }
+
+.purchase-success { border-color: #d2cbc1; background-color: #f3eee7; color: #6c6257; cursor: default; }
+
+.theme-maison {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #1c1917;
+}
+
+.theme-maison h1,
+.theme-maison h2,
+.theme-maison h3,
+.theme-maison [data-testid="collections-title"],
+.theme-maison [data-testid="brand-title"] {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.01em;
+}
