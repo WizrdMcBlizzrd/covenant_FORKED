@@ -1,0 +1,20 @@
+<turbo-frame id="launchpad-progress">
+  <% const totalWorks = supply.total %>
+  <% const mintedCount = supply.minted %>
+  <% const mintedPercent = supply.progress %>
+
+  <div class="border border-stone-300 bg-white px-5 py-4" data-testid="progress-section">
+    <div class="flex items-center justify-between text-xs uppercase text-stone-900/60">
+      <span>Supply</span>
+      <span class="font-mono text-stone-900/80"><%= totalWorks %></span>
+    </div>
+    <div class="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+      <div class="h-full bg-orange-500/80" style="width: <%= mintedPercent %>%;"></div>
+    </div>
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-900/60">
+      <span>Minted <strong class="text-stone-900/85"><%= mintedCount %></strong></span>
+      <span>Pending <strong class="text-stone-900/85"><%= supply.pending %></strong></span>
+      <span>Available <strong class="text-stone-900/85"><%= supply.available %></strong></span>
+    </div>
+  </div>
+</turbo-frame>
