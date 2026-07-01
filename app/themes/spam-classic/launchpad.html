@@ -1,216 +1,157 @@
-<section
-  data-testid="launchpad-page"
-  <% if (false) { %>
-    data-controller="mint"
-    data-action="wallet:connected@window->mint#onWalletConnected wallet:disconnected@window->mint#onWalletDisconnected"
-    data-mint-collection-value="<%= collection.slug %>"
-    data-mint-price-value="<%= collection.price_sats %>"
-    data-mint-payment-address-value="<%= collection.payment_address %>"
-    data-mint-lowest-inscription-utxo-size-value="<%= collection.lowest_inscription_utxo_size %>"
-    data-mint-seller-address-value="<%= launchpad.seller_address %>"
-    <% if (collection.explicit_fee_rate) { %>
-      data-mint-explicit-fee-rate-value="<%= collection.explicit_fee_rate %>"
-    <% } %>
-  <% } %>
->
-  <% const isGallery = Boolean(collection.gallery_inscription_id) %>
-  <% const bannerId = collection.gallery_inscription_id ?? collection.parent_inscription_id ?? (collection.inscription_ids ?? [])[0] %>
-
-  <section class="detail-section">
-    <div class="detail-bg"></div>
-
-    <div class="detail-container">
-      <div class="detail-media-wrapper">
-        <div class="detail-media" data-testid="launchpad-media" data-controller="image">
-          <div class="inscription-skeleton" data-image-target="skeleton"></div>
-          <% if (parentInscription && parentInscription.isImage) { %>
-            <img
-              src="https://ordinals.com/content/<%= encodeURIComponent(bannerId) %>"
-              alt="<%= collection.title %>"
-              loading="eager"
-              decoding="async"
-              class="opacity-0 transition-opacity duration-300"
-              style="image-rendering: pixelated"
-              data-image-target="img"
-              data-action="load->image#loaded error->image#error"
-              data-testid="launchpad-media-img"
-            />
-          <% } else { %>
-            <iframe
-              src="https://ordinals.com/preview/<%= encodeURIComponent(bannerId) %>"
-              class="pointer-events-none opacity-0 transition-opacity duration-300"
-              allow="accelerometer; gyroscope"
-              data-image-target="media"
-              data-action="load->image#loaded error->image#error"
-              data-testid="launchpad-media-iframe"
-            ></iframe>
-          <% } %>
-        </div>
-      </div>
-
-      <div class="detail-sidebar">
-        <div class="detail-card" data-testid="launchpad-header">
-          <span class="detail-jp">聖なる遺物</span>
-          <h2 class="detail-title" data-testid="launchpad-title"><%= collection.title.toUpperCase() %></h2>
-          <div class="detail-meta">
-            <% if (isGallery) { %>
-              Gallery provenance launch.
-            <% } else if (collection.parent_inscription_id) { %>
-              Parent provenance launch.
-            <% } else { %>
-              Curated launch collection.
-            <% } %>
-          </div>
-          <% if (collection.parent_inscription_id && parentInscription && parentInscription.isSealed) { %>
-            <div class="detail-meta">This collection is sealed 🔥</div>
-          <% } %>
-          <% if (collection.gallery_inscription_id || collection.parent_inscription_id) { %>
-            <div class="detail-meta">
-              <a class="detail-link" href="https://ordinals.com/inscription/<%= encodeURIComponent(bannerId) %>" target="_blank" rel="noopener" data-testid="parent-ordinals-number-link">View on ordinals.com</a>
-            </div>
-          <% } %>
-        </div>
-
-        <turbo-frame
-          id="launchpad-progress"
-          src="/launchpad/<%= encodeURIComponent(collection.slug) %>/progress"
+<section class="knotzi-mint-archive-page" data-testid="launchpad-page">
+  <div class="knotzi-mint-archive-grid">
+    <div class="knotzi-mint-left">
+      <div class="knotzi-mint-media">
+        <img
+          src="<%= CONFIG.launchpad_media_gif_url || '/bitcoin-knotzis-mint-loop.gif' %>"
+          alt="Bitcoin Knotzis mint animation"
           loading="eager"
-          refresh="morph"
-          data-controller="frame-refresh"
-          data-frame-refresh-interval-value="<%= launchpad.refresh_ms %>"
-        ></turbo-frame>
-
-        <div class="detail-card" data-testid="purchase-panel">
-          <div class="detail-price-block" style="border-top: none; padding-top: 0; margin-bottom: 1.5rem;">
-            <div>
-              <div class="detail-price" data-testid="price-sats"><%= formatSats(collection.price_sats) %></div>
-            </div>
-          </div>
-
-          <% if (true) { %>
-            <button class="detail-buy-btn" type="button" disabled>Sold Out</button>
-            <a class="detail-buy-btn knotzi-open-gallery-btn" href="/gallery">Open Gallery</a>
-          <% } else { %>
-            <form method="post" data-testid="mint-form" data-mint-target="form">
-              <% if (collection.op_return) { %>
-                <div style="margin-bottom: 1rem; padding: 0.75rem; border: 1px solid var(--color-ash); background: var(--color-surface-altar);" data-testid="spam-container">
-                  <div style="font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-smoke);">OP_RETURN SPAM</div>
-                  <textarea
-                    id="launchpad-spam-<%= collection.slug %>"
-                    rows="3"
-                    required
-                    spellcheck="false"
-                    autocomplete="off"
-                    placeholder="Enter at least 81 bytes"
-                    data-mint-target="spamInput"
-                    data-action="input->mint#onSpamInput"
-                    style="width: 100%; min-height: 80px; margin-top: 0.5rem; border: 1px solid var(--color-ash); background: #0b0b0b; color: var(--color-bone); padding: 0.5rem; font-size: 0.8rem;"
-                  ></textarea>
-                  <div style="margin-top: 0.4rem; font-size: 0.65rem; color: var(--color-secondary);">Minimum 81 bytes required.</div>
-                </div>
-              <% } %>
-              <% if ((collection.optional_payments ?? []).length > 0) { %>
-                <div class="optional-payments" data-testid="optional-payments">
-                  <div class="optional-payments-label">ADDITIONAL OPTIONS</div>
-                  <% collection.optional_payments.forEach((payment) => { %>
-                    <label class="optional-payment" data-testid="optional-payment">
-                      <input type="checkbox" data-mint-target="optionalPayment" data-payment='<%= JSON.stringify(payment) %>' data-action="mint#calculateCost" />
-                      <div class="optional-payment-title"><%= payment.title %></div>
-                      <span class="optional-payment-amount"><%= formatSats(payment.amount) %></span>
-                      <div class="optional-payment-desc"><%= payment.description %></div>
-                    </label>
-                  <% }) %>
-                </div>
-              <% } %>
-
-              <div class="fees-section" data-testid="fees" data-mint-target="fees">
-                <div class="fee-row">
-                  <span class="label">NETWORK FEE:</span>
-                  <span class="value" data-mint-target="fee">-</span>
-                </div>
-                <div class="fee-row">
-                  <span class="label">FEE RATE:</span>
-                  <span class="value" data-mint-target="feeRate">-</span>
-                </div>
-                <div class="fee-row total">
-                  <span class="label">TOTAL:</span>
-                  <span class="value" data-mint-target="total">-</span>
-                </div>
-                <div class="fee-row usd">
-                  <span class="label"></span>
-                  <span class="value hidden" data-usd-role="total" data-usd-sats=""></span>
-                </div>
-              </div>
-
-              <% if (launchpad.turnstile_site_key) { %>
-                <div style="margin-top: 16px; display: flex; justify-content: center;">
-                  <div
-                    class="cf-turnstile"
-                    data-mint-target="turnstile"
-                    data-sitekey="<%= launchpad.turnstile_site_key %>"
-                    data-callback="launchpadTurnstileSuccess"
-                    data-expired-callback="launchpadTurnstileExpired"
-                    data-error-callback="launchpadTurnstileError"
-                  ></div>
-                </div>
-              <% } %>
-
-              <div style="margin-top: 1.5rem;">
-                <button class="detail-buy-btn hide-on-connected" type="button" data-mint-target="connectButton" data-action="wallet#select">CONNECT WALLET</button>
-
-                <button class="detail-buy-btn show-on-connected" type="button" data-mint-target="prepareButton" data-action="click->mint#prepare">
-                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span data-mint-target="prepareSpinner" class="button-spinner button-spinner-hidden"></span>
-                    <span data-mint-target="prepareLabel">PREPARE MINT</span>
-                  </span>
-                </button>
-
-                <button class="detail-buy-btn hidden" type="button" data-testid="mint-button" data-mint-target="mintButton" data-action="click->mint#mint">
-                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span data-mint-target="mintSpinner" class="button-spinner button-spinner-hidden"></span>
-                    <span data-mint-target="mintLabel">CONFIRM MINT</span>
-                  </span>
-                </button>
-              </div>
-            </form>
-
-            <div class="hidden message message-success" data-mint-target="successPanel" data-testid="mint-success">
-              <div class="message-title" data-mint-target="successTitle">ACQUISITION COMPLETE</div>
-              <a class="message-link" target="_blank" rel="noopener" data-mint-target="successLink" href="">View on mempool.space</a>
-            </div>
-
-            <div class="hidden message message-error" data-mint-target="errorPanel" data-testid="mint-client-error">
-              <div class="message-title" data-mint-target="errorTitle">ACQUISITION FAILED</div>
-              <div class="message-link" data-mint-target="errorMessage"></div>
-            </div>
-          <% } %>
-        </div>
+          decoding="async"
+        />
       </div>
     </div>
-  </section>
 
-  <turbo-frame
-    id="launchpad-sales"
-    src="/launchpad/<%= encodeURIComponent(collection.slug) %>/sales"
-    loading="lazy"
-    refresh="morph"
-    target="_top"
-    style="margin-top: 48px;"
-    data-controller="frame-refresh"
-    data-frame-refresh-interval-value="<%= launchpad.refresh_ms %>"
-  ></turbo-frame>
+    <aside class="knotzi-mint-right">
+      <div class="knotzi-rhs-card" data-testid="purchase-panel">
+        <div class="knotzi-rhs-kicker">Mint Status</div>
+        <img class="knotzi-soldout-image" src="/sold-out.png" alt="Sold Out" />
+
+        <p>
+          The Bitcoin Knotzis mint is closed. Wallet connection and minting are disabled.
+        </p>
+
+        <div class="knotzi-rhs-actions">
+          <a class="knotzi-rhs-btn gallery" href="/gallery">Open Gallery</a>
+          <a class="knotzi-rhs-btn trade" href="https://ord.net/collection/bitcoin-knotzis" target="_blank" rel="noopener">
+            Trade on ord.net
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
 </section>
 
-
-<style id="knotzi-open-gallery-btn-style">
-  .knotzi-open-gallery-btn {
-    display: block;
-    margin-top: 0.75rem;
-    text-align: center;
-    text-decoration: none !important;
+<style id="knotzi-clean-mint-archive-layout">
+  .knotzi-mint-archive-page {
+    width: 100%;
+    padding: clamp(24px, 5vw, 64px) 0;
+    background: #bf1717;
   }
 
-  .knotzi-open-gallery-btn:hover {
-    filter: brightness(1.08);
+  .knotzi-mint-archive-grid {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+    gap: clamp(22px, 4vw, 44px);
+    align-items: start;
+  }
+
+  .knotzi-mint-left,
+  .knotzi-mint-right {
+    min-width: 0;
+  }
+
+  .knotzi-mint-media {
+    background: #000;
+    border: 4px solid #111;
+    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+
+  .knotzi-mint-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 72vh;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .knotzi-rhs-card {
+    background: #f5efe7;
+    color: #111;
+    border: 4px solid #111;
+    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.35);
+    padding: clamp(24px, 4vw, 42px);
+  }
+
+  .knotzi-rhs-kicker {
+    color: #bf1717;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .knotzi-rhs-card h1 {
+    margin: 0 0 1rem;
+    color: #111;
+    font-size: clamp(3.4rem, 8vw, 6.8rem);
+    line-height: 0.86;
+    text-transform: uppercase;
+    font-weight: 900;
+  }
+
+  .knotzi-rhs-card p {
+    margin: 0 0 1.5rem;
+    color: #111;
+    font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+    line-height: 1.45;
+  }
+
+  .knotzi-rhs-actions {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .knotzi-rhs-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 58px;
+    padding: 0 20px;
+    border: 4px solid #111;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    font-weight: 900;
+    text-align: center;
+    color: #111 !important;
+  }
+
+  .knotzi-rhs-btn.gallery {
+    background: #f7931a;
+  }
+
+  .knotzi-rhs-btn.trade {
+    background: #111;
+    color: #fff !important;
+  }
+
+  .knotzi-rhs-btn:hover {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  @media (max-width: 860px) {
+    .knotzi-mint-archive-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .knotzi-mint-media img {
+      max-height: none;
+    }
+  }
+</style>
+
+
+<style id="knotzi-soldout-image-style">
+  .knotzi-soldout-image {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+    margin: 0 0 1.25rem;
   }
 </style>
