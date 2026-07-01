@@ -53,7 +53,6 @@
       <div class="kg-modal-actions">
         <button id="copyIdBtn" type="button">Copy ID</button>
         <a id="viewOrdinalBtn" target="_blank" rel="noreferrer">View Ordinal</a>
-        <a id="viewMagicEdenBtn" target="_blank" rel="noreferrer">Magic Eden</a>
         <a id="openOriginalBtn" target="_blank" rel="noreferrer">Open Original 2048×2048</a>
         <button id="downloadBtn" type="button">Download Copy</button>
       </div>
@@ -410,7 +409,6 @@
     modalTraits: document.getElementById('modalTraits'),
     copyId: document.getElementById('copyIdBtn'),
     viewOrdinal: document.getElementById('viewOrdinalBtn'),
-    viewMagicEden: document.getElementById('viewMagicEdenBtn'),
     openOriginal: document.getElementById('openOriginalBtn'),
     download: document.getElementById('downloadBtn'),
     filters: {
@@ -424,7 +422,6 @@
 
   const mediaUrl = id => `https://ordinals.com/content/${id}`
   const ordinalUrl = id => `https://ordinals.com/inscription/${id}`
-  const magicEdenUrl = id => `https://magiceden.io/ordinals/item-details/${id}`
 
   function normaliseTraitValue(value) {
     return value === null || value === undefined || value === '' ? 'None' : String(value)
@@ -566,7 +563,6 @@
     els.modalShortId.textContent = shortId(item.id)
     els.modalFullId.textContent = item.id
     els.viewOrdinal.href = ordinalUrl(item.id)
-    els.viewMagicEden.href = magicEdenUrl(item.id)
     els.openOriginal.href = mediaUrl(item.id)
 
     els.modalTraits.innerHTML = traitBadges(item)
@@ -781,5 +777,46 @@
     padding: 7px 9px !important;
     border: 2px solid #111 !important;
     font-weight: 900 !important;
+  }
+</style>
+
+
+<style id="knotzi-gallery-modal-white-text-fix">
+  .kg-modal-card,
+  .kg-modal-info,
+  .kg-modal-info h2,
+  #modalTitle,
+  #modalShortId,
+  #modalFullId,
+  .kg-id-box code,
+  .kg-id-box span {
+    color: #f5efe7 !important;
+  }
+
+  .kg-modal-info h2,
+  #modalTitle {
+    color: #ffffff !important;
+  }
+
+  .kg-modal-info .kg-kicker {
+    color: #f7931a !important;
+  }
+
+  .kg-id-box {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+  }
+
+  .kg-modal-actions a,
+  .kg-modal-actions button {
+    background: #f5efe7 !important;
+    color: #111 !important;
+    border: 3px solid #111 !important;
+  }
+
+  .kg-modal-actions a:hover,
+  .kg-modal-actions button:hover {
+    background: #f7931a !important;
+    color: #111 !important;
   }
 </style>
