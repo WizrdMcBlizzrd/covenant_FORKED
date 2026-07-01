@@ -1,822 +1,914 @@
-<section class="knotzi-gallery-page">
-  <div class="kg-hero">
-    <p class="kg-kicker">BITCOIN KNOTZI ARCHIVE</p>
-    <h1>Regime Gallery</h1>
-    <p>
-      Search all 5,000 Bitcoin Knotzis by number, inscription ID, background, body, face,
-      outfit, and headwear. Open original 2048×2048 inscription media and download copies.
-    </p>
-  </div>
+<section class="kg-page">
+  <div class="kg-wrap">
+    <header class="kg-hero">
+      <div>
+        <p class="kg-kicker">Bitcoin Knotzis</p>
+        <h1>Gallery</h1>
+        <p class="kg-copy">Search, filter, view originals, and download layered assets directly from the on-chain trait inscriptions.</p>
+      </div>
+      <a class="kg-trade" href="https://ord.net/collection/bitcoin-knotzis" target="_blank" rel="noopener">Trade on ord.net</a>
+    </header>
 
-  <div class="kg-tools">
-    <input id="kgSearch" type="search" placeholder="Search number, trait, name, inscription ID..." />
+    <section class="kg-controls">
+      <input id="kgSearch" type="search" placeholder="Search #, name, trait..." />
+      <select id="kgSort">
+        <option value="asc">Number Asc</option>
+        <option value="desc">Number Desc</option>
+      </select>
+      <button id="kgClear" type="button">Clear Filters</button>
+    </section>
 
-    <div class="kg-filters">
-      <select id="filterBackground"><option value="">Background</option></select>
-      <select id="filterBody"><option value="">Body</option></select>
-      <select id="filterFace"><option value="">Face</option></select>
-      <select id="filterOutfit"><option value="">Outfit</option></select>
-      <select id="filterHeadwear"><option value="">Headwear</option></select>
+    <section id="kgFilters" class="kg-filters"></section>
+
+    <p class="kg-count">Showing <span id="kgShowing">0</span> of <span id="kgTotal">0</span></p>
+
+    <section id="kgGrid" class="kg-grid"></section>
+
+    <div class="kg-more-wrap">
+      <button id="kgMore" type="button">Load More</button>
     </div>
-
-    <div class="kg-row">
-      <span id="kgCount">Loading archive...</span>
-      <button id="clearFilters" type="button">Clear filters</button>
-    </div>
   </div>
-
-  <div id="kgGrid" class="kg-grid"></div>
-  <div id="kgSentinel" class="kg-sentinel"></div>
 </section>
 
 <div id="kgModal" class="kg-modal" aria-hidden="true">
-  <div class="kg-backdrop" data-close-modal></div>
-  <article class="kg-modal-card">
-    <button class="kg-close" type="button" data-close-modal>×</button>
+  <div class="kg-modal-bg" data-close></div>
+  <div class="kg-modal-card">
+    <button class="kg-close" type="button" data-close>×</button>
 
-    <div class="kg-modal-media">
-      <img id="modalImage" alt="" />
-    </div>
+    <div id="kgModalArt" class="kg-modal-art"></div>
 
     <div class="kg-modal-info">
       <p class="kg-kicker">Original inscription media · 2048×2048</p>
-      <h2 id="modalTitle"></h2>
-      <p id="modalShortId" class="kg-short-id"></p>
+      <h2 id="kgModalTitle"></h2>
+      <p id="kgModalShortId" class="kg-short-id"></p>
 
-      <div id="modalTraits" class="kg-traits"></div>
+      <div id="kgModalTraits" class="kg-modal-traits"></div>
 
-      <div class="kg-id-box">
+      <div class="kg-full-id">
         <span>Full inscription ID</span>
-        <code id="modalFullId"></code>
+        <code id="kgModalFullId"></code>
       </div>
 
-      <div class="kg-modal-actions">
-        <button id="copyIdBtn" type="button">Copy ID</button>
-        <a id="viewOrdinalBtn" target="_blank" rel="noreferrer">View Ordinal</a>
-        <a id="openOriginalBtn" target="_blank" rel="noreferrer">Open Original 2048×2048</a>
-        <button id="downloadBtn" type="button">Download Copy</button>
+      <div class="kg-actions">
+        <button id="kgCopyId" type="button">Copy ID</button>
+        <a id="kgViewOrdinal" target="_blank" rel="noopener">View Ordinal</a>
+        <a id="kgOpenOriginal" target="_blank" rel="noopener">Open Original</a>
+        <button id="kgDownloadPng" type="button">Download PNG</button>
+        <button id="kgDownloadHtml" type="button">Download Animated HTML</button>
+        <button id="kgDownloadGif" type="button">Download GIF</button>
       </div>
     </div>
-  </article>
+  </div>
 </div>
 
 <style>
-  .knotzi-gallery-page {
+  .kg-page {
     min-height: 100vh;
-    background:
-      radial-gradient(circle at top left, rgba(247,147,26,.18), transparent 32rem),
-      radial-gradient(circle at top right, rgba(255,255,255,.06), transparent 24rem),
-      #050505;
-    color: #f5f0e8;
-    padding: 72px 18px 100px;
+    background: #bf1717;
+    color: #fff;
+    padding: clamp(24px, 5vw, 64px) 0;
+  }
+
+  .kg-wrap {
+    width: min(1480px, calc(100% - 32px));
+    margin: 0 auto;
   }
 
   .kg-hero {
-    width: min(1180px, 100%);
-    margin: 0 auto 28px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 24px;
   }
 
   .kg-kicker {
     color: #f7931a;
-    letter-spacing: .22em;
-    font-size: 12px;
+    margin: 0 0 10px;
     text-transform: uppercase;
-    margin: 0 0 12px;
+    letter-spacing: .18em;
+    font-weight: 900;
+    font-size: .85rem;
   }
 
   .kg-hero h1 {
-    font-size: clamp(42px, 8vw, 96px);
-    line-height: .88;
-    margin: 0 0 18px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(3.8rem, 9vw, 8rem);
+    line-height: .82;
+    font-weight: 900;
     text-transform: uppercase;
   }
 
-  .kg-hero p {
+  .kg-copy {
+    margin: 16px 0 0;
+    color: #f5efe7;
+    font-size: 1.1rem;
+    line-height: 1.5;
     max-width: 780px;
-    color: rgba(245,240,232,.72);
-    line-height: 1.6;
-    font-size: 17px;
   }
 
-  .kg-tools {
-    width: min(1180px, 100%);
-    margin: 0 auto 24px;
-    border: 1px solid rgba(247,147,26,.24);
-    background: rgba(8,8,8,.86);
+  .kg-trade,
+  .kg-controls button,
+  .kg-more-wrap button,
+  .kg-actions a,
+  .kg-actions button {
+    border: 3px solid #111;
+    background: #f5efe7;
+    color: #111 !important;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    font-weight: 900;
+    padding: 13px 16px;
+    box-shadow: 5px 5px 0 rgba(0,0,0,.35);
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .kg-trade:hover,
+  .kg-controls button:hover,
+  .kg-more-wrap button:hover,
+  .kg-actions a:hover,
+  .kg-actions button:hover {
+    background: #f7931a;
+  }
+
+  .kg-controls {
+    background: #f5efe7;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0 rgba(0,0,0,.35);
     padding: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    backdrop-filter: blur(12px);
+    display: grid;
+    grid-template-columns: 1fr 180px auto;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
-  #kgSearch {
+  .kg-controls input,
+  .kg-controls select {
     width: 100%;
-    background: #0d0d0d;
-    color: #f5f0e8;
-    border: 1px solid rgba(247,147,26,.36);
-    padding: 16px;
-    font-size: 16px;
-    outline: none;
-  }
-
-  #kgSearch:focus {
-    border-color: #f7931a;
-    box-shadow: 0 0 0 3px rgba(247,147,26,.16);
+    border: 3px solid #111;
+    background: #fff;
+    color: #111;
+    padding: 13px;
+    font-weight: 900;
   }
 
   .kg-filters {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-top: 12px;
-  }
-
-  .kg-filters select {
-    min-width: 0;
-    background: #0d0d0d;
-    color: #f5f0e8;
-    border: 1px solid rgba(255,255,255,.12);
-    padding: 12px;
-  }
-
-  .kg-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
-    margin-top: 12px;
-    color: rgba(245,240,232,.65);
-    font-size: 13px;
+    margin-bottom: 18px;
   }
 
-  #clearFilters {
-    background: transparent;
-    border: 1px solid rgba(247,147,26,.36);
-    color: #f7931a;
-    padding: 10px 12px;
-    cursor: pointer;
+  .kg-filter {
+    background: #f5efe7;
+    border: 3px solid #111;
+    color: #111;
+    padding: 10px;
   }
 
-  .kg-grid {
-    width: min(1180px, 100%);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-    gap: 14px;
-  }
-
-  .kg-card {
-    background: rgba(12,12,12,.94);
-    border: 1px solid rgba(255,255,255,.1);
-    color: #f5f0e8;
-    text-align: left;
-    padding: 0;
-    cursor: pointer;
-    overflow: hidden;
-    transition: transform .15s ease, border-color .15s ease;
-  }
-
-  .kg-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(247,147,26,.6);
-  }
-
-  .kg-img-wrap {
-    aspect-ratio: 1 / 1;
-    background: #111;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-  }
-
-  .kg-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .kg-filter label {
     display: block;
+    font-size: .72rem;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: .08em;
+    margin-bottom: 6px;
   }
 
-  .kg-placeholder {
-    color: #f7931a;
-    font-size: 54px;
+  .kg-filter select {
+    width: 100%;
+    border: 2px solid #111;
+    background: #fff;
+    color: #111;
+    padding: 8px;
     font-weight: 900;
   }
 
+  .kg-count {
+    color: #f5efe7;
+    font-weight: 900;
+    margin: 0 0 16px;
+  }
+
+  .kg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+  }
+
+  .kg-card {
+    background: #130f0f;
+    border: 3px solid rgba(247,147,26,.45);
+    color: #fff;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .12s ease, border-color .12s ease;
+  }
+
+  .kg-card:hover {
+    transform: translateY(-2px);
+    border-color: #f7931a;
+  }
+
+  .kg-card-art {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .kg-card-art svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
   .kg-card-body {
-    padding: 12px;
+    background: rgba(42,0,0,.78);
+    padding: 14px;
   }
 
-  .kg-card h3 {
-    margin: 0 0 6px;
-    font-size: 15px;
+  .kg-card-title {
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 900;
+    margin-bottom: 7px;
   }
 
-  .kg-short-id {
-    color: rgba(245,240,232,.5);
-    font-size: 12px;
-    word-break: break-all;
-    margin: 0 0 10px;
+  .kg-card-id {
+    color: rgba(245,239,231,.5);
+    font-size: .82rem;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
   }
 
-  .kg-traits {
+  .kg-card-traits {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 7px;
   }
 
-  .kg-trait {
-    border: 1px solid rgba(247,147,26,.22);
-    background: rgba(247,147,26,.07);
-    color: rgba(245,240,232,.82);
-    padding: 5px 7px;
-    font-size: 11px;
+  .kg-trait-chip {
+    border: 1px solid rgba(247,147,26,.45);
+    color: rgba(245,239,231,.8);
+    padding: 5px 8px;
+    font-size: .72rem;
   }
 
-  .kg-card-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-
-  .kg-card-actions a {
-    color: #f7931a;
-    font-size: 12px;
-    text-decoration: none;
-  }
-
-  .kg-sentinel {
-    height: 80px;
+  .kg-more-wrap {
+    margin-top: 30px;
+    text-align: center;
   }
 
   .kg-modal {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: 999999;
     display: none;
   }
 
-  .kg-modal.is-open {
+  .kg-modal.open {
     display: block;
   }
 
-  .kg-backdrop {
+  .kg-modal-bg {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,.78);
+    background: rgba(0,0,0,.82);
   }
 
   .kg-modal-card {
     position: relative;
-    z-index: 2;
-    width: min(1100px, calc(100% - 28px));
+    width: min(1280px, calc(100% - 28px));
     max-height: calc(100vh - 28px);
-    overflow: auto;
     margin: 14px auto;
+    background: #070707;
+    border: 3px solid rgba(247,147,26,.55);
     display: grid;
-    grid-template-columns: minmax(280px, 520px) 1fr;
-    background: #080808;
-    border: 1px solid rgba(247,147,26,.42);
-    box-shadow: 0 0 80px rgba(247,147,26,.16);
-  }
-
-  .kg-modal-media {
-    background: #111;
-    display: grid;
-    place-items: center;
-  }
-
-  .kg-modal-media img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: contain;
-    display: block;
-  }
-
-  .kg-modal-info {
-    padding: clamp(20px, 4vw, 38px);
-  }
-
-  .kg-modal-info h2 {
-    margin: 0 0 10px;
-    font-size: clamp(28px, 5vw, 56px);
-    line-height: .95;
-  }
-
-  .kg-id-box {
-    margin-top: 18px;
-    padding: 12px;
-    background: rgba(255,255,255,.035);
-    border: 1px solid rgba(255,255,255,.1);
-  }
-
-  .kg-id-box span {
-    display: block;
-    color: rgba(245,240,232,.5);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .12em;
-    margin-bottom: 8px;
-  }
-
-  .kg-id-box code {
-    color: rgba(245,240,232,.8);
-    word-break: break-all;
-    font-size: 12px;
-  }
-
-  .kg-modal-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  .kg-modal-actions a,
-  .kg-modal-actions button {
-    background: transparent;
-    border: 1px solid rgba(247,147,26,.42);
-    color: #f7931a;
-    padding: 11px 12px;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 12px;
-    text-transform: uppercase;
+    grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
+    overflow: auto;
+    box-shadow: 12px 12px 0 rgba(0,0,0,.55);
   }
 
   .kg-close {
     position: absolute;
-    top: 10px;
-    right: 12px;
-    z-index: 3;
-    width: 38px;
-    height: 38px;
-    border: 1px solid rgba(247,147,26,.45);
-    background: #050505;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    width: 48px;
+    height: 48px;
+    border: 2px solid #f7931a;
+    background: #111;
     color: #f7931a;
-    font-size: 28px;
+    font-size: 30px;
     cursor: pointer;
   }
 
-  @media (max-width: 780px) {
-    .kg-filters {
-      grid-template-columns: 1fr;
-    }
+  .kg-modal-art {
+    background: #000;
+    display: grid;
+    place-items: center;
+    min-height: 560px;
+    overflow: hidden;
+  }
 
+  .kg-modal-art svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .kg-modal-info {
+    padding: clamp(24px, 4vw, 46px);
+    color: #fff;
+  }
+
+  .kg-modal-info h2 {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    line-height: .88;
+    font-weight: 900;
+  }
+
+  .kg-short-id {
+    color: rgba(245,239,231,.55);
+    margin: 0 0 18px;
+    overflow-wrap: anywhere;
+  }
+
+  .kg-modal-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .kg-full-id {
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.06);
+    color: #f5efe7;
+    padding: 14px;
+    margin-bottom: 22px;
+    overflow-wrap: anywhere;
+  }
+
+  .kg-full-id span {
+    display: block;
+    color: rgba(245,239,231,.65);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    font-size: .78rem;
+    margin-bottom: 10px;
+  }
+
+  .kg-full-id code {
+    color: #fff;
+    white-space: pre-wrap;
+  }
+
+  .kg-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .kg-actions button,
+  .kg-actions a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 52px;
+    box-shadow: none;
+  }
+
+  .kg-actions button:disabled {
+    opacity: .7;
+    cursor: wait;
+  }
+
+  @media (max-width: 920px) {
+    .kg-hero,
     .kg-modal-card {
       grid-template-columns: 1fr;
+      display: grid;
     }
 
-    .kg-tools {
-      position: relative;
+    .kg-controls,
+    .kg-filters,
+    .kg-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .kg-modal-art {
+      min-height: auto;
+      aspect-ratio: 1 / 1;
     }
   }
 </style>
 
-<script>
-(() => {
-  const JSON_URL = '/magiceden_inscriptions_BitcoinKnotzi_chronoIDs.json'
-  const BATCH_SIZE = 40
+<script type="module">
+  import { LAYERS, TRAITS } from '/knotzi-traits.js'
 
-  const state = {
-    raw: [],
-    items: [],
-    filtered: [],
-    rendered: 0,
-    selected: null,
-    query: '',
-    filters: {
-      Background: '',
-      Body: '',
-      Face: '',
-      Outfit: '',
-      Headwear: ''
-    }
-  }
+  const BASE = 'https://ordinals.com/content/'
+  const JSON_URL = '/magiceden_inscriptions_BitcoinKnotzi_chronoIDs.json'
+  const PAGE_SIZE = 80
+
+  let allItems = []
+  let filtered = []
+  let visibleCount = PAGE_SIZE
+  let activeItem = null
 
   const els = {
     search: document.getElementById('kgSearch'),
+    sort: document.getElementById('kgSort'),
+    clear: document.getElementById('kgClear'),
+    filters: document.getElementById('kgFilters'),
     grid: document.getElementById('kgGrid'),
-    count: document.getElementById('kgCount'),
-    clear: document.getElementById('clearFilters'),
-    sentinel: document.getElementById('kgSentinel'),
+    showing: document.getElementById('kgShowing'),
+    total: document.getElementById('kgTotal'),
+    more: document.getElementById('kgMore'),
     modal: document.getElementById('kgModal'),
-    modalImage: document.getElementById('modalImage'),
-    modalTitle: document.getElementById('modalTitle'),
-    modalShortId: document.getElementById('modalShortId'),
-    modalFullId: document.getElementById('modalFullId'),
-    modalTraits: document.getElementById('modalTraits'),
-    copyId: document.getElementById('copyIdBtn'),
-    viewOrdinal: document.getElementById('viewOrdinalBtn'),
-    openOriginal: document.getElementById('openOriginalBtn'),
-    download: document.getElementById('downloadBtn'),
-    filters: {
-      Background: document.getElementById('filterBackground'),
-      Body: document.getElementById('filterBody'),
-      Face: document.getElementById('filterFace'),
-      Outfit: document.getElementById('filterOutfit'),
-      Headwear: document.getElementById('filterHeadwear')
+    modalArt: document.getElementById('kgModalArt'),
+    modalTitle: document.getElementById('kgModalTitle'),
+    modalShortId: document.getElementById('kgModalShortId'),
+    modalFullId: document.getElementById('kgModalFullId'),
+    modalTraits: document.getElementById('kgModalTraits'),
+    copyId: document.getElementById('kgCopyId'),
+    viewOrdinal: document.getElementById('kgViewOrdinal'),
+    openOriginal: document.getElementById('kgOpenOriginal'),
+    downloadPng: document.getElementById('kgDownloadPng'),
+    downloadHtml: document.getElementById('kgDownloadHtml'),
+    downloadGif: document.getElementById('kgDownloadGif'),
+  }
+
+  const activeFilters = Object.fromEntries(LAYERS.map(layer => [layer, '']))
+
+  function nameOf(item) {
+    return item?.meta?.name || 'Bitcoin Knotzi'
+  }
+
+  function numberOf(item) {
+    const found = nameOf(item).match(/#\s*(\d+)/)
+    return found ? Number(found[1]) : 0
+  }
+
+  function shortId(item) {
+    const id = item?.id || ''
+    return id.length > 18 ? id.slice(0, 8) + '...' + id.slice(-6) : id
+  }
+
+  function cleanName(name, ext) {
+    return String(name || 'Bitcoin-Knotzi')
+      .replace(/[^a-z0-9#]+/gi, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .replace('#', '')
+      + '.' + ext
+  }
+
+  function traitValue(item, layer) {
+    const value = item?.meta?.attributes?.find(a => a.trait_type === layer)?.value
+    return value == null ? '' : String(value)
+  }
+
+  function traitId(layer, value) {
+    return TRAITS[layer]?.find(t => t.name === value)?.id || ''
+  }
+
+  function partsFor(item) {
+    return LAYERS.map(layer => {
+      const value = traitValue(item, layer)
+      const id = traitId(layer, value)
+      return { layer, value, id }
+    }).filter(x => x.value && x.id)
+  }
+
+  function buildSvg(item) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    svg.setAttribute('viewBox', '0 0 2048 2048')
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet')
+
+    for (const part of partsFor(item)) {
+      const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+      image.setAttribute('href', BASE + part.id)
+      image.setAttribute('width', '2048')
+      image.setAttribute('height', '2048')
+      image.setAttribute('preserveAspectRatio', 'none')
+      svg.appendChild(image)
     }
+
+    return svg
   }
 
-  const mediaUrl = id => `https://ordinals.com/content/${id}`
-  const ordinalUrl = id => `https://ordinals.com/inscription/${id}`
+  function renderFilters() {
+    els.filters.innerHTML = ''
 
-  function normaliseTraitValue(value) {
-    return value === null || value === undefined || value === '' ? 'None' : String(value)
-  }
+    for (const layer of LAYERS) {
+      const wrap = document.createElement('div')
+      wrap.className = 'kg-filter'
 
-  function shortId(id) {
-    return `${id.slice(0, 8)}…${id.slice(-6)}`
-  }
+      const label = document.createElement('label')
+      label.textContent = layer
 
-  function getNumber(name) {
-    const match = String(name || '').match(/#(\d+)/)
-    return match ? match[1] : ''
-  }
+      const select = document.createElement('select')
+      select.innerHTML = `<option value="">All ${layer}</option>`
 
-  function filenameFor(item, ext = 'png') {
-    const n = String(item.number || '').padStart(4, '0')
-    return `Bitcoin-Knotzi-${n || item.name.replace(/\s+/g, '-')}.${ext}`
-  }
-
-  function normaliseItem(item) {
-    const traits = {}
-
-    for (const attr of item.meta?.attributes || []) {
-      traits[attr.trait_type] = normaliseTraitValue(attr.value)
-    }
-
-    const name = item.meta?.name || 'Bitcoin Knotzi'
-    const number = getNumber(name)
-
-    const searchText = [
-      item.id,
-      name,
-      number,
-      traits.Background,
-      traits.Body,
-      traits.Face,
-      traits.Outfit,
-      traits.Headwear
-    ].filter(Boolean).join(' ').toLowerCase()
-
-    return {
-      id: item.id,
-      name,
-      number,
-      traits,
-      searchText
-    }
-  }
-
-  function populateFilters() {
-    for (const trait of Object.keys(els.filters)) {
-      const values = [...new Set(state.items.map(item => item.traits[trait] || 'None'))]
-        .sort((a, b) => a.localeCompare(b))
+      const values = [...new Set(allItems.map(item => traitValue(item, layer)).filter(Boolean))].sort()
 
       for (const value of values) {
         const option = document.createElement('option')
         option.value = value
         option.textContent = value
-        els.filters[trait].appendChild(option)
+        select.appendChild(option)
       }
+
+      select.addEventListener('change', () => {
+        activeFilters[layer] = select.value
+        applyFilters()
+      })
+
+      wrap.appendChild(label)
+      wrap.appendChild(select)
+      els.filters.appendChild(wrap)
     }
   }
 
   function applyFilters() {
-    const q = state.query.trim().toLowerCase()
+    const q = els.search.value.trim().toLowerCase()
 
-    state.filtered = state.items.filter(item => {
-      if (q && !item.searchText.includes(q)) return false
+    filtered = allItems.filter(item => {
+      const haystack = [
+        nameOf(item),
+        String(numberOf(item)),
+        shortId(item),
+        ...(item.meta.attributes || []).map(a => `${a.trait_type} ${a.value || ''}`)
+      ].join(' ').toLowerCase()
 
-      for (const [trait, value] of Object.entries(state.filters)) {
-        if (value && (item.traits[trait] || 'None') !== value) return false
-      }
+      const matchesSearch = !q || haystack.includes(q)
 
-      return true
+      const matchesFilters = LAYERS.every(layer => {
+        return !activeFilters[layer] || traitValue(item, layer) === activeFilters[layer]
+      })
+
+      return matchesSearch && matchesFilters
     })
 
-    state.rendered = 0
+    filtered.sort((a, b) => {
+      return els.sort.value === 'desc' ? numberOf(b) - numberOf(a) : numberOf(a) - numberOf(b)
+    })
+
+    visibleCount = PAGE_SIZE
+    renderGrid()
+  }
+
+  function renderGrid() {
+    const visible = filtered.slice(0, visibleCount)
     els.grid.innerHTML = ''
-    els.count.textContent = `Showing ${state.filtered.length.toLocaleString()} of ${state.items.length.toLocaleString()}`
-    renderMore()
-  }
 
-  function traitBadges(item) {
-    return ['Background', 'Body', 'Face', 'Outfit', 'Headwear'].map(trait => {
-      const value = item.traits[trait] || 'None'
-      return `<span class="kg-trait">${trait}: ${value}</span>`
-    }).join('')
-  }
-
-  function renderMore() {
-    const next = state.filtered.slice(state.rendered, state.rendered + BATCH_SIZE)
-
-    for (const item of next) {
+    for (const item of visible) {
       const card = document.createElement('article')
       card.className = 'kg-card'
-      card.innerHTML = `
-        <div class="kg-img-wrap">
-          <img loading="lazy" src="${mediaUrl(item.id)}" alt="${item.name}">
-        </div>
-        <div class="kg-card-body">
-          <h3>${item.name}</h3>
-          <p class="kg-short-id">${shortId(item.id)}</p>
-          <div class="kg-traits">${traitBadges(item)}</div>
-          <div class="kg-card-actions">
-            <a href="${ordinalUrl(item.id)}" target="_blank" rel="noreferrer">View Ordinal</a>
-            <a href="${mediaUrl(item.id)}" target="_blank" rel="noreferrer">Open 2048×2048</a>
-          </div>
-        </div>
-      `
 
-      const img = card.querySelector('img')
+      const art = document.createElement('div')
+      art.className = 'kg-card-art'
+      art.appendChild(buildSvg(item))
 
-      img.addEventListener('error', () => {
-        img.replaceWith(Object.assign(document.createElement('div'), {
-          className: 'kg-placeholder',
-          textContent: '₿'
-        }))
-      })
+      const body = document.createElement('div')
+      body.className = 'kg-card-body'
 
-      card.addEventListener('click', event => {
-        if (event.target.closest('a')) return
-        openModal(item)
-      })
+      const title = document.createElement('div')
+      title.className = 'kg-card-title'
+      title.textContent = nameOf(item)
+
+      const id = document.createElement('div')
+      id.className = 'kg-card-id'
+      id.textContent = shortId(item)
+
+      const traits = document.createElement('div')
+      traits.className = 'kg-card-traits'
+
+      for (const attr of item.meta.attributes || []) {
+        if (attr.value == null) continue
+        const chip = document.createElement('span')
+        chip.className = 'kg-trait-chip'
+        chip.textContent = `${attr.trait_type}: ${attr.value}`
+        traits.appendChild(chip)
+      }
+
+      body.appendChild(title)
+      body.appendChild(id)
+      body.appendChild(traits)
+
+      card.appendChild(art)
+      card.appendChild(body)
+
+      card.addEventListener('click', () => openModal(item))
 
       els.grid.appendChild(card)
     }
 
-    state.rendered += next.length
+    els.showing.textContent = String(visible.length)
+    els.total.textContent = String(filtered.length)
+    els.more.style.display = visibleCount < filtered.length ? 'inline-block' : 'none'
   }
 
   function openModal(item) {
-    state.selected = item
-    els.modal.classList.add('is-open')
+    activeItem = item
+
+    els.modalTitle.textContent = nameOf(item)
+    els.modalShortId.textContent = shortId(item)
+    els.modalFullId.textContent = item.id || ''
+
+    els.modalArt.innerHTML = ''
+    els.modalArt.appendChild(buildSvg(item))
+
+    els.modalTraits.innerHTML = ''
+    for (const attr of item.meta.attributes || []) {
+      if (attr.value == null) continue
+      const chip = document.createElement('span')
+      chip.className = 'kg-trait-chip'
+      chip.textContent = `${attr.trait_type}: ${attr.value}`
+      els.modalTraits.appendChild(chip)
+    }
+
+    els.viewOrdinal.href = item.id ? `https://ordinals.com/inscription/${item.id}` : '#'
+    els.openOriginal.href = item.id ? BASE + item.id : '#'
+
+    els.modal.classList.add('open')
     els.modal.setAttribute('aria-hidden', 'false')
-
-    els.modalImage.src = mediaUrl(item.id)
-    els.modalImage.alt = item.name
-    els.modalTitle.textContent = item.name
-    els.modalShortId.textContent = shortId(item.id)
-    els.modalFullId.textContent = item.id
-    els.viewOrdinal.href = ordinalUrl(item.id)
-    els.openOriginal.href = mediaUrl(item.id)
-
-    els.modalTraits.innerHTML = traitBadges(item)
+    document.body.style.overflow = 'hidden'
   }
 
   function closeModal() {
-    els.modal.classList.remove('is-open')
+    els.modal.classList.remove('open')
     els.modal.setAttribute('aria-hidden', 'true')
-    els.modalImage.removeAttribute('src')
-    state.selected = null
+    document.body.style.overflow = ''
+    activeItem = null
   }
 
-  async function downloadSelected() {
-    const item = state.selected
-    if (!item) return
-
-    const url = mediaUrl(item.id)
-
-    try {
-      const res = await fetch(url)
-      if (!res.ok) throw new Error('Download failed')
-
-      const contentType = res.headers.get('content-type') || ''
-      const ext = contentType.includes('gif') ? 'gif' : 'png'
-      const blob = await res.blob()
-
-      const a = document.createElement('a')
-      const objectUrl = URL.createObjectURL(blob)
-
-      a.href = objectUrl
-      a.download = filenameFor(item, ext)
-
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-
-      URL.revokeObjectURL(objectUrl)
-    } catch (error) {
-      window.open(url, '_blank', 'noopener,noreferrer')
-    }
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 2000)
   }
 
-  function debounce(fn, wait = 180) {
-    let t
-
-    return (...args) => {
-      clearTimeout(t)
-      t = setTimeout(() => fn(...args), wait)
-    }
-  }
-
-  async function init() {
-    try {
-      const res = await fetch(JSON_URL)
-      if (!res.ok) throw new Error('Could not load JSON')
-
-      state.raw = await res.json()
-      state.items = state.raw.map(normaliseItem)
-      state.filtered = state.items.slice()
-
-      populateFilters()
-      applyFilters()
-    } catch (error) {
-      els.count.textContent = 'Could not load Bitcoin Knotzi JSON.'
-      console.error(error)
-    }
-  }
-
-  els.search.addEventListener('input', debounce(event => {
-    state.query = event.target.value
-    applyFilters()
-  }))
-
-  for (const [trait, select] of Object.entries(els.filters)) {
-    select.addEventListener('change', event => {
-      state.filters[trait] = event.target.value
-      applyFilters()
+  function loadImage(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(img)
+      img.onerror = () => reject(new Error('Could not load layer: ' + url))
+      img.src = url
     })
   }
 
-  els.clear.addEventListener('click', () => {
-    state.query = ''
-    els.search.value = ''
+  async function downloadPng(item, button) {
+    const old = button.textContent
+    button.disabled = true
+    button.textContent = 'Building PNG...'
 
-    for (const [trait, select] of Object.entries(els.filters)) {
-      state.filters[trait] = ''
-      select.value = ''
+    try {
+      const canvas = document.createElement('canvas')
+      canvas.width = 2048
+      canvas.height = 2048
+      const ctx = canvas.getContext('2d')
+
+      for (const part of partsFor(item)) {
+        const img = await loadImage(BASE + part.id)
+        ctx.drawImage(img, 0, 0, 2048, 2048)
+      }
+
+      canvas.toBlob(blob => downloadBlob(blob, cleanName(nameOf(item), 'png')), 'image/png')
+    } finally {
+      button.disabled = false
+      button.textContent = old
+    }
+  }
+
+  function downloadAnimatedHtml(item) {
+    const images = partsFor(item).map(part => {
+      return `<image href="${BASE}${part.id}" width="2048" height="2048" preserveAspectRatio="none" />`
+    }).join('\n    ')
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${nameOf(item)}</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}
+svg{width:100%;height:100%;display:block}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048" preserveAspectRatio="xMidYMid meet">
+    ${images}
+</svg>
+</body>
+</html>`
+
+    downloadBlob(new Blob([html], { type: 'text/html' }), cleanName(nameOf(item) + '-animated', 'html'))
+  }
+
+  async function ensureGifEncoder() {
+    if (window.GIF) return
+
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = '/vendor/gif.js'
+      script.onload = resolve
+      script.onerror = reject
+      document.head.appendChild(script)
+    })
+  }
+
+  async function ensureGifDecoder() {
+    if (window.__gifuct) return window.__gifuct
+
+    try {
+      window.__gifuct = await import('https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/+esm')
+    } catch {
+      window.__gifuct = await import('https://esm.sh/gifuct-js@2.1.2')
     }
 
+    return window.__gifuct
+  }
+
+  async function fetchGifBuffer(url) {
+    const res = await fetch(url, { mode: 'cors', cache: 'force-cache' })
+    const buf = await res.arrayBuffer()
+    const header = new TextDecoder().decode(new Uint8Array(buf.slice(0, 6)))
+    if (!header.startsWith('GIF')) return null
+    return buf
+  }
+
+  async function downloadGif(item, button) {
+    const old = button.textContent
+    button.disabled = true
+    button.textContent = 'Preparing GIF...'
+
+    try {
+      const bg = partsFor(item).find(part => part.layer === 'Background')
+      if (!bg) throw new Error('No background layer')
+
+      const bgBuffer = await fetchGifBuffer(BASE + bg.id)
+      if (!bgBuffer) {
+        alert('This background is not a GIF. Use Download Animated HTML for animated AVIF layers.')
+        return
+      }
+
+      const { parseGIF, decompressFrames } = await ensureGifDecoder()
+      const parsed = parseGIF(bgBuffer)
+      const frames = decompressFrames(parsed, true)
+
+      const bgWidth = parsed.lsd.width
+      const bgHeight = parsed.lsd.height
+      const exportSize = 1024
+
+      const bgCanvas = document.createElement('canvas')
+      bgCanvas.width = bgWidth
+      bgCanvas.height = bgHeight
+      const bgCtx = bgCanvas.getContext('2d', { willReadFrequently: true })
+      bgCtx.fillStyle = '#000'
+      bgCtx.fillRect(0, 0, bgWidth, bgHeight)
+
+      const patchCanvas = document.createElement('canvas')
+      const patchCtx = patchCanvas.getContext('2d', { willReadFrequently: true })
+
+      const outCanvas = document.createElement('canvas')
+      outCanvas.width = exportSize
+      outCanvas.height = exportSize
+      const outCtx = outCanvas.getContext('2d', { willReadFrequently: true })
+
+      const overlays = []
+      for (const part of partsFor(item).filter(part => part.layer !== 'Background')) {
+        overlays.push(await loadImage(BASE + part.id))
+      }
+
+      await ensureGifEncoder()
+
+      const encoder = new window.GIF({
+        workers: 2,
+        quality: 8,
+        width: exportSize,
+        height: exportSize,
+        workerScript: '/vendor/gif.worker.js'
+      })
+
+      const useFrames = frames.slice(0, 120)
+
+      for (let i = 0; i < useFrames.length; i++) {
+        const frame = useFrames[i]
+        const dims = frame.dims
+
+        patchCanvas.width = dims.width
+        patchCanvas.height = dims.height
+
+        const imageData = new ImageData(frame.patch, dims.width, dims.height)
+        patchCtx.putImageData(imageData, 0, 0)
+
+        bgCtx.drawImage(patchCanvas, dims.left, dims.top)
+
+        outCtx.clearRect(0, 0, exportSize, exportSize)
+        outCtx.drawImage(bgCanvas, 0, 0, exportSize, exportSize)
+
+        for (const overlay of overlays) {
+          outCtx.drawImage(overlay, 0, 0, exportSize, exportSize)
+        }
+
+        const delay = Math.max(40, frame.delay || 100)
+        encoder.addFrame(outCtx, { copy: true, delay })
+
+        button.textContent = `Building GIF ${i + 1}/${useFrames.length}`
+
+        if (frame.disposalType === 2) {
+          bgCtx.clearRect(dims.left, dims.top, dims.width, dims.height)
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 0))
+      }
+
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('GIF render timed out')), 150000)
+
+        encoder.on('progress', p => {
+          button.textContent = `Encoding GIF ${Math.round(p * 100)}%`
+        })
+
+        encoder.on('finished', blob => {
+          clearTimeout(timer)
+          downloadBlob(blob, cleanName(nameOf(item), 'gif'))
+          resolve()
+        })
+
+        encoder.render()
+      })
+    } catch (err) {
+      console.error(err)
+      alert('GIF export failed for this one. Use Download Animated HTML as fallback.')
+    } finally {
+      button.disabled = false
+      button.textContent = old
+    }
+  }
+
+  document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal))
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal()
+  })
+
+  els.search.addEventListener('input', applyFilters)
+  els.sort.addEventListener('change', applyFilters)
+  els.more.addEventListener('click', () => {
+    visibleCount += PAGE_SIZE
+    renderGrid()
+  })
+
+  els.clear.addEventListener('click', () => {
+    els.search.value = ''
+    els.sort.value = 'asc'
+    for (const key of Object.keys(activeFilters)) activeFilters[key] = ''
+    els.filters.querySelectorAll('select').forEach(select => select.value = '')
     applyFilters()
   })
 
   els.copyId.addEventListener('click', async () => {
-    if (!state.selected) return
-
-    await navigator.clipboard.writeText(state.selected.id)
-
-    els.copyId.textContent = 'Copied'
-    setTimeout(() => {
-      els.copyId.textContent = 'Copy ID'
-    }, 900)
+    if (!activeItem?.id) return
+    await navigator.clipboard.writeText(activeItem.id)
   })
 
-  els.download.addEventListener('click', downloadSelected)
-
-  document.querySelectorAll('[data-close-modal]').forEach(el => {
-    el.addEventListener('click', closeModal)
+  els.downloadPng.addEventListener('click', () => {
+    if (activeItem) downloadPng(activeItem, els.downloadPng)
   })
 
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') closeModal()
+  els.downloadHtml.addEventListener('click', () => {
+    if (activeItem) downloadAnimatedHtml(activeItem)
   })
 
-  const observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting && state.rendered < state.filtered.length) {
-      renderMore()
-    }
-  }, { rootMargin: '600px' })
+  els.downloadGif.addEventListener('click', () => {
+    if (activeItem) downloadGif(activeItem, els.downloadGif)
+  })
 
-  observer.observe(els.sentinel)
+  async function init() {
+    const res = await fetch(JSON_URL)
+    allItems = await res.json()
+    allItems = allItems.filter(item => item?.meta?.name && item?.meta?.attributes?.length)
 
-  init()
-})()
+    renderFilters()
+    applyFilters()
+  }
+
+  init().catch(err => {
+    console.error(err)
+    els.grid.innerHTML = '<p style="color:white;font-weight:900;">Gallery failed to load. Check JSON and traits file.</p>'
+  })
 </script>
-
-<style id="knotzi-gallery-red-background-fix">
-  .knotzi-gallery-page {
-    background: transparent !important;
-    padding-top: 42px !important;
-  }
-
-  .kg-hero {
-    background: transparent !important;
-  }
-
-  .kg-tools {
-    background: rgba(0, 0, 0, 0.55) !important;
-    border-color: rgba(247, 147, 26, 0.5) !important;
-  }
-
-  .kg-grid {
-    background: transparent !important;
-  }
-
-  .kg-card {
-    background: rgba(10, 10, 10, 0.78) !important;
-  }
-</style>
-
-<style id="knotzi-gallery-white-filter-panel">
-  .kg-tools {
-    background: #f5efe7 !important;
-    border: 3px solid #111 !important;
-    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.45) !important;
-  }
-
-  #kgSearch {
-    background: #ffffff !important;
-    color: #111 !important;
-    border: 3px solid #111 !important;
-    box-shadow: none !important;
-  }
-
-  #kgSearch::placeholder {
-    color: rgba(0, 0, 0, 0.55) !important;
-  }
-
-  .kg-filters select {
-    background: #ffffff !important;
-    color: #111 !important;
-    border: 3px solid #111 !important;
-    box-shadow: none !important;
-    font-weight: 700 !important;
-  }
-
-  .kg-row {
-    color: #111 !important;
-    font-weight: 700 !important;
-  }
-
-  #clearFilters {
-    background: #111 !important;
-    color: #f5efe7 !important;
-    border: 3px solid #111 !important;
-    font-weight: 900 !important;
-    box-shadow: none !important;
-  }
-
-  #clearFilters:hover {
-    background: #f7931a !important;
-    color: #111 !important;
-    border-color: #111 !important;
-  }
-
-  .kg-modal-actions a,
-  .kg-modal-actions button {
-    background: #f5efe7 !important;
-    color: #111 !important;
-    border: 3px solid #111 !important;
-    font-weight: 900 !important;
-  }
-
-  .kg-modal-actions a:hover,
-  .kg-modal-actions button:hover {
-    background: #f7931a !important;
-    color: #111 !important;
-  }
-
-  .kg-card-actions a {
-    background: #f7931a !important;
-    color: #111 !important;
-    padding: 7px 9px !important;
-    border: 2px solid #111 !important;
-    font-weight: 900 !important;
-  }
-</style>
-
-
-<style id="knotzi-gallery-modal-white-text-fix">
-  .kg-modal-card,
-  .kg-modal-info,
-  .kg-modal-info h2,
-  #modalTitle,
-  #modalShortId,
-  #modalFullId,
-  .kg-id-box code,
-  .kg-id-box span {
-    color: #f5efe7 !important;
-  }
-
-  .kg-modal-info h2,
-  #modalTitle {
-    color: #ffffff !important;
-  }
-
-  .kg-modal-info .kg-kicker {
-    color: #f7931a !important;
-  }
-
-  .kg-id-box {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border-color: rgba(255, 255, 255, 0.18) !important;
-  }
-
-  .kg-modal-actions a,
-  .kg-modal-actions button {
-    background: #f5efe7 !important;
-    color: #111 !important;
-    border: 3px solid #111 !important;
-  }
-
-  .kg-modal-actions a:hover,
-  .kg-modal-actions button:hover {
-    background: #f7931a !important;
-    color: #111 !important;
-  }
-</style>
