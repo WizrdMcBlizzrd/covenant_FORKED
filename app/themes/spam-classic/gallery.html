@@ -18,6 +18,9 @@
       <button id="kgClear" type="button">Clear Filters</button>
     </section>
 
+    <p id="kgWalletStatus" class="kg-wallet-status"></p>
+    <button id="kgDownloadWalletAssets" class="kg-wallet-download" type="button">Download All Wallet Assets</button>
+
     <section id="kgFilters" class="kg-filters"></section>
 
     <p class="kg-count">Showing <span id="kgShowing">0</span> of <span id="kgTotal">0</span></p>
@@ -190,6 +193,45 @@
     color: #f5efe7;
     font-weight: 900;
     margin: 0 0 16px;
+  }
+
+  .kg-wallet-status {
+    display: none;
+    background: #f5efe7;
+    color: #111;
+    border: 3px solid #111;
+    padding: 12px 14px;
+    font-weight: 900;
+    margin: 0 0 16px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.35);
+  }
+
+  .kg-wallet-status.active {
+    display: block;
+  }
+
+  .kg-wallet-download {
+    display: none;
+    border: 3px solid #111;
+    background: #f7931a;
+    color: #111;
+    padding: 13px 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    box-shadow: 6px 6px 0 rgba(0,0,0,.35);
+    cursor: pointer;
+    margin: 0 0 16px;
+  }
+
+  .kg-wallet-download.active {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .kg-wallet-download:disabled {
+    opacity: .7;
+    cursor: wait;
   }
 
   .kg-grid {
@@ -420,9 +462,14 @@
   let filtered = []
   let visibleCount = PAGE_SIZE
   let activeItem = null
+  let walletMode = null
+  let walletMatchedItems = []
+  let walletDebounce = null
 
   const els = {
     search: document.getElementById('kgSearch'),
+    walletStatus: document.getElementById('kgWalletStatus'),
+    downloadWalletAssets: document.getElementById('kgDownloadWalletAssets'),
     sort: document.getElementById('kgSort'),
     clear: document.getElementById('kgClear'),
     filters: document.getElementById('kgFilters'),
@@ -445,6 +492,75 @@
   }
 
   const activeFilters = Object.fromEntries(LAYERS.map(layer => [layer, '']))
+
+  function looksLikeBitcoinAddress(value) {
+    const address = String(value || '').trim()
+    return /^(bc1|tb1)[a-z0-9]{20,90}$/i.test(address) ||
+      /^[13][a-km-zA-HJ-NP-Z1-9]{25,40}$/.test(address)
+  }
+
+  function setWalletStatus(message, active = false) {
+    els.walletStatus.textContent = message || ''
+    els.walletStatus.classList.toggle('active', Boolean(active && message))
+  }
+
+  function updateWalletDownloadButton() {
+    const count = walletMatchedItems.length
+
+    if (!walletMode || count === 0) {
+      els.downloadWalletAssets.classList.remove('active')
+      els.downloadWalletAssets.disabled = false
+      els.downloadWalletAssets.textContent = 'Download All Wallet Assets'
+      return
+    }
+
+    els.downloadWalletAssets.classList.add('active')
+    els.downloadWalletAssets.disabled = false
+    els.downloadWalletAssets.textContent =
+      count === 1 ? 'Download 1 Wallet Asset' : `Download All ${count} Wallet Assets`
+  }
+
+  async function lookupWallet(address) {
+    setWalletStatus('Checking wallet ownership...', true)
+
+    try {
+      const response = await fetch(`/api/knotzi-wallet?address=${encodeURIComponent(address)}`)
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error || 'Wallet lookup failed')
+      }
+
+      const data = await response.json()
+      const ownedIds = new Set(data.inscriptionIds || [])
+      const knotziIds = new Set(allItems.map(item => item.id))
+      const matchedCount = [...ownedIds].filter(id => knotziIds.has(id)).length
+
+      walletMode = {
+        address,
+        ids: ownedIds
+      }
+
+      walletMatchedItems = allItems.filter(item => ownedIds.has(item.id))
+      updateWalletDownloadButton()
+
+      setWalletStatus(
+        matchedCount === 1
+          ? `Wallet mode: 1 Bitcoin Knotzi found for ${address}. Clear Filters to exit.`
+          : `Wallet mode: ${matchedCount} Bitcoin Knotzis found for ${address}. Clear Filters to exit.`,
+        true
+      )
+
+      applyFilters()
+    } catch (err) {
+      console.error(err)
+      walletMode = null
+      walletMatchedItems = []
+      updateWalletDownloadButton()
+      setWalletStatus('Wallet lookup failed. Check the address or try again in a minute.', true)
+      applyFilters()
+    }
+  }
 
   function nameOf(item) {
     return item?.meta?.name || 'Bitcoin Knotzi'
@@ -538,7 +654,9 @@
   }
 
   function applyFilters() {
-    const q = els.search.value.trim().toLowerCase()
+    const rawSearch = els.search.value.trim()
+    const q = looksLikeBitcoinAddress(rawSearch) ? '' : rawSearch.toLowerCase()
+    const walletIds = walletMode?.ids || null
 
     filtered = allItems.filter(item => {
       const haystack = [
@@ -550,11 +668,13 @@
 
       const matchesSearch = !q || haystack.includes(q)
 
+      const matchesWallet = !walletIds || walletIds.has(item.id)
+
       const matchesFilters = LAYERS.every(layer => {
         return !activeFilters[layer] || traitValue(item, layer) === activeFilters[layer]
       })
 
-      return matchesSearch && matchesFilters
+      return matchesSearch && matchesFilters && matchesWallet
     })
 
     filtered.sort((a, b) => {
@@ -861,12 +981,223 @@ svg{width:100%;height:100%;display:block}
     }
   }
 
+
+  async function ensureZip() {
+    if (window.JSZip) return
+
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = '/vendor/jszip.min.js'
+      script.onload = resolve
+      script.onerror = reject
+      document.head.appendChild(script)
+    })
+  }
+
+  async function pngBlobForItem(item) {
+    const canvas = document.createElement('canvas')
+    canvas.width = 2048
+    canvas.height = 2048
+    const ctx = canvas.getContext('2d')
+
+    for (const part of partsFor(item)) {
+      const img = await loadImage(BASE + part.id)
+      ctx.drawImage(img, 0, 0, 2048, 2048)
+    }
+
+    return await new Promise(resolve => {
+      canvas.toBlob(blob => resolve(blob), 'image/png')
+    })
+  }
+
+  async function gifBlobForItem(item, backgroundBuffer, progressText) {
+    const { parseGIF, decompressFrames } = await ensureGifDecoder()
+    const parsed = parseGIF(backgroundBuffer)
+    const frames = decompressFrames(parsed, true)
+
+    const bgWidth = parsed.lsd.width
+    const bgHeight = parsed.lsd.height
+    const exportSize = 1024
+
+    const bgCanvas = document.createElement('canvas')
+    bgCanvas.width = bgWidth
+    bgCanvas.height = bgHeight
+    const bgCtx = bgCanvas.getContext('2d', { willReadFrequently: true })
+    bgCtx.fillStyle = '#000'
+    bgCtx.fillRect(0, 0, bgWidth, bgHeight)
+
+    const patchCanvas = document.createElement('canvas')
+    const patchCtx = patchCanvas.getContext('2d', { willReadFrequently: true })
+
+    const outCanvas = document.createElement('canvas')
+    outCanvas.width = exportSize
+    outCanvas.height = exportSize
+    const outCtx = outCanvas.getContext('2d', { willReadFrequently: true })
+
+    const overlays = []
+    for (const part of partsFor(item).filter(part => part.layer !== 'Background')) {
+      overlays.push(await loadImage(BASE + part.id))
+    }
+
+    await ensureGifEncoder()
+
+    const encoder = new window.GIF({
+      workers: 2,
+      quality: 8,
+      width: exportSize,
+      height: exportSize,
+      workerScript: '/vendor/gif.worker.js'
+    })
+
+    const useFrames = frames.slice(0, 120)
+
+    for (let i = 0; i < useFrames.length; i++) {
+      const frame = useFrames[i]
+      const dims = frame.dims
+
+      patchCanvas.width = dims.width
+      patchCanvas.height = dims.height
+
+      const imageData = new ImageData(frame.patch, dims.width, dims.height)
+      patchCtx.putImageData(imageData, 0, 0)
+
+      bgCtx.drawImage(patchCanvas, dims.left, dims.top)
+
+      outCtx.clearRect(0, 0, exportSize, exportSize)
+      outCtx.drawImage(bgCanvas, 0, 0, exportSize, exportSize)
+
+      for (const overlay of overlays) {
+        outCtx.drawImage(overlay, 0, 0, exportSize, exportSize)
+      }
+
+      const delay = Math.max(40, frame.delay || 100)
+      encoder.addFrame(outCtx, { copy: true, delay })
+
+      if (progressText) progressText(`GIF frame ${i + 1}/${useFrames.length}`)
+
+      if (frame.disposalType === 2) {
+        bgCtx.clearRect(dims.left, dims.top, dims.width, dims.height)
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 0))
+    }
+
+    return await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('GIF render timed out')), 150000)
+
+      encoder.on('progress', p => {
+        if (progressText) progressText(`Encoding GIF ${Math.round(p * 100)}%`)
+      })
+
+      encoder.on('finished', blob => {
+        clearTimeout(timer)
+        resolve(blob)
+      })
+
+      encoder.render()
+    })
+  }
+
+  async function walletAssetBlob(item, progressText) {
+    const bg = partsFor(item).find(part => part.layer === 'Background')
+
+    if (bg) {
+      const bgBuffer = await fetchGifBuffer(BASE + bg.id)
+
+      if (bgBuffer) {
+        const blob = await gifBlobForItem(item, bgBuffer, progressText)
+        return {
+          blob,
+          filename: cleanName(nameOf(item), 'gif')
+        }
+      }
+    }
+
+    const blob = await pngBlobForItem(item)
+    return {
+      blob,
+      filename: cleanName(nameOf(item), 'png')
+    }
+  }
+
+  async function downloadWalletAssetsZip() {
+    if (!walletMode || walletMatchedItems.length === 0) {
+      alert('Paste a wallet address first, then wait for wallet mode to find Knotzis.')
+      return
+    }
+
+    const count = walletMatchedItems.length
+
+    if (count > 25) {
+      const ok = confirm(`This wallet has ${count} Knotzis. Building all assets may take several minutes and use a lot of browser memory. Continue?`)
+      if (!ok) return
+    }
+
+    const button = els.downloadWalletAssets
+    const old = button.textContent
+    button.disabled = true
+
+    try {
+      await ensureZip()
+
+      const zip = new window.JSZip()
+      const folder = zip.folder('bitcoin-knotzis-wallet-assets')
+
+      for (let i = 0; i < walletMatchedItems.length; i++) {
+        const item = walletMatchedItems[i]
+        button.textContent = `Building ${i + 1}/${count}: ${nameOf(item)}`
+
+        const result = await walletAssetBlob(item, msg => {
+          button.textContent = `Building ${i + 1}/${count}: ${msg}`
+        })
+
+        folder.file(result.filename, result.blob)
+      }
+
+      button.textContent = 'Zipping assets...'
+
+      const zipBlob = await zip.generateAsync(
+        { type: 'blob' },
+        meta => {
+          button.textContent = `Zipping ${Math.round(meta.percent)}%`
+        }
+      )
+
+      const safeAddress = walletMode.address.slice(0, 10) + '-' + walletMode.address.slice(-8)
+      downloadBlob(zipBlob, `bitcoin-knotzis-${safeAddress}.zip`)
+    } catch (err) {
+      console.error(err)
+      alert('Download All failed. Try fewer wallet assets or download individually.')
+    } finally {
+      button.disabled = false
+      button.textContent = old
+      updateWalletDownloadButton()
+    }
+  }
+
+
   document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal))
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeModal()
   })
 
-  els.search.addEventListener('input', applyFilters)
+  els.search.addEventListener('input', () => {
+    const value = els.search.value.trim()
+
+    clearTimeout(walletDebounce)
+
+    if (looksLikeBitcoinAddress(value)) {
+      setWalletStatus('Wallet address detected. Checking ownership...', true)
+      walletDebounce = setTimeout(() => lookupWallet(value), 650)
+      return
+    }
+
+    walletMode = null
+    walletMatchedItems = []
+    updateWalletDownloadButton()
+    setWalletStatus('', false)
+    applyFilters()
+  })
   els.sort.addEventListener('change', applyFilters)
   els.more.addEventListener('click', () => {
     visibleCount += PAGE_SIZE
@@ -893,6 +1224,8 @@ svg{width:100%;height:100%;display:block}
   els.downloadHtml.addEventListener('click', () => {
     if (activeItem) downloadAnimatedHtml(activeItem)
   })
+
+  els.downloadWalletAssets.addEventListener('click', downloadWalletAssetsZip)
 
   els.downloadGif.addEventListener('click', () => {
     if (activeItem) downloadGif(activeItem, els.downloadGif)

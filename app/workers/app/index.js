@@ -34,6 +34,66 @@ app.get('/launchpad/:slug/sales', launchpadSalesController)
 app.get('/launchpad/:slug/progress', launchpadProgressController)
 app.get('/gallery', galleryController)
 
+
+
+app.get('/api/knotzi-wallet', async (c) => {
+  const address = String(c.req.query('address') || '').trim()
+
+  const looksLikeBtcAddress =
+    /^(bc1|tb1)[a-z0-9]{20,90}$/i.test(address) ||
+    /^[13][a-km-zA-HJ-NP-Z1-9]{25,40}$/.test(address)
+
+  if (!looksLikeBtcAddress) {
+    return c.json({ error: 'Invalid Bitcoin address' }, 400)
+  }
+
+  const apiKey = c.env.ORDISCAN_API_KEY
+
+  if (!apiKey) {
+    return c.json({ error: 'Missing ORDISCAN_API_KEY secret' }, 500)
+  }
+
+  const url = `https://api.ordiscan.com/v1/address/${encodeURIComponent(address)}/inscription-ids`
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'X-API-KEY': apiKey,
+      Accept: 'application/json'
+    }
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    return c.json({
+      error: 'Wallet lookup failed',
+      status: response.status,
+      detail: text.slice(0, 500)
+    }, 502)
+  }
+
+  const data = await response.json()
+
+  const inscriptionIds = Array.isArray(data)
+    ? data
+    : Array.isArray(data.inscriptionIds)
+      ? data.inscriptionIds
+      : Array.isArray(data.inscription_ids)
+        ? data.inscription_ids
+        : Array.isArray(data.data)
+          ? data.data
+          : []
+
+  return c.json({
+    address,
+    inscriptionIds
+  }, {
+    headers: {
+      'Cache-Control': 'public, max-age=60'
+    }
+  })
+})
+
 app.get('/:collection', collectionController)
 app.get('/:collection/:id', showCollectionInscriptionController)
 
