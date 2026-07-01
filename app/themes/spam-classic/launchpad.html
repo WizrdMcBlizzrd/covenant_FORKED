@@ -1,49 +1,36 @@
-<%
-  const bannerId =
-    collection.gallery_inscription_id ??
-    collection.parent_inscription_id ??
-    (collection.inscription_ids ?? [])[0]
+<section
+  data-testid="launchpad-page"
+  <% if (false) { %>
+    data-controller="mint"
+    data-action="wallet:connected@window->mint#onWalletConnected wallet:disconnected@window->mint#onWalletDisconnected"
+    data-mint-collection-value="<%= collection.slug %>"
+    data-mint-price-value="<%= collection.price_sats %>"
+    data-mint-payment-address-value="<%= collection.payment_address %>"
+    data-mint-lowest-inscription-utxo-size-value="<%= collection.lowest_inscription_utxo_size %>"
+    data-mint-seller-address-value="<%= launchpad.seller_address %>"
+    <% if (collection.explicit_fee_rate) { %>
+      data-mint-explicit-fee-rate-value="<%= collection.explicit_fee_rate %>"
+    <% } %>
+  <% } %>
+>
+  <% const isGallery = Boolean(collection.gallery_inscription_id) %>
+  <% const bannerId = collection.gallery_inscription_id ?? collection.parent_inscription_id ?? (collection.inscription_ids ?? [])[0] %>
 
-  let mintAttrs = ''
-  if (!supply.isSoldOut && supply.hasMintable) {
-    mintAttrs += ' data-controller="mint"'
-    mintAttrs += ' data-action="wallet:connected@window->mint#onWalletConnected wallet:disconnected@window->mint#onWalletDisconnected"'
-    mintAttrs += ` data-mint-collection-value="${collection.slug}"`
-    mintAttrs += ` data-mint-price-value="${collection.price_sats}"`
-    mintAttrs += ` data-mint-payment-address-value="${collection.payment_address}"`
-    mintAttrs += ` data-mint-lowest-inscription-utxo-size-value="${collection.lowest_inscription_utxo_size}"`
-    mintAttrs += ` data-mint-seller-address-value="${launchpad.seller_address}"`
-    if (collection.explicit_fee_rate) {
-      mintAttrs += ` data-mint-explicit-fee-rate-value="${collection.explicit_fee_rate}"`
-    }
-  }
-%>
+  <section class="detail-section">
+    <div class="detail-bg"></div>
 
-<section class="pb-6" data-testid="launchpad-page"<%- mintAttrs %>>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <!-- Left: Artwork -->
-    <% if (CONFIG.launchpad_media_gif_url) { %>
-      <div class="spam-can p-4" data-testid="launchpad-media">
-        <img
-          src="<%= CONFIG.launchpad_media_gif_url %>"
-          alt="<%= collection.title %>"
-          class="w-full aspect-[4/3] object-contain rounded border-2 border-spam-navy"
-          data-testid="launchpad-media-gif"
-        />
-      </div>
-    <% } else if (bannerId) { %>
-      <div class="spam-can p-4" data-testid="launchpad-media" data-controller="image">
-        <div class="relative aspect-[4/3]">
-          <div class="absolute inset-0 bg-spam-bone-dark rounded animate-pulse" data-image-target="skeleton"></div>
-
+    <div class="detail-container">
+      <div class="detail-media-wrapper">
+        <div class="detail-media" data-testid="launchpad-media" data-controller="image">
+          <div class="inscription-skeleton" data-image-target="skeleton"></div>
           <% if (parentInscription && parentInscription.isImage) { %>
             <img
               src="https://ordinals.com/content/<%= encodeURIComponent(bannerId) %>"
               alt="<%= collection.title %>"
               loading="eager"
               decoding="async"
+              class="opacity-0 transition-opacity duration-300"
               style="image-rendering: pixelated"
-              class="w-full h-full object-contain rounded border-2 border-spam-navy opacity-0 transition-opacity duration-300"
               data-image-target="img"
               data-action="load->image#loaded error->image#error"
               data-testid="launchpad-media-img"
@@ -51,7 +38,7 @@
           <% } else { %>
             <iframe
               src="https://ordinals.com/preview/<%= encodeURIComponent(bannerId) %>"
-              class="w-full h-full rounded border-2 border-spam-navy pointer-events-none opacity-0 transition-opacity duration-300"
+              class="pointer-events-none opacity-0 transition-opacity duration-300"
               allow="accelerometer; gyroscope"
               data-image-target="media"
               data-action="load->image#loaded error->image#error"
@@ -60,164 +47,147 @@
           <% } %>
         </div>
       </div>
-    <% } else { %>
-      <div class="spam-can p-4" data-testid="launchpad-media">
-        <div class="w-full aspect-[4/3] rounded border-2 border-spam-navy bg-spam-bone flex items-center justify-center">
-          <span class="text-5xl">🥫</span>
+
+      <div class="detail-sidebar">
+        <div class="detail-card" data-testid="launchpad-header">
+          <span class="detail-jp">聖なる遺物</span>
+          <h2 class="detail-title" data-testid="launchpad-title"><%= collection.title.toUpperCase() %></h2>
+          <div class="detail-meta">
+            <% if (isGallery) { %>
+              Gallery provenance launch.
+            <% } else if (collection.parent_inscription_id) { %>
+              Parent provenance launch.
+            <% } else { %>
+              Curated launch collection.
+            <% } %>
+          </div>
+          <% if (collection.parent_inscription_id && parentInscription && parentInscription.isSealed) { %>
+            <div class="detail-meta">This collection is sealed 🔥</div>
+          <% } %>
+          <% if (collection.gallery_inscription_id || collection.parent_inscription_id) { %>
+            <div class="detail-meta">
+              <a class="detail-link" href="https://ordinals.com/inscription/<%= encodeURIComponent(bannerId) %>" target="_blank" rel="noopener" data-testid="parent-ordinals-number-link">View on ordinals.com</a>
+            </div>
+          <% } %>
+        </div>
+
+        <turbo-frame
+          id="launchpad-progress"
+          src="/launchpad/<%= encodeURIComponent(collection.slug) %>/progress"
+          loading="eager"
+          refresh="morph"
+          data-controller="frame-refresh"
+          data-frame-refresh-interval-value="<%= launchpad.refresh_ms %>"
+        ></turbo-frame>
+
+        <div class="detail-card" data-testid="purchase-panel">
+          <div class="detail-price-block" style="border-top: none; padding-top: 0; margin-bottom: 1.5rem;">
+            <div>
+              <div class="detail-price" data-testid="price-sats"><%= formatSats(collection.price_sats) %></div>
+            </div>
+          </div>
+
+          <% if (true) { %>
+            <button class="detail-buy-btn" type="button" disabled>Sold Out</button>
+            <a class="detail-buy-btn knotzi-open-gallery-btn" href="/gallery">Open Gallery</a>
+          <% } else { %>
+            <form method="post" data-testid="mint-form" data-mint-target="form">
+              <% if (collection.op_return) { %>
+                <div style="margin-bottom: 1rem; padding: 0.75rem; border: 1px solid var(--color-ash); background: var(--color-surface-altar);" data-testid="spam-container">
+                  <div style="font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-smoke);">OP_RETURN SPAM</div>
+                  <textarea
+                    id="launchpad-spam-<%= collection.slug %>"
+                    rows="3"
+                    required
+                    spellcheck="false"
+                    autocomplete="off"
+                    placeholder="Enter at least 81 bytes"
+                    data-mint-target="spamInput"
+                    data-action="input->mint#onSpamInput"
+                    style="width: 100%; min-height: 80px; margin-top: 0.5rem; border: 1px solid var(--color-ash); background: #0b0b0b; color: var(--color-bone); padding: 0.5rem; font-size: 0.8rem;"
+                  ></textarea>
+                  <div style="margin-top: 0.4rem; font-size: 0.65rem; color: var(--color-secondary);">Minimum 81 bytes required.</div>
+                </div>
+              <% } %>
+              <% if ((collection.optional_payments ?? []).length > 0) { %>
+                <div class="optional-payments" data-testid="optional-payments">
+                  <div class="optional-payments-label">ADDITIONAL OPTIONS</div>
+                  <% collection.optional_payments.forEach((payment) => { %>
+                    <label class="optional-payment" data-testid="optional-payment">
+                      <input type="checkbox" data-mint-target="optionalPayment" data-payment='<%= JSON.stringify(payment) %>' data-action="mint#calculateCost" />
+                      <div class="optional-payment-title"><%= payment.title %></div>
+                      <span class="optional-payment-amount"><%= formatSats(payment.amount) %></span>
+                      <div class="optional-payment-desc"><%= payment.description %></div>
+                    </label>
+                  <% }) %>
+                </div>
+              <% } %>
+
+              <div class="fees-section" data-testid="fees" data-mint-target="fees">
+                <div class="fee-row">
+                  <span class="label">NETWORK FEE:</span>
+                  <span class="value" data-mint-target="fee">-</span>
+                </div>
+                <div class="fee-row">
+                  <span class="label">FEE RATE:</span>
+                  <span class="value" data-mint-target="feeRate">-</span>
+                </div>
+                <div class="fee-row total">
+                  <span class="label">TOTAL:</span>
+                  <span class="value" data-mint-target="total">-</span>
+                </div>
+                <div class="fee-row usd">
+                  <span class="label"></span>
+                  <span class="value hidden" data-usd-role="total" data-usd-sats=""></span>
+                </div>
+              </div>
+
+              <% if (launchpad.turnstile_site_key) { %>
+                <div style="margin-top: 16px; display: flex; justify-content: center;">
+                  <div
+                    class="cf-turnstile"
+                    data-mint-target="turnstile"
+                    data-sitekey="<%= launchpad.turnstile_site_key %>"
+                    data-callback="launchpadTurnstileSuccess"
+                    data-expired-callback="launchpadTurnstileExpired"
+                    data-error-callback="launchpadTurnstileError"
+                  ></div>
+                </div>
+              <% } %>
+
+              <div style="margin-top: 1.5rem;">
+                <button class="detail-buy-btn hide-on-connected" type="button" data-mint-target="connectButton" data-action="wallet#select">CONNECT WALLET</button>
+
+                <button class="detail-buy-btn show-on-connected" type="button" data-mint-target="prepareButton" data-action="click->mint#prepare">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span data-mint-target="prepareSpinner" class="button-spinner button-spinner-hidden"></span>
+                    <span data-mint-target="prepareLabel">PREPARE MINT</span>
+                  </span>
+                </button>
+
+                <button class="detail-buy-btn hidden" type="button" data-testid="mint-button" data-mint-target="mintButton" data-action="click->mint#mint">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span data-mint-target="mintSpinner" class="button-spinner button-spinner-hidden"></span>
+                    <span data-mint-target="mintLabel">CONFIRM MINT</span>
+                  </span>
+                </button>
+              </div>
+            </form>
+
+            <div class="hidden message message-success" data-mint-target="successPanel" data-testid="mint-success">
+              <div class="message-title" data-mint-target="successTitle">ACQUISITION COMPLETE</div>
+              <a class="message-link" target="_blank" rel="noopener" data-mint-target="successLink" href="">View on mempool.space</a>
+            </div>
+
+            <div class="hidden message message-error" data-mint-target="errorPanel" data-testid="mint-client-error">
+              <div class="message-title" data-mint-target="errorTitle">ACQUISITION FAILED</div>
+              <div class="message-link" data-mint-target="errorMessage"></div>
+            </div>
+          <% } %>
         </div>
       </div>
-    <% } %>
-
-    <!-- Right: Mint info / details -->
-    <div class="spam-can p-6" data-testid="launchpad-details">
-      <h1 class="font-display text-2xl text-spam-navy mb-2" data-testid="launchpad-title"><%= collection.title %></h1>
-
-      <% if (collection.description) { %>
-        <p class="font-body text-base leading-relaxed text-spam-navy mb-4" data-testid="launchpad-description"><%= collection.description %></p>
-      <% } %>
-
-      <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="rounded-lg border-2 border-spam-navy bg-spam-bone p-4">
-          <div class="font-body text-xs uppercase tracking-wide text-spam-navy/80">Price</div>
-          <div class="font-display text-xl text-spam-navy" data-testid="launchpad-price"><%= collection.price_sats %> sats</div>
-        </div>
-
-        <div class="rounded-lg border-2 border-spam-navy bg-spam-bone p-4">
-          <div class="font-body text-xs uppercase tracking-wide text-spam-navy/80">Supply</div>
-          <div class="font-display text-xl text-spam-navy" data-testid="launchpad-supply">
-            <%= supply.remaining %> / <%= supply.total %>
-          </div>
-        </div>
-      </div>
-
-      <% if (supply.isSoldOut || !supply.hasMintable) { %>
-        <div class="rounded-xl border-4 border-spam-navy bg-spam-bone p-6 text-center" data-testid="launchpad-sold-out">
-          <div class="text-5xl mb-3">🥫</div>
-          <div class="font-display text-xl text-spam-navy">Sold out</div>
-        </div>
-      <% } else { %>
-        <form method="post" data-testid="mint-form" data-mint-target="form">
-          <% if ((collection.optional_payments ?? []).length > 0) { %>
-            <div class="mb-4" data-testid="optional-payments">
-              <div class="font-display text-sm text-spam-green mb-3">Include additional payments</div>
-              <div class="space-y-2">
-                <% collection.optional_payments.forEach((payment) => { %>
-                  <label class="flex items-center justify-between gap-3 p-3 bg-spam-cream border-2 border-spam-navy rounded-lg hover:bg-spam-yellow/20 cursor-pointer" data-testid="optional-payment">
-                    <div class="flex items-center gap-3">
-                      <input class="w-4 h-4 accent-spam-green" type="checkbox" data-mint-target="optionalPayment" data-payment='<%= JSON.stringify(payment) %>' data-action="mint#calculateCost" />
-                      <div>
-                        <div class="font-body text-sm font-bold text-spam-navy"><%= payment.title %></div>
-                        <div class="font-body text-xs text-spam-green-dark"><%= payment.description %></div>
-                      </div>
-                    </div>
-                    <span class="font-display text-sm text-spam-green"><%= formatSats(payment.amount) %></span>
-                  </label>
-                <% }) %>
-              </div>
-            </div>
-          <% } %>
-
-          <% if (launchpad.turnstile_site_key) { %>
-            <div class="mb-4 flex justify-center">
-              <div
-                class="cf-turnstile"
-                data-mint-target="turnstile"
-                data-sitekey="<%= launchpad.turnstile_site_key %>"
-                data-callback="launchpadTurnstileSuccess"
-                data-expired-callback="launchpadTurnstileExpired"
-                data-error-callback="launchpadTurnstileError"
-              ></div>
-            </div>
-          <% } %>
-
-          <!-- Hidden targets required by mint controller -->
-          <div class="hidden" aria-hidden="true">
-            <span data-mint-target="fee">-</span>
-            <span data-mint-target="feeRate">-</span>
-            <button type="button" data-mint-target="connectButton">Connect</button>
-            <button type="button" data-mint-target="prepareButton">
-              <span data-mint-target="prepareSpinner" class="button-spinner button-spinner-hidden"></span>
-              <span data-mint-target="prepareLabel">Prepare Mint</span>
-            </button>
-          </div>
-
-          <!-- OP_RETURN Message box -->
-          <% if (collection.op_return) { %>
-            <div class="mb-4" data-testid="opreturn-section">
-              <div class="rounded-xl border-4 border-spam-navy bg-spam-bone p-5">
-                <div class="flex items-center justify-between gap-4 mb-3">
-                  <div class="font-display text-lg text-spam-navy">OP_RETURN Message</div>
-                  <button
-                    type="button"
-                    class="rounded-lg border-2 border-spam-navy bg-spam-yellow px-4 py-2 font-display text-sm text-spam-navy hover:bg-spam-cream transition-colors"
-                    id="opreturn-randomise"
-                  >
-                    Randomise
-                  </button>
-                </div>
-
-                <div class="font-body text-xs text-spam-navy/70 mb-2">
-                  The Knotzi regime requires a minimum of 80kb OPRETURN data per Knotzi, irrespecitve of rank.
-                  <span class="ml-2 font-display" id="opreturn-bytes">0 bytes</span>
-                </div>
-
-                <textarea
-                  id="opreturn-message"
-                  class="w-full min-h-[110px] rounded-lg border-2 border-spam-navy bg-spam-cream p-3 font-body text-sm text-spam-navy"
-                  rows="3"
-                  required
-                  spellcheck="false"
-                  autocomplete="off"
-                  placeholder="Enter at least 81 bytes"
-                  data-mint-target="spamInput"
-                  data-action="input->mint#onSpamInput"
-                ></textarea>
-              </div>
-            </div>
-          <% } %>
-        </form>
-
-        <div class="show-on-connected mb-3 w-full flex items-center justify-between rounded-lg border-2 border-spam-navy bg-spam-bone px-4 py-3">
-          <span class="font-display text-sm text-spam-navy">Total</span>
-          <div class="text-right">
-            <span class="font-display text-lg text-spam-navy" data-mint-target="total">-</span>
-            <div class="hidden font-body text-xs text-spam-navy/60" data-usd-role="total" data-usd-sats=""></div>
-          </div>
-        </div>
-
-        <div class="space-y-3" data-testid="launchpad-mint">
-          <button
-            class="hide-on-connected w-full rounded-xl border-4 border-spam-navy bg-white px-6 py-4 font-display text-lg text-spam-navy hover:bg-spam-green hover:text-spam-bone hover:border-spam-navy transition-colors cursor-pointer"
-            type="button"
-            onclick="document.querySelector('[data-testid=connect-wallet-button]')?.click()"
-          >Connect wallet to mint</button>
-
-          <button
-            type="button"
-            class="hidden w-full rounded-xl border-4 border-spam-navy bg-white px-6 py-4 font-display text-lg text-spam-navy hover:bg-spam-green hover:text-spam-bone hover:border-spam-navy transition-colors cursor-pointer"
-            data-testid="mint-button"
-            data-mint-target="mintButton"
-            data-action="click->mint#mint"
-          >
-            <span class="inline-flex w-full items-center justify-center gap-2">
-              <span data-mint-target="mintSpinner" class="button-spinner button-spinner-hidden"></span>
-              <span data-mint-target="mintLabel">Mint</span>
-            </span>
-          </button>
-        </div>
-
-        <div class="hidden mt-4 p-4 bg-green-100 border-3 border-green-600 rounded-lg" data-mint-target="successPanel" data-testid="mint-success">
-          <div class="font-display text-sm text-green-800" data-mint-target="successTitle">Mint Successful</div>
-          <a class="font-body text-xs text-green-600 underline" target="_blank" rel="noopener" data-mint-target="successLink" href="">View transaction on mempool.space</a>
-        </div>
-
-        <div class="hidden mt-4 p-4 bg-red-100 border-3 border-red-600 rounded-lg" data-mint-target="errorPanel" data-testid="mint-client-error">
-          <div class="font-display text-sm text-red-800" data-mint-target="errorTitle">Error</div>
-          <div class="font-body text-xs text-red-600" data-mint-target="errorMessage"></div>
-        </div>
-      <% } %>
     </div>
-  </div>
+  </section>
 
   <turbo-frame
     id="launchpad-sales"
@@ -225,79 +195,22 @@
     loading="lazy"
     refresh="morph"
     target="_top"
-    class="block mt-4"
+    style="margin-top: 48px;"
     data-controller="frame-refresh"
     data-frame-refresh-interval-value="<%= launchpad.refresh_ms %>"
   ></turbo-frame>
-
-  <% if (collection.op_return) { %>
-  <script>
-    (function () {
-      const enc = new TextEncoder()
-
-      function byteLen(str) {
-        return enc.encode(str).length
-      }
-
-      function setMessage(msg) {
-        const ta = document.getElementById("opreturn-message")
-        const bytesEl = document.getElementById("opreturn-bytes")
-
-        if (ta) {
-          ta.value = msg
-          ta.dispatchEvent(new Event('input', { bubbles: true }))
-        }
-        if (bytesEl) bytesEl.textContent = byteLen(msg) + " bytes"
-      }
-
-      let LINES = []
-
-      async function loadMessages() {
-        const res = await fetch("/opreturn-messages.json", { cache: "no-store" })
-        if (!res.ok) throw new Error("Failed to load /opreturn-messages.json (" + res.status + ")")
-
-        const data = await res.json()
-
-        const arr = Array.isArray(data) ? data : Array.isArray(data?.messages) ? data.messages : null
-        if (!arr) throw new Error('JSON format not recognised. Use an array, or {"messages":[...]}')
-
-        LINES = arr.map((s) => String(s ?? "").trim()).filter(Boolean)
-
-        if (LINES.length === 0) throw new Error("No messages found in /opreturn-messages.json")
-      }
-
-      function randomise() {
-        if (!LINES.length) {
-          setMessage("Loading OP_RETURN messages…")
-          return
-        }
-        const pick = LINES[Math.floor(Math.random() * LINES.length)]
-        setMessage(pick)
-      }
-
-      const btn = document.getElementById("opreturn-randomise")
-      if (btn) btn.addEventListener("click", randomise)
-
-      // Update byte counter on manual edits
-      const ta = document.getElementById("opreturn-message")
-      if (ta) ta.addEventListener("input", () => {
-        const bytesEl = document.getElementById("opreturn-bytes")
-        if (bytesEl) bytesEl.textContent = byteLen(ta.value) + " bytes"
-      })
-
-      loadMessages()
-        .then(() => {
-          randomise()
-        })
-        .catch((e) => {
-          console.error(e)
-          setMessage("ERROR loading messages. Check /opreturn-messages.json in /public and console logs.")
-        })
-    })();
-  </script>
-  <% } %>
 </section>
 
-<% if (launchpad.turnstile_site_key) { %>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<% } %>
+
+<style id="knotzi-open-gallery-btn-style">
+  .knotzi-open-gallery-btn {
+    display: block;
+    margin-top: 0.75rem;
+    text-align: center;
+    text-decoration: none !important;
+  }
+
+  .knotzi-open-gallery-btn:hover {
+    filter: brightness(1.08);
+  }
+</style>

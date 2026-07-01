@@ -12,6 +12,7 @@ import { launchpadProgressController } from '../../controllers/launchpad_progres
 import { setupController } from '../../controllers/setup_controller.js'
 import { runSyncCollectionsCron } from '../../crons/sync_collections_cron.js'
 import { runOrdersCron } from '../../crons/orders_cron.js'
+import { galleryController } from '../../controllers/gallery_controller.js'
 
 export { LaunchpadReservationWorker } from '../launchpad/worker.js'
 
@@ -31,6 +32,8 @@ app.post('/launchpad/:slug/reserve', launchpadReserveController)
 app.post('/launchpad/:slug/mint', launchpadMintController)
 app.get('/launchpad/:slug/sales', launchpadSalesController)
 app.get('/launchpad/:slug/progress', launchpadProgressController)
+app.get('/gallery', galleryController)
+
 app.get('/:collection', collectionController)
 app.get('/:collection/:id', showCollectionInscriptionController)
 

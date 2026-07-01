@@ -36,84 +36,13 @@
         </div>
 
         <div class="flex items-center gap-3" data-testid="header-right">
-          <div
-            data-controller="wallet"
-            data-testid="connect-slot"
-            data-action="keydown.esc@window->wallet#close"
+          <a
+            class="rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
+            href="/gallery"
+            data-testid="gallery-link"
           >
-            <!-- Wallet Modal -->
-            <div
-              data-wallet-target="selector"
-              class="fixed inset-0 z-[10000] hidden items-center justify-center data-[state=open]:flex"
-              data-state="closed"
-            >
-              <div
-                class="absolute inset-0 bg-spam-navy/70 cursor-pointer"
-                data-action="click->wallet#close"
-              ></div>
-
-              <div class="relative z-10 w-full max-w-[360px] mx-4 bg-spam-bone rounded-2xl border-4 border-spam-navy shadow-can overflow-hidden">
-                <div class="flex items-center justify-between p-4 bg-spam-yellow border-b-4 border-spam-navy">
-                  <span class="font-display text-xl text-spam-navy">Connect wallet</span>
-                  <button
-                    class="w-8 h-8 rounded-full bg-spam-green text-spam-bone font-display text-lg hover:bg-spam-green-dark transition-colors flex items-center justify-center"
-                    type="button"
-                    aria-label="Close"
-                    data-action="wallet#close"
-                  >
-                    &times;
-                  </button>
-                </div>
-
-                <div class="p-6 space-y-4">
-                  <button
-                    class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer"
-                    data-wallet-target="xverse"
-                    data-action="wallet#authorize:prevent"
-                    data-wallet-provider-param="xverse"
-                  >
-                    <img src="/wallets/xverse.png" class="h-6 w-6" alt="" />
-                    <span class="font-display text-lg text-spam-navy">Xverse</span>
-                  </button>
-
-                  <button
-                    class="w-full flex items-center justify-center gap-3 p-4 bg-spam-cream border-3 border-spam-navy rounded-lg hover:bg-spam-yellow transition-colors cursor-pointer"
-                    data-wallet-target="unisat"
-                    data-action="wallet#authorize:prevent"
-                    data-wallet-provider-param="unisat"
-                  >
-                    <img src="/wallets/unisat.png" class="h-6 w-6" alt="" />
-                    <span class="font-display text-lg text-spam-navy">Unisat</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="hide-on-connected">
-              <button
-                class="rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
-                data-action="wallet#select"
-                data-testid="connect-wallet-button"
-              >
-                Connect wallet
-              </button>
-            </div>
-
-            <div class="show-on-connected">
-              <div class="relative z-30 inline-flex" data-controller="dropdown" data-action="mouseup@window->dropdown#hide">
-                <button
-                  class="inline-flex items-center gap-2 rounded-lg border-2 border-spam-bone bg-spam-navy px-4 py-2 font-display text-sm text-spam-bone hover:bg-spam-navy/80 transition-colors"
-                  data-action="dropdown#toggle"
-                >
-                  <span data-wallet-target="addressPreview"></span>
-                  <span class="text-spam-bone/50">▾</span>
-                </button>
-                <div class="absolute right-0 top-full z-50 mt-1 hidden w-48 border-3 border-spam-navy bg-spam-bone rounded-lg shadow-can p-1" data-dropdown-target="menu">
-                  <a class="block px-3 py-2 font-display text-sm text-spam-navy hover:bg-spam-yellow rounded" href="#" data-action="wallet#logout:prevent dropdown#toggle">Disconnect</a>
-                </div>
-              </div>
-            </div>
-          </div>
+            Gallery
+          </a>
         </div>
       </div>
     </header>
@@ -140,6 +69,7 @@
 
         <div class="flex items-center gap-4" data-testid="social">
           <a class="font-body text-sm text-spam-bone hover:text-spam-yellow" href="/activity" data-testid="nav-activity">Activity</a>
+          <a class="font-body text-sm text-spam-bone hover:text-spam-yellow" href="/gallery" data-testid="nav-gallery">Gallery</a>
           <% if (CONFIG.social_website_url) { %>
             <a class="text-spam-bone hover:text-spam-yellow text-lg" href="<%= CONFIG.social_website_url %>" target="_blank" rel="noopener" data-testid="social-website">🌐</a>
           <% } %>
